@@ -1,21 +1,42 @@
 # MangaBook
 
-Application web développée avec **Flask** autour d’un univers manga, avec une architecture modulaire, une séparation claire entre l’espace public et l’espace d’administration, et une base de données pilotée par un schéma SQL dédié.
+Application web développée avec **Flask** autour d’un univers manga, conçue avec une architecture modulaire, une séparation claire entre l’espace public et l’espace d’administration, et une base de données initialisée via un schéma SQL dédié.
 
-## Objectif du projet
+## Présentation
 
-MangaBook est un projet full stack orienté web permettant de structurer une plateforme autour de plusieurs besoins métier :
+MangaBook est un projet web full stack centré sur la gestion et la consultation de contenus liés à l’univers manga.  
+L’application a été pensée pour structurer plusieurs briques fonctionnelles dans une base technique claire, maintenable et évolutive.
 
-- consultation d’articles et de contenus manga
-- gestion des utilisateurs
-- authentification
-- favoris et historique
-- commandes
-- espace d’administration
-- messagerie / contact
-- forum avec gestion des sujets et réponses
+Le projet couvre à la fois des besoins côté utilisateur et côté administration, avec une organisation du code orientée modularité.
 
-L’objectif technique du projet est aussi de mettre en place une base de travail propre, maintenable et évolutive, en appliquant une architecture Flask sérieuse.
+## Objectifs du projet
+
+MangaBook a deux objectifs principaux :
+
+### 1. Objectif fonctionnel
+
+Mettre en place une plateforme web permettant de gérer :
+
+- la consultation d’articles manga
+- les comptes utilisateurs
+- l’authentification
+- les favoris
+- l’historique utilisateur
+- les commandes
+- les messages de contact
+- le forum avec sujets et réponses
+- l’espace d’administration
+
+### 2. Objectif technique
+
+Construire une base de travail propre en appliquant de bonnes pratiques de développement web avec Flask :
+
+- architecture modulaire
+- séparation des responsabilités
+- configuration centralisée
+- base de données structurée
+- maintenance facilitée
+- évolutivité du projet
 
 ---
 
@@ -27,7 +48,7 @@ L’objectif technique du projet est aussi de mettre en place une base de travai
 - **Flask**
 - **Jinja2**
 - **SQLite** pour l’environnement local actuel
-- SQL natif via `schema.sql`
+- SQL natif via **`schema.sql`**
 
 ### Front-end
 
@@ -39,24 +60,24 @@ L’objectif technique du projet est aussi de mettre en place une base de travai
 
 - **Git / GitHub**
 - **VS Code**
-- **venv** pour l’environnement virtuel
-- éventuellement **Node.js / npm** si des outils front sont ajoutés au projet
+- **venv** pour l’environnement virtuel Python
+- **Node.js / npm** uniquement si des outils front sont ajoutés au projet
 
 ---
 
 ## Principes d’architecture
 
-Le projet repose sur une organisation pensée pour être claire et scalable :
+Le projet repose sur une structure conçue pour rester lisible et scalable :
 
 - **Application Factory** pour l’initialisation de l’application Flask
-- **Blueports séparés** pour les zones publiques et admin
-- **templates isolés par module**
+- **Blueprints séparés** pour les espaces public, admin et modules spécifiques
+- **templates isolés par zone fonctionnelle**
 - **extensions centralisées**
 - **configuration externalisable**
-- **base SQL initialisée via `schema.sql`**
-- **gestion des erreurs et du contexte au niveau app**
+- **base de données initialisée via `schema.sql`**
+- **gestion centralisée du contexte applicatif et des erreurs**
 
-Cette approche permet de limiter le couplage, de rendre la maintenance plus simple, et de préparer une évolution plus propre du projet.
+Cette organisation permet de réduire le couplage entre les composants, de simplifier la maintenance et de préparer une refonte ou une montée en charge plus propre.
 
 ---
 
@@ -67,14 +88,14 @@ Selon l’état actuel du projet, MangaBook intègre ou prépare les fonctionnal
 - authentification utilisateur
 - gestion des rôles utilisateur / administrateur
 - catalogue d’articles
-- détail d’articles
+- détail des articles
 - favoris
 - historique utilisateur
 - gestion des commandes
 - formulaire de contact
 - forum
 - espace d’administration
-- tableau de bord admin avec statistiques
+- tableau de bord administrateur avec statistiques
 
 ---
 
@@ -99,6 +120,7 @@ flask-manga-book/
 ├── schema.sql
 ├── README.md
 ├── requirements.txt
-├── package.json
-└── .gitignore
+├── .env.example
+├── .gitignore
+└── package.json   # optionnel si outils front
 ```
