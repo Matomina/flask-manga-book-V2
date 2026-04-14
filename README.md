@@ -1,19 +1,22 @@
 # MangaBook
 
-Application web développée avec **Flask** autour d’un univers manga, conçue avec une architecture modulaire, une séparation claire entre l’espace public et l’espace d’administration, et une base de données initialisée via un schéma SQL dédié.
+Application web développée avec **Flask** autour d’un univers manga, pensée avec une architecture modulaire, une séparation claire entre l’espace public et l’espace d’administration, et une base de données initialisée via un schéma SQL dédié.
+
+---
 
 ## Présentation
 
-MangaBook est un projet web full stack centré sur la gestion et la consultation de contenus liés à l’univers manga.  
-L’application a été pensée pour structurer plusieurs briques fonctionnelles dans une base technique claire, maintenable et évolutive.
+MangaBook est un projet web full stack centré sur la gestion et la consultation de contenus liés à l’univers manga.
 
-Le projet couvre à la fois des besoins côté utilisateur et côté administration, avec une organisation du code orientée modularité.
+L’application a été conçue pour structurer plusieurs briques fonctionnelles dans une base technique claire, maintenable et évolutive. Le projet couvre à la fois des besoins côté utilisateur et côté administration, avec une organisation du code orientée modularité.
+
+---
 
 ## Objectifs du projet
 
-MangaBook a deux objectifs principaux :
+MangaBook poursuit deux objectifs principaux.
 
-### 1. Objectif fonctionnel
+### Objectif fonctionnel
 
 Mettre en place une plateforme web permettant de gérer :
 
@@ -27,7 +30,7 @@ Mettre en place une plateforme web permettant de gérer :
 - le forum avec sujets et réponses
 - l’espace d’administration
 
-### 2. Objectif technique
+### Objectif technique
 
 Construire une base de travail propre en appliquant de bonnes pratiques de développement web avec Flask :
 
@@ -47,7 +50,7 @@ Construire une base de travail propre en appliquant de bonnes pratiques de déve
 - **Python**
 - **Flask**
 - **Jinja2**
-- **SQLite** pour l’environnement local actuel
+- **SQLite** pour l’environnement local
 - SQL natif via **`schema.sql`**
 
 ### Front-end
@@ -61,23 +64,25 @@ Construire une base de travail propre en appliquant de bonnes pratiques de déve
 - **Git / GitHub**
 - **VS Code**
 - **venv** pour l’environnement virtuel Python
-- **Node.js / npm** uniquement si des outils front sont ajoutés au projet
+- **pytest** pour les tests
+- **pytest-cov** pour la couverture
+- **ruff** pour le lint et le formatage
 
 ---
 
 ## Principes d’architecture
 
-Le projet repose sur une structure conçue pour rester lisible et scalable :
+Le projet repose sur une structure conçue pour rester lisible, maintenable et évolutive :
 
 - **Application Factory** pour l’initialisation de l’application Flask
 - **Blueprints séparés** pour les espaces public, admin et modules spécifiques
 - **templates isolés par zone fonctionnelle**
+- **configuration externalisée**
 - **extensions centralisées**
-- **configuration externalisable**
 - **base de données initialisée via `schema.sql`**
 - **gestion centralisée du contexte applicatif et des erreurs**
 
-Cette organisation permet de réduire le couplage entre les composants, de simplifier la maintenance et de préparer une refonte ou une montée en charge plus propre.
+Cette organisation permet de réduire le couplage entre les composants, de simplifier la maintenance et de préparer la suite du projet sur des bases plus propres.
 
 ---
 
@@ -107,9 +112,6 @@ Exemple de structure logique du dépôt :
 flask-manga-book/
 ├── manga/
 │   ├── __init__.py
-│   ├── extensions/
-│   │   ├── __init__.py
-│   │   └── db.py
 │   ├── admin/
 │   ├── public/
 │   ├── forum/
@@ -117,10 +119,14 @@ flask-manga-book/
 │   ├── static/
 │   └── ...
 ├── instance/
+├── tests/
 ├── schema.sql
 ├── README.md
 ├── requirements.txt
+├── requirements-dev.txt
+├── pyproject.toml
 ├── .env.example
+├── .flaskenv
 ├── .gitignore
-└── package.json   # optionnel si outils front
+└── run.py
 ```
