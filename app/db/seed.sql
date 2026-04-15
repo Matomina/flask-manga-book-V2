@@ -5,13 +5,76 @@ PRAGMA foreign_keys = ON;
 -- =====================================================
 
 INSERT INTO user (first_name, last_name, email, password, phone, address, city, role) VALUES
-('Mato', 'NGUAYILA', 'matomina.nguayila@gmail.com', 'Orly94', '07-54-69-32-58', '1 rue du clos dion', 'Montereau-Fault-Yonne', 'admin'),
-('Cynthia', 'DAUVERNE', 'cynthia.dauverne@gmail.com', 'Monterau77', '07-55-69-32-58', '1 rue du clos dion', 'Montereau-Fault-Yonne', 'user'),
-('Hakim', 'BOUDERE', 'hakim.boudere@gmail.com', 'Paris75', '07-56-69-32-58', '1 rue de la paix', 'Paris', 'user'),
-('Billal', 'ZEBIR', 'billal.zerbir@gmail.com', 'Pantin93', '07-57-69-32-58', '1 rue de courcelle', 'Pantin', 'user'),
-('Zeyna', 'SIDIBE', 'zeyna.sidibe@gmail.com', 'Cachan94', '07-58-69-32-58', '1 rue pasteur', 'Cachan', 'user'),
-('Alfred', 'Macdy', 'alfred.macdy@gmail.com', 'Evry91', '07-59-69-32-58', '1 allée de la brume', 'Evry', 'user'),
-('Moussa', 'DIOP', 'moussa.diop@gmail.com', 'Coulommier77', '07-60-69-32-58', '1 rue des champs', 'Coulommiers', 'user');
+(
+    'Mato',
+    'NGUAYILA',
+    'admin@test.com',
+    'scrypt:32768:8:1$Mg1qXWVBSM1AbbDh$831a14f3e811cfea8f04ab6b12c13537dae56cbb697b1510d86af86036ec9c335a42d3e3abef3aef51308c3a9ff3373b89e0cf129e87170cb3f35929cfd8caca',
+    '07-54-69-32-58',
+    '1 rue du clos dion',
+    'Montereau-Fault-Yonne',
+    'admin'
+),
+(
+    'Cynthia',
+    'DAUVERNE',
+    'user@test.com',
+    'scrypt:32768:8:1$Mg1qXWVBSM1AbbDh$831a14f3e811cfea8f04ab6b12c13537dae56cbb697b1510d86af86036ec9c335a42d3e3abef3aef51308c3a9ff3373b89e0cf129e87170cb3f35929cfd8caca',
+    '07-55-69-32-58',
+    '1 rue du clos dion',
+    'Montereau-Fault-Yonne',
+    'user'
+),
+(
+    'Hakim',
+    'BOUDERE',
+    'hakim.boudere@gmail.com',
+    'scrypt:32768:8:1$Mg1qXWVBSM1AbbDh$831a14f3e811cfea8f04ab6b12c13537dae56cbb697b1510d86af86036ec9c335a42d3e3abef3aef51308c3a9ff3373b89e0cf129e87170cb3f35929cfd8caca',
+    '07-56-69-32-58',
+    '1 rue de la paix',
+    'Paris',
+    'user'
+),
+(
+    'Billal',
+    'ZEBIR',
+    'billal.zerbir@gmail.com',
+    'scrypt:32768:8:1$Mg1qXWVBSM1AbbDh$831a14f3e811cfea8f04ab6b12c13537dae56cbb697b1510d86af86036ec9c335a42d3e3abef3aef51308c3a9ff3373b89e0cf129e87170cb3f35929cfd8caca',
+    '07-57-69-32-58',
+    '1 rue de courcelle',
+    'Pantin',
+    'user'
+),
+(
+    'Zeyna',
+    'SIDIBE',
+    'zeyna.sidibe@gmail.com',
+    'scrypt:32768:8:1$Mg1qXWVBSM1AbbDh$831a14f3e811cfea8f04ab6b12c13537dae56cbb697b1510d86af86036ec9c335a42d3e3abef3aef51308c3a9ff3373b89e0cf129e87170cb3f35929cfd8caca',
+    '07-58-69-32-58',
+    '1 rue pasteur',
+    'Cachan',
+    'user'
+),
+(
+    'Alfred',
+    'Macdy',
+    'alfred.macdy@gmail.com',
+    'scrypt:32768:8:1$Mg1qXWVBSM1AbbDh$831a14f3e811cfea8f04ab6b12c13537dae56cbb697b1510d86af86036ec9c335a42d3e3abef3aef51308c3a9ff3373b89e0cf129e87170cb3f35929cfd8caca',
+    '07-59-69-32-58',
+    '1 allée de la brume',
+    'Evry',
+    'user'
+),
+(
+    'Moussa',
+    'DIOP',
+    'moussa.diop@gmail.com',
+    'scrypt:32768:8:1$Mg1qXWVBSM1AbbDh$831a14f3e811cfea8f04ab6b12c13537dae56cbb697b1510d86af86036ec9c335a42d3e3abef3aef51308c3a9ff3373b89e0cf129e87170cb3f35929cfd8caca',
+    '07-60-69-32-58',
+    '1 rue des champs',
+    'Coulommiers',
+    'user'
+);
 
 -- =====================================================
 -- ARTICLES (DEBUT)

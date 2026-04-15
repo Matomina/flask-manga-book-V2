@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article["name"] }} - MangaBook V2{% endblock %}
+
+{% block content %}
+<p>
+    <a href="{{ url_for('public.articles') }}">← Retour au catalogue</a>
+</p>
+
+<article>
+    <h2>{{ article["name"] }}</h2>
+
+    <p><strong>Genre :</strong> {{ article["genres"] }}</p>
+
+    {% if article["universe"] %}
+        <p><strong>Univers :</strong> {{ article["universe"] }}</p>
+    {% endif %}
+
+    <p><strong>Prix :</strong> {{ article["price"] }} €</p>
+    <p><strong>Stock :</strong> {{ article["stock"] }}</p>
+
+    {% if article["release_day"] %}
+        <p><strong>Jour de sortie :</strong> {{ article["release_day"] }}</p>
+    {% endif %}
+
+    <p><strong>Image :</strong> {{ article["image"] }}</p>
+</article>
+{% endblock %}

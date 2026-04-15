@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, flash, redirect, render_template, url_for
+
+from app.core.security import login_required
+
 
 bp = Blueprint(
     "forum",
@@ -16,5 +19,7 @@ def index():
 
 
 @bp.route("/create", methods=["POST"])
+@login_required
 def create_topic():
-    return redirect(url_for("auth.login"))
+    flash("Création de sujet à venir.", "info")
+    return redirect(url_for("forum.index"))

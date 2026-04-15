@@ -12,7 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from app import create_app
-from app.db import get_db, init_db
+from app.db import get_db, reset_db
 
 
 @pytest.fixture
@@ -30,7 +30,7 @@ def app():
     )
 
     with app.app_context():
-        init_db()
+        reset_db()
 
     yield app
 
