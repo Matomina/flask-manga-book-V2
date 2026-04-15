@@ -1,0 +1,3 @@
+-- Reset géré par app/db/connection.py
+-- init_db() exécute schema.sql
+-- seed_db() exécute seed.sql
