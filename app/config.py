@@ -11,17 +11,17 @@ INSTANCE_DIR = BASE_DIR / "instance"
 class Config:
     """Configuration globale de l'application Flask."""
 
-    # =====================================================
-    # Sécurité
-    # =====================================================
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev")
 
-    # =====================================================
-    # Base de données
-    # =====================================================
     DATABASE = str(INSTANCE_DIR / "manga.sqlite")
 
-    # =====================================================
-    # Environnement
-    # =====================================================
     DEBUG = os.environ.get("FLASK_DEBUG", "1") == "1"
+    TESTING = False
+
+
+class TestConfig(Config):
+    """Configuration utilisée pour les tests."""
+
+    TESTING = True
+    DEBUG = False
+    DATABASE = str(INSTANCE_DIR / "test.sqlite")
