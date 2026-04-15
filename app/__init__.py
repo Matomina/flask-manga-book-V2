@@ -20,21 +20,16 @@ from typing import Any
 
 from flask import Flask, session
 
+from .config import Config
 from .db import get_db, init_app as init_db_app
 
 
 def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     """Créer et configurer l'application Flask."""
     app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object(Config)
 
-    app.config.from_mapping(
-        SECRET_KEY=os.environ.get("SECRET_KEY", "dev"),
-        DATABASE=os.path.join(app.instance_path, "manga.sqlite"),
-    )
-
-    if test_config is None:
-        app.config.from_pyfile("config.py", silent=True)
-    else:
+    if test_config is not None:
         app.config.from_mapping(test_config)
 
     os.makedirs(app.instance_path, exist_ok=True)
