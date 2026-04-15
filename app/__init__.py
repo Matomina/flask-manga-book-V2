@@ -3,12 +3,6 @@
 MANGABOOK – APPLICATION FACTORY
 --------------------------------------------------------
 Initialisation principale de l'application Flask.
-
-Architecture :
-- Public séparé
-- Admin séparé
-- Templates isolés par blueprint
-- Extensions centralisées
 ========================================================
 """
 
@@ -118,26 +112,15 @@ def register_template_filters(app: Flask) -> None:
 def register_blueprints(app: Flask) -> None:
     """Enregistrer les blueprints de l'application."""
 
-    from .admin.admin import bp as admin_bp
-    from .admin.articles import bp as admin_articles_bp
-    from .admin.auth import bp as auth_bp
-    from .admin.contacts import bp as contacts_bp
-    from .admin.forum import bp as admin_forum_bp
-    from .admin.orders import bp as orders_bp
-    from .admin.users import bp as users_bp
-    from .public.articles import bp as public_articles_bp
+    from .admin.routes import bp as admin_bp
+    from .auth.routes import bp as auth_bp
+    from .forum.routes import bp as forum_bp
     from .public.routes import bp as public_bp
 
     app.register_blueprint(public_bp)
-    app.register_blueprint(public_articles_bp)
-
-    app.register_blueprint(admin_bp)
-    app.register_blueprint(users_bp)
-    app.register_blueprint(orders_bp)
-    app.register_blueprint(admin_articles_bp)
     app.register_blueprint(auth_bp)
-    app.register_blueprint(contacts_bp)
-    app.register_blueprint(admin_forum_bp)
+    app.register_blueprint(forum_bp)
+    app.register_blueprint(admin_bp)
 
 
 def register_error_handlers(app: Flask) -> None:

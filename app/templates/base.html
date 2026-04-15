@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MangaBook V2{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>MangaBook V2</h1>
+        <nav>
+            <a href="{{ url_for('public.home') }}">Accueil</a>
+            <a href="{{ url_for('public.about') }}">À propos</a>
+            <a href="{{ url_for('auth.login') }}">Connexion</a>
+            <a href="{{ url_for('forum.index') }}">Forum</a>
+            <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+        </nav>
+        <hr>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
