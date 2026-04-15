@@ -20,8 +20,7 @@ from typing import Any
 
 from flask import Flask, session
 
-from .extensions import db
-from .extensions.db import get_db
+from .db import get_db, init_app as init_db_app
 
 
 def create_app(test_config: dict[str, Any] | None = None) -> Flask:
@@ -50,8 +49,8 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
 
 
 def register_extensions(app: Flask) -> None:
-    """Initialiser les extensions Flask."""
-    db.init_app(app)
+    """Initialiser les extensions et services globaux."""
+    init_db_app(app)
 
 
 def register_context_processors(app: Flask) -> None:
@@ -124,9 +123,6 @@ def register_template_filters(app: Flask) -> None:
 def register_blueprints(app: Flask) -> None:
     """Enregistrer les blueprints de l'application."""
 
-    from .public.routes import bp as public_bp
-    from .public.articles import bp as public_articles_bp
-
     from .admin.admin import bp as admin_bp
     from .admin.articles import bp as admin_articles_bp
     from .admin.auth import bp as auth_bp
@@ -134,6 +130,8 @@ def register_blueprints(app: Flask) -> None:
     from .admin.forum import bp as admin_forum_bp
     from .admin.orders import bp as orders_bp
     from .admin.users import bp as users_bp
+    from .public.articles import bp as public_articles_bp
+    from .public.routes import bp as public_bp
 
     app.register_blueprint(public_bp)
     app.register_blueprint(public_articles_bp)
