@@ -1,5 +1,5 @@
 def test_forum_page(client):
-    response = client.get("/forum")
+    response = client.get("/forum/")
     assert response.status_code == 200
 
 
