@@ -1,8 +1,38 @@
 {% extends "base.html" %}
 
-{% block title %}Admin{% endblock %}
+{% block title %}Admin - Dashboard{% endblock %}
 
 {% block content %}
-<h2>Dashboard admin</h2>
-<p>Espace d'administration en cours de construction.</p>
+<h2>Dashboard Admin</h2>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap;">
+
+    <div style="border: 1px solid #ccc; padding: 16px;">
+        <h3>Utilisateurs</h3>
+        <p>{{ stats.users }}</p>
+    </div>
+
+    <div style="border: 1px solid #ccc; padding: 16px;">
+        <h3>Articles</h3>
+        <p>{{ stats.articles }}</p>
+    </div>
+
+    <div style="border: 1px solid #ccc; padding: 16px;">
+        <h3>Commandes</h3>
+        <p>{{ stats.orders }}</p>
+    </div>
+
+    <div style="border: 1px solid #ccc; padding: 16px;">
+        <h3>Messages</h3>
+        <p>{{ stats.contacts }}</p>
+    </div>
+
+</div>
+
+<hr>
+
+<nav>
+    <a href="{{ url_for('admin.contact_list') }}">Voir les messages</a>
+</nav>
+
 {% endblock %}

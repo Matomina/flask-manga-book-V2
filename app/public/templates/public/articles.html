@@ -7,34 +7,58 @@
 <p>Découvrez tous les articles disponibles sur MangaBook.</p>
 
 {% if articles %}
-    <section>
-        <div>
-            {% for article in articles %}
-                <article style="border: 1px solid #ccc; padding: 12px; margin-bottom: 12px;">
-                    <h3>{{ article["name"] }}</h3>
+<section>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px;">
+        
+        {% for article in articles %}
+            <article style="border: 1px solid #ccc; padding: 12px; border-radius: 8px;">
 
-                    <p><strong>Genre :</strong> {{ article["genres"] }}</p>
+                <h3>{{ article["name"] }}</h3>
 
+                <p><strong>{{ article["price"] }} €</strong></p>
+
+                <p style="font-size: 14px;">
+                    {{ article["genres"] }}
                     {% if article["universe"] %}
-                        <p><strong>Univers :</strong> {{ article["universe"] }}</p>
+                        • {{ article["universe"] }}
                     {% endif %}
+                </p>
 
-                    <p><strong>Prix :</strong> {{ article["price"] }} €</p>
-                    <p><strong>Stock :</strong> {{ article["stock"] }}</p>
+                <p style="font-size: 13px;">
+                    Stock : {{ article["stock"] }}
+                </p>
 
-                    {% if article["release_day"] %}
-                        <p><strong>Jour de sortie :</strong> {{ article["release_day"] }}</p>
-                    {% endif %}
-
-                    <p>
-                        <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
-                            Voir le détail
-                        </a>
+                {% if article["release_day"] %}
+                    <p style="font-size: 13px;">
+                        Sortie : {{ article["release_day"] }}
                     </p>
-                </article>
-            {% endfor %}
-        </div>
-    </section>
+                {% endif %}
+
+                <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+
+                    <!-- Voir détail -->
+                    <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+                        Voir
+                    </a>
+
+                    <!-- Favoris -->
+                    {% if session.get("user_id") %}
+                        {% if article["id"] in favorites_ids %}
+                            <span>✔ Déjà en favori</span>
+                        {% else %}
+                            <form method="post" action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}">
+                                <button type="submit">❤️ Favori</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+
+            </article>
+        {% endfor %}
+
+    </div>
+</section>
 {% else %}
     <p>Aucun article disponible pour le moment.</p>
 {% endif %}
