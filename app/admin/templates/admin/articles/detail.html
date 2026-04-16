@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article["name"] }} - Admin{% endblock %}
+
+{% block content %}
+<p>
+    <a href="{{ url_for('admin.articles_list') }}">← Retour à la liste</a>
+</p>
+
+<article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px; max-width: 700px;">
+    <h2>{{ article["name"] }}</h2>
+
+    <p><strong>Genre :</strong> {{ article["genres"] }}</p>
+
+    {% if article["universe"] %}
+        <p><strong>Univers :</strong> {{ article["universe"] }}</p>
+    {% endif %}
+
+    <p><strong>Image :</strong> {{ article["image"] }}</p>
+    <p><strong>Prix :</strong> {{ article["price"] }} €</p>
+    <p><strong>Stock :</strong> {{ article["stock"] }}</p>
+
+    {% if article["release_day"] %}
+        <p><strong>Jour de sortie :</strong> {{ article["release_day"] }}</p>
+    {% endif %}
+
+    <p><strong>Créé le :</strong> {{ article["created_at"] }}</p>
+
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px;">
+        <a href="{{ url_for('admin.article_edit', article_id=article['id']) }}">Modifier</a>
+
+        <form action="{{ url_for('admin.article_delete', article_id=article['id']) }}" method="post">
+            <button type="submit">Supprimer</button>
+        </form>
+    </div>
+</article>
+{% endblock %}

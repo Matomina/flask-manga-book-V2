@@ -1,8 +1,45 @@
 from __future__ import annotations
 
 import sqlite3
+from pathlib import Path
+from typing import Any
+from uuid import uuid4
+
+from flask import current_app
+from werkzeug.datastructures import FileStorage
+from werkzeug.utils import secure_filename
 
 from app.db import get_db
+
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+VALID_ARTICLE_GENRES = {"manga", "figurine", "textile", "vaisselle", "goodies"}
+VALID_RELEASE_DAYS = {
+    "Lundi",
+    "Mardi",
+    "Mercredi",
+    "Jeudi",
+    "Vendredi",
+    "Samedi",
+    "Dimanche",
+    "Sans jour fixe",
+}
+UPLOAD_FOLDER = "uploads"
+
+
+# =========================
+# HELPERS
+# =========================
+
+def _normalize_str(value: Any) -> str:
+    """Nettoyer une valeur texte et garantir une chaîne."""
+    return str(value or "").strip()
+
+
+def _normalize_optional_str(value: Any) -> str | None:
+    """Nettoyer une valeur texte optionnelle."""
+    cleaned = _normalize_str(value)
+    return cleaned or None
 
 
 # =========================
@@ -15,25 +52,23 @@ def get_all_contacts() -> list[sqlite3.Row]:
 
     return db.execute(
         """
-        SELECT c.id, c.sujet, c.message, c.status, c.created_at,
-               u.email
-        FROM contact c
-        LEFT JOIN user u ON u.id = c.user_id
-        ORDER BY c.created_at DESC
+        SELECT c.id, c.sujet, c.message, c.status, c.created_at, u.email
+        FROM contact AS c
+        LEFT JOIN user AS u ON u.id = c.user_id
+        ORDER BY c.created_at DESC, c.id DESC
         """
     ).fetchall()
 
 
 def get_contact_by_id(contact_id: int) -> sqlite3.Row | None:
-    """Récupérer un message de contact par ID."""
+    """Récupérer un message de contact par son identifiant."""
     db = get_db()
 
     return db.execute(
         """
-        SELECT c.id, c.sujet, c.message, c.status, c.created_at,
-               u.email
-        FROM contact c
-        LEFT JOIN user u ON u.id = c.user_id
+        SELECT c.id, c.sujet, c.message, c.status, c.created_at, u.email
+        FROM contact AS c
+        LEFT JOIN user AS u ON u.id = c.user_id
         WHERE c.id = ?
         """,
         (contact_id,),
@@ -41,7 +76,7 @@ def get_contact_by_id(contact_id: int) -> sqlite3.Row | None:
 
 
 def mark_contact_as_read(contact_id: int) -> None:
-    """Marquer un message comme lu."""
+    """Marquer un message de contact comme lu."""
     db = get_db()
 
     db.execute(
@@ -60,19 +95,24 @@ def mark_contact_as_read(contact_id: int) -> None:
 # =========================
 
 def get_dashboard_stats() -> dict[str, int]:
-    """Récupérer les stats globales pour le dashboard admin."""
+    """Récupérer les statistiques globales du dashboard admin."""
     db = get_db()
 
-    users = db.execute("SELECT COUNT(*) AS count FROM user").fetchone()["count"]
-    articles = db.execute("SELECT COUNT(*) AS count FROM articles").fetchone()["count"]
-    orders = db.execute("SELECT COUNT(*) AS count FROM orders").fetchone()["count"]
-    contacts = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
+    row = db.execute(
+        """
+        SELECT
+            (SELECT COUNT(*) FROM user) AS users,
+            (SELECT COUNT(*) FROM articles) AS articles,
+            (SELECT COUNT(*) FROM orders) AS orders,
+            (SELECT COUNT(*) FROM contact) AS contacts
+        """
+    ).fetchone()
 
     return {
-        "users": users,
-        "articles": articles,
-        "orders": orders,
-        "contacts": contacts,
+        "users": row["users"],
+        "articles": row["articles"],
+        "orders": row["orders"],
+        "contacts": row["contacts"],
     }
 
 
@@ -81,23 +121,25 @@ def get_dashboard_stats() -> dict[str, int]:
 # =========================
 
 def get_all_articles_admin() -> list[sqlite3.Row]:
+    """Récupérer tous les articles pour l'administration."""
     db = get_db()
 
     return db.execute(
         """
-        SELECT id, name, genres, universe, price, stock, created_at
+        SELECT id, name, genres, universe, image, price, stock, release_day, created_at
         FROM articles
-        ORDER BY created_at DESC
+        ORDER BY created_at DESC, id DESC
         """
     ).fetchall()
 
 
 def get_article_by_id_admin(article_id: int) -> sqlite3.Row | None:
+    """Récupérer un article admin par son identifiant."""
     db = get_db()
 
     return db.execute(
         """
-        SELECT *
+        SELECT id, name, genres, universe, image, price, stock, release_day, created_at
         FROM articles
         WHERE id = ?
         """,
@@ -105,7 +147,8 @@ def get_article_by_id_admin(article_id: int) -> sqlite3.Row | None:
     ).fetchone()
 
 
-def create_article(data: dict) -> None:
+def create_article(data: dict[str, Any]) -> None:
+    """Créer un article."""
     db = get_db()
 
     db.execute(
@@ -126,7 +169,8 @@ def create_article(data: dict) -> None:
     db.commit()
 
 
-def update_article(article_id: int, data: dict) -> None:
+def update_article(article_id: int, data: dict[str, Any]) -> None:
+    """Mettre à jour un article existant."""
     db = get_db()
 
     db.execute(
@@ -150,6 +194,7 @@ def update_article(article_id: int, data: dict) -> None:
 
 
 def delete_article(article_id: int) -> None:
+    """Supprimer un article."""
     db = get_db()
 
     db.execute(
@@ -160,44 +205,49 @@ def delete_article(article_id: int) -> None:
 
 
 # =========================
-# VALIDATION (PRO)
+# VALIDATION ARTICLES
 # =========================
 
-def validate_article_data(data: dict) -> tuple[dict, list[str]]:
+def validate_article_data(
+    data: dict[str, Any],
+    *,
+    require_image: bool = True,
+) -> tuple[dict[str, Any], list[str]]:
     """Valider et nettoyer les données d’un article."""
-    errors = []
+    errors: list[str] = []
 
-    name = data.get("name", "").strip()
-    genres = data.get("genres", "").strip()
-    universe = data.get("universe", "").strip() or None
-    image = data.get("image", "").strip()
-    release_day = data.get("release_day", "").strip() or None
+    name = _normalize_str(data.get("name"))
+    genres = _normalize_str(data.get("genres"))
+    universe = _normalize_optional_str(data.get("universe"))
+    image = _normalize_optional_str(data.get("image"))
+    release_day = _normalize_optional_str(data.get("release_day"))
 
-    # prix
     try:
         price = float(data.get("price", 0))
         if price < 0:
             errors.append("Le prix doit être positif.")
-    except ValueError:
+    except (TypeError, ValueError):
         errors.append("Prix invalide.")
-        price = 0
+        price = 0.0
 
-    # stock
     try:
         stock = int(data.get("stock", 0))
         if stock < 0:
             errors.append("Stock invalide.")
-    except ValueError:
+    except (TypeError, ValueError):
         errors.append("Stock invalide.")
         stock = 0
 
     if not name:
         errors.append("Le nom est obligatoire.")
 
-    if genres not in ["manga", "figurine", "textile", "vaisselle", "goodies"]:
+    if genres not in VALID_ARTICLE_GENRES:
         errors.append("Genre invalide.")
 
-    if not image:
+    if release_day is not None and release_day not in VALID_RELEASE_DAYS:
+        errors.append("Jour de sortie invalide.")
+
+    if require_image and not image:
         errors.append("Image obligatoire.")
 
     clean_data = {
@@ -211,3 +261,36 @@ def validate_article_data(data: dict) -> tuple[dict, list[str]]:
     }
 
     return clean_data, errors
+
+
+# =========================
+# UPLOAD IMAGE
+# =========================
+
+def allowed_file(filename: str) -> bool:
+    """Vérifier si l'extension du fichier est autorisée."""
+    if not filename or "." not in filename:
+        return False
+
+    extension = Path(filename).suffix.lower().lstrip(".")
+    return extension in ALLOWED_EXTENSIONS
+
+
+def save_image(file: FileStorage | None) -> str | None:
+    """Sauvegarder une image et retourner son chemin relatif dans static."""
+    if file is None or not file.filename:
+        return None
+
+    if not allowed_file(file.filename):
+        return None
+
+    original_name = secure_filename(file.filename)
+    filename = f"{uuid4().hex}_{original_name}"
+
+    upload_dir = Path(current_app.root_path) / "static" / UPLOAD_FOLDER
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    upload_path = upload_dir / filename
+    file.save(upload_path)
+
+    return f"{UPLOAD_FOLDER}/{filename}"

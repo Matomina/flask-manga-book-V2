@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Détail message - MangaBook V2{% endblock %}
+
+{% block content %}
+<p>
+    <a href="{{ url_for('admin.contact_list') }}">← Retour aux messages</a>
+</p>
+
+<article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px; max-width: 700px;">
+    <h2>{{ message["sujet"] }}</h2>
+
+    <p><strong>Email :</strong> {{ message["email"] or "Utilisateur supprimé / inconnu" }}</p>
+    <p><strong>Statut :</strong> {{ message["status"] }}</p>
+    <p><strong>Date :</strong> {{ message["created_at"] }}</p>
+
+    <hr>
+
+    <p style="white-space: pre-line;">{{ message["message"] }}</p>
+</article>
+{% endblock %}

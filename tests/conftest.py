@@ -62,16 +62,36 @@ def auth(client):
     """Helper pour les actions d'authentification."""
 
     class AuthActions:
-        def login(self, email: str = "admin@test.com", password: str = "test"):
+        def login(
+            self,
+            email: str = "admin@test.com",
+            password: str = "test",
+            follow_redirects: bool = False,
+        ):
             return client.post(
                 "/auth/login",
                 data={
                     "email": email,
                     "password": password,
                 },
+                follow_redirects=follow_redirects,
             )
 
-        def logout(self):
-            return client.get("/auth/logout")
+        def login_as_admin(self, follow_redirects: bool = False):
+            return self.login(
+                email="admin@test.com",
+                password="test",
+                follow_redirects=follow_redirects,
+            )
+
+        def login_as_user(self, follow_redirects: bool = False):
+            return self.login(
+                email="user@test.com",
+                password="test",
+                follow_redirects=follow_redirects,
+            )
+
+        def logout(self, follow_redirects: bool = False):
+            return client.get("/auth/logout", follow_redirects=follow_redirects)
 
     return AuthActions()

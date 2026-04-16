@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Messages Admin - MangaBook V2{% endblock %}
+
+{% block content %}
+<h2>Messages de contact</h2>
+
+{% if messages %}
+    <section style="display: flex; flex-direction: column; gap: 12px;">
+        {% for msg in messages %}
+            <article style="border: 1px solid #ccc; border-radius: 8px; padding: 12px;">
+                <h3 style="margin: 0 0 8px 0;">{{ msg["sujet"] }}</h3>
+
+                <p><strong>Email :</strong> {{ msg["email"] or "Utilisateur supprimé / inconnu" }}</p>
+                <p><strong>Statut :</strong> {{ msg["status"] }}</p>
+                <p><strong>Date :</strong> {{ msg["created_at"] }}</p>
+
+                <p style="margin-top: 10px;">
+                    <a href="{{ url_for('admin.contact_detail', contact_id=msg['id']) }}">Voir le message</a>
+                </p>
+            </article>
+        {% endfor %}
+    </section>
+{% else %}
+    <p>Aucun message pour le moment.</p>
+{% endif %}
+{% endblock %}

@@ -25,3 +25,6 @@ class TestConfig(Config):
     TESTING = True
     DEBUG = False
     DATABASE = str(INSTANCE_DIR / "test.sqlite")
+
+    UPLOAD_FOLDER = "app/static/uploads"
+MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2MB
