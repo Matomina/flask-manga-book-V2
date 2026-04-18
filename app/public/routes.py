@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, session, url_for
+from flask import (
+    Blueprint,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 
 from app.core.security import login_required
 from .services import (
@@ -22,6 +31,19 @@ bp = Blueprint(
 )
 
 
+def _get_article_or_404(article_id: int):
+    """Retourne un article existant ou déclenche une 404."""
+    article = get_article_by_id(article_id)
+    if article is None:
+        abort(404)
+    return article
+
+
+def _get_current_user_id() -> int | None:
+    """Retourne l'identifiant utilisateur courant s'il existe en session."""
+    return session.get("user_id")
+
+
 @bp.route("/")
 def home():
     featured_articles = get_featured_articles()
@@ -36,13 +58,11 @@ def articles():
 
 @bp.route("/articles/<int:article_id>")
 def article_detail(article_id: int):
-    article = get_article_by_id(article_id)
+    article = _get_article_or_404(article_id)
 
-    if article is None:
-        abort(404)
-
-    if session.get("user_id"):
-        add_to_history(session["user_id"], article_id)
+    user_id = _get_current_user_id()
+    if user_id is not None:
+        add_to_history(user_id, article_id)
 
     return render_template("public/article_detail.html", article=article)
 
@@ -62,10 +82,7 @@ def favorites():
 @bp.route("/favorites/add/<int:article_id>", methods=["POST"])
 @login_required
 def add_to_favorites(article_id: int):
-    article = get_article_by_id(article_id)
-
-    if article is None:
-        abort(404)
+    _get_article_or_404(article_id)
 
     add_favorite(session["user_id"], article_id)
     flash("Article ajouté aux favoris.", "success")
