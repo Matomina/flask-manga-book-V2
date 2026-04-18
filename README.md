@@ -1,6 +1,9 @@
-# MangaBook
+# MangaBook V2
 
-Application web développée avec **Flask** autour d’un univers manga, pensée avec une architecture modulaire, une séparation claire entre l’espace public et l’espace d’administration, et une base de données initialisée via un schéma SQL dédié.
+Application web développée avec **Flask** autour d’un univers manga, construite sur une architecture modulaire claire et testée.
+
+Cette version **V2** constitue la **base technique officielle du projet**.  
+Elle remplace l’ancien dépôt comme fondation de travail et sert désormais de socle pour la suite du développement, des migrations fonctionnelles et des évolutions visuelles.
 
 ---
 
@@ -8,13 +11,20 @@ Application web développée avec **Flask** autour d’un univers manga, pensée
 
 MangaBook est un projet web full stack centré sur la gestion et la consultation de contenus liés à l’univers manga.
 
-L’application a été conçue pour structurer plusieurs briques fonctionnelles dans une base technique claire, maintenable et évolutive. Le projet couvre à la fois des besoins côté utilisateur et côté administration, avec une organisation du code orientée modularité.
+L’objectif de cette V2 est de repartir sur une base plus propre, plus maintenable et plus évolutive que la première version du projet, avec une séparation nette des responsabilités et une architecture Flask structurée.
+
+Le projet couvre à la fois :
+
+- l’espace public
+- l’authentification utilisateur
+- le forum
+- l’administration
+- la base de données
+- les tests automatisés
 
 ---
 
 ## Objectifs du projet
-
-MangaBook poursuit deux objectifs principaux.
 
 ### Objectif fonctionnel
 
@@ -32,14 +42,39 @@ Mettre en place une plateforme web permettant de gérer :
 
 ### Objectif technique
 
-Construire une base de travail propre en appliquant de bonnes pratiques de développement web avec Flask :
+Construire une base de travail sérieuse avec Flask en appliquant de bonnes pratiques :
 
 - architecture modulaire
-- séparation des responsabilités
+- séparation claire entre routes, services et logique transverse
 - configuration centralisée
 - base de données structurée
+- tests automatisés
+- couverture de code élevée
 - maintenance facilitée
 - évolutivité du projet
+
+---
+
+## État actuel du projet
+
+Le dépôt V2 est actuellement dans un état **stable et exploitable**.
+
+### Modules déjà structurés
+
+- **auth** : connexion, déconnexion, gestion de session
+- **public** : accueil, catalogue, détail article, favoris, historique, contact
+- **forum** : liste des sujets, création de sujet, détail, réponses
+- **admin** : espace d’administration et gestion métier associée
+- **core** : sécurité, filtres, gestion d’erreurs, context processors
+- **db** : connexion et initialisation base de données
+
+### Qualité actuelle
+
+- suite de tests automatisés en place
+- **81 tests passent**
+- **97% de couverture**
+- architecture Flask modulaire stabilisée
+- base V2 prête pour la suite du projet
 
 ---
 
@@ -66,58 +101,41 @@ Construire une base de travail propre en appliquant de bonnes pratiques de déve
 - **venv** pour l’environnement virtuel Python
 - **pytest** pour les tests
 - **pytest-cov** pour la couverture
-- **ruff** pour le lint et le formatage
+- **ruff** pour le lint
 
 ---
 
 ## Principes d’architecture
 
-Le projet repose sur une structure conçue pour rester lisible, maintenable et évolutive :
+Le projet repose sur une structure pensée pour rester lisible, maintenable et évolutive :
 
-- **Application Factory** pour l’initialisation de l’application Flask
-- **Blueprints séparés** pour les espaces public, admin et modules spécifiques
-- **templates isolés par zone fonctionnelle**
-- **configuration externalisée**
-- **extensions centralisées**
-- **base de données initialisée via `schema.sql`**
-- **gestion centralisée du contexte applicatif et des erreurs**
+- **Application Factory**
+- **Blueprints séparés par domaine fonctionnel**
+- **services dédiés à la logique métier**
+- **templates organisés par module**
+- **configuration centralisée**
+- **gestion DB isolée**
+- **gestion centralisée des erreurs**
+- **outillage de test intégré au projet**
 
-Cette organisation permet de réduire le couplage entre les composants, de simplifier la maintenance et de préparer la suite du projet sur des bases plus propres.
-
----
-
-## Fonctionnalités principales
-
-Selon l’état actuel du projet, MangaBook intègre ou prépare les fonctionnalités suivantes :
-
-- authentification utilisateur
-- gestion des rôles utilisateur / administrateur
-- catalogue d’articles
-- détail des articles
-- favoris
-- historique utilisateur
-- gestion des commandes
-- formulaire de contact
-- forum
-- espace d’administration
-- tableau de bord administrateur avec statistiques
+Cette organisation permet de limiter le couplage entre les composants, de mieux isoler les responsabilités, et de faire évoluer l’application plus proprement.
 
 ---
 
 ## Structure du projet
 
-Exemple de structure logique du dépôt :
-
 ```text
-flask-manga-book/
-├── manga/
+flask-manga-book-V2/
+├── app/
 │   ├── __init__.py
 │   ├── admin/
-│   ├── public/
+│   ├── auth/
+│   ├── core/
+│   ├── db/
 │   ├── forum/
+│   ├── public/
 │   ├── templates/
-│   ├── static/
-│   └── ...
+│   └── config.py
 ├── instance/
 ├── tests/
 ├── schema.sql
