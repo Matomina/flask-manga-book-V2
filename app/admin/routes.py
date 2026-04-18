@@ -54,7 +54,7 @@ def dashboard():
 @admin_required
 def contact_list():
     messages = get_all_contacts()
-    return render_template("admin/contact_list.html", messages=messages)
+    return render_template("admin/contacts/list.html", messages=messages)
 
 
 @bp.route("/contact/<int:contact_id>", methods=["GET"])
@@ -69,7 +69,7 @@ def contact_detail(contact_id: int):
         mark_contact_as_read(contact_id)
         message = get_contact_by_id(contact_id)
 
-    return render_template("admin/contact_detail.html", message=message)
+    return render_template("admin/contacts/detail.html", message=message)
 
 
 # =========================
