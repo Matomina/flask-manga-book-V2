@@ -6,22 +6,17 @@ def assert_redirects_to_login(response) -> None:
     assert "/auth/login" in response.headers["Location"]
 
 
-def test_forum_page(client):
-    response = client.get("/forum/")
-    assert response.status_code == 200
-
-
-def test_topic_detail_page(client, db):
+def _create_topic(db, user_id: int = 1, title: str = "Sujet test", message: str = "Contenu du sujet") -> int:
     db.execute(
         """
         INSERT INTO topics (user_id, title, message)
         VALUES (?, ?, ?)
         """,
-        (1, "Sujet test", "Contenu du sujet"),
+        (user_id, title, message),
     )
     db.commit()
 
-    topic_id = db.execute(
+    return db.execute(
         """
         SELECT id
         FROM topics
@@ -29,6 +24,27 @@ def test_topic_detail_page(client, db):
         LIMIT 1
         """
     ).fetchone()["id"]
+
+
+def test_forum_page(client):
+    response = client.get("/forum/")
+    assert response.status_code == 200
+
+
+def test_create_page_requires_login(client):
+    response = client.get("/forum/create", follow_redirects=False)
+    assert_redirects_to_login(response)
+
+
+def test_create_page_authenticated(client, auth):
+    auth.login_as_user()
+
+    response = client.get("/forum/create")
+    assert response.status_code == 200
+
+
+def test_topic_detail_page(client, db):
+    topic_id = _create_topic(db)
 
     response = client.get(f"/forum/{topic_id}")
     assert response.status_code == 200
@@ -60,7 +76,7 @@ def test_create_topic_invalid_redirects_without_insert(client, auth, db):
     )
 
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/forum/")
+    assert response.headers["Location"].endswith("/forum/create")
 
     after = db.execute("SELECT COUNT(*) AS count FROM topics").fetchone()["count"]
     assert after == before
@@ -78,7 +94,7 @@ def test_create_topic_blank_values_after_strip_redirects_without_insert(client, 
     )
 
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/forum/")
+    assert response.headers["Location"].endswith("/forum/create")
 
     after = db.execute("SELECT COUNT(*) AS count FROM topics").fetchone()["count"]
     assert after == before
@@ -123,23 +139,7 @@ def test_create_topic_authenticated_success(client, auth, db):
 
 
 def test_reply_requires_login(client, db):
-    db.execute(
-        """
-        INSERT INTO topics (user_id, title, message)
-        VALUES (?, ?, ?)
-        """,
-        (1, "Sujet test", "Contenu du sujet"),
-    )
-    db.commit()
-
-    topic_id = db.execute(
-        """
-        SELECT id
-        FROM topics
-        ORDER BY id DESC
-        LIMIT 1
-        """
-    ).fetchone()["id"]
+    topic_id = _create_topic(db)
 
     response = client.post(
         f"/forum/{topic_id}/reply",
@@ -164,24 +164,7 @@ def test_reply_404_when_topic_does_not_exist(client, auth):
 
 def test_reply_invalid_redirects_without_insert(client, auth, db):
     auth.login_as_user()
-
-    db.execute(
-        """
-        INSERT INTO topics (user_id, title, message)
-        VALUES (?, ?, ?)
-        """,
-        (1, "Sujet test", "Contenu du sujet"),
-    )
-    db.commit()
-
-    topic_id = db.execute(
-        """
-        SELECT id
-        FROM topics
-        ORDER BY id DESC
-        LIMIT 1
-        """
-    ).fetchone()["id"]
+    topic_id = _create_topic(db)
 
     before = db.execute("SELECT COUNT(*) AS count FROM replies").fetchone()["count"]
 
@@ -200,24 +183,7 @@ def test_reply_invalid_redirects_without_insert(client, auth, db):
 
 def test_reply_blank_value_after_strip_redirects_without_insert(client, auth, db):
     auth.login_as_user()
-
-    db.execute(
-        """
-        INSERT INTO topics (user_id, title, message)
-        VALUES (?, ?, ?)
-        """,
-        (1, "Sujet test", "Contenu du sujet"),
-    )
-    db.commit()
-
-    topic_id = db.execute(
-        """
-        SELECT id
-        FROM topics
-        ORDER BY id DESC
-        LIMIT 1
-        """
-    ).fetchone()["id"]
+    topic_id = _create_topic(db)
 
     before = db.execute("SELECT COUNT(*) AS count FROM replies").fetchone()["count"]
 
@@ -240,23 +206,7 @@ def test_reply_authenticated_success(client, auth, db):
     with client.session_transaction() as sess:
         user_id = sess["user_id"]
 
-    db.execute(
-        """
-        INSERT INTO topics (user_id, title, message)
-        VALUES (?, ?, ?)
-        """,
-        (1, "Sujet test", "Contenu du sujet"),
-    )
-    db.commit()
-
-    topic_id = db.execute(
-        """
-        SELECT id
-        FROM topics
-        ORDER BY id DESC
-        LIMIT 1
-        """
-    ).fetchone()["id"]
+    topic_id = _create_topic(db)
 
     before = db.execute("SELECT COUNT(*) AS count FROM replies").fetchone()["count"]
 
