@@ -36,9 +36,9 @@ def _execute_write(query: str, params: tuple = ()) -> int:
     return int(cursor.lastrowid)
 
 
-def _normalize_text(value: str) -> str:
+def _normalize_text(value: str | None) -> str:
     """Nettoyer une chaîne utilisateur."""
-    return value.strip()
+    return (value or "").strip()
 
 
 def _user_exists(user_id: int) -> bool:
