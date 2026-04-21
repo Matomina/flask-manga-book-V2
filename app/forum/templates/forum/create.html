@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Créer un sujet - Forum{% endblock %}
+
+{% block content %}
+
+<section class="forum-create">
+
+    <div class="forum-create__topbar">
+        <a href="{{ url_for('forum.index') }}" class="btn btn-secondary">
+            ← Retour au forum
+        </a>
+    </div>
+
+    <header class="forum-create__header">
+        <h2>Créer un nouveau sujet</h2>
+        <p>
+            Lancez une discussion avec la communauté MangaBook en renseignant un titre clair
+            et un message précis.
+        </p>
+    </header>
+
+    <section class="forum-create__card">
+        <form
+            action="{{ url_for('forum.create_topic') }}"
+            method="post"
+            class="forum-form"
+        >
+            <div class="forum-form__group">
+                <label for="title">Titre du sujet</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    required
+                    maxlength="150"
+                    placeholder="Exemple : Quel manga conseillez-vous pour débuter ?"
+                >
+            </div>
+
+            <div class="forum-form__group">
+                <label for="message">Message</label>
+                <textarea
+                    id="message"
+                    name="message"
+                    rows="10"
+                    required
+                    placeholder="Décrivez votre sujet, posez votre question ou partagez votre avis..."
+                ></textarea>
+            </div>
+
+            <div class="forum-form__actions">
+                <button type="submit" class="btn btn-primary">
+                    Publier le sujet
+                </button>
+            </div>
+        </form>
+    </section>
+
+</section>
+
+{% endblock %}
