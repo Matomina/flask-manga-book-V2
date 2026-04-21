@@ -11,9 +11,9 @@ t.user_id,
 t.title,
 t.message,
 t.created_at,
-u.first_name,
-u.last_name,
-u.role
+u.first_name AS author_first_name,
+u.last_name AS author_last_name,
+u.role AS author_role
 """
 
 REPLY_COLUMNS = """
@@ -22,14 +22,14 @@ r.topic_id,
 r.user_id,
 r.message,
 r.created_at,
-u.first_name,
-u.last_name,
-u.role
+u.first_name AS author_first_name,
+u.last_name AS author_last_name,
+u.role AS author_role
 """
 
 
-def _execute_write(query: str, params: tuple = ()) -> int:
-    """Exécuter une requête d'écriture, commit et retourner le lastrowid."""
+def _execute_insert(query: str, params: tuple = ()) -> int:
+    """Exécuter une insertion, commit et retourner le lastrowid."""
     db = get_db()
     cursor = db.execute(query, params)
     db.commit()
@@ -126,29 +126,29 @@ def get_replies_by_topic_id(topic_id: int) -> list[sqlite3.Row]:
 
 def create_topic(user_id: int, title: str, message: str) -> int:
     """Créer un sujet de forum et retourner son identifiant."""
-    title = _normalize_text(title)
-    message = _normalize_text(message)
+    normalized_title = _normalize_text(title)
+    normalized_message = _normalize_text(message)
 
-    if not title or not message:
+    if not normalized_title or not normalized_message:
         raise ValueError("Le titre et le message sont obligatoires.")
 
     if not _user_exists(user_id):
         raise ValueError("Utilisateur introuvable.")
 
-    return _execute_write(
+    return _execute_insert(
         """
         INSERT INTO topics (user_id, title, message)
         VALUES (?, ?, ?)
         """,
-        (user_id, title, message),
+        (user_id, normalized_title, normalized_message),
     )
 
 
 def create_reply(topic_id: int, user_id: int, message: str) -> int:
     """Créer une réponse sur un sujet et retourner son identifiant."""
-    message = _normalize_text(message)
+    normalized_message = _normalize_text(message)
 
-    if not message:
+    if not normalized_message:
         raise ValueError("Le message est obligatoire.")
 
     if not _topic_exists(topic_id):
@@ -157,10 +157,10 @@ def create_reply(topic_id: int, user_id: int, message: str) -> int:
     if not _user_exists(user_id):
         raise ValueError("Utilisateur introuvable.")
 
-    return _execute_write(
+    return _execute_insert(
         """
         INSERT INTO replies (topic_id, user_id, message)
         VALUES (?, ?, ?)
         """,
-        (topic_id, user_id, message),
+        (topic_id, user_id, normalized_message),
     )
