@@ -36,6 +36,13 @@ def _execute_insert(query: str, params: tuple = ()) -> int:
     return int(cursor.lastrowid)
 
 
+def _execute_write(query: str, params: tuple = ()) -> None:
+    """Exécuter une requête d'écriture et commit."""
+    db = get_db()
+    db.execute(query, params)
+    db.commit()
+
+
 def _normalize_text(value: str | None) -> str:
     """Nettoyer une chaîne utilisateur."""
     return (value or "").strip()
@@ -88,6 +95,11 @@ def get_all_topics() -> list[sqlite3.Row]:
     ).fetchall()
 
 
+def get_all_topics_for_admin() -> list[sqlite3.Row]:
+    """Récupérer tous les sujets du forum pour la modération admin."""
+    return get_all_topics()
+
+
 def get_topic_by_id(topic_id: int) -> sqlite3.Row | None:
     """Récupérer un sujet du forum par son identifiant."""
     db = get_db()
@@ -122,6 +134,21 @@ def get_replies_by_topic_id(topic_id: int) -> list[sqlite3.Row]:
         """,
         (topic_id,),
     ).fetchall()
+
+
+def get_reply_by_id(reply_id: int) -> sqlite3.Row | None:
+    """Récupérer une réponse par son identifiant."""
+    db = get_db()
+    return db.execute(
+        f"""
+        SELECT
+            {REPLY_COLUMNS}
+        FROM replies AS r
+        JOIN user AS u ON u.id = r.user_id
+        WHERE r.id = ?
+        """,
+        (reply_id,),
+    ).fetchone()
 
 
 def create_topic(user_id: int, title: str, message: str) -> int:
@@ -163,4 +190,26 @@ def create_reply(topic_id: int, user_id: int, message: str) -> int:
         VALUES (?, ?, ?)
         """,
         (topic_id, user_id, normalized_message),
+    )
+
+
+def delete_topic_by_id(topic_id: int) -> None:
+    """Supprimer un sujet du forum par son identifiant."""
+    _execute_write(
+        """
+        DELETE FROM topics
+        WHERE id = ?
+        """,
+        (topic_id,),
+    )
+
+
+def delete_reply_by_id(reply_id: int) -> None:
+    """Supprimer une réponse du forum par son identifiant."""
+    _execute_write(
+        """
+        DELETE FROM replies
+        WHERE id = ?
+        """,
+        (reply_id,),
     )
