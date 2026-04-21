@@ -3,6 +3,14 @@ from __future__ import annotations
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
 from app.core.security import admin_required
+from app.forum.services import (
+    delete_reply_by_id,
+    delete_topic_by_id,
+    get_all_topics_for_admin,
+    get_replies_by_topic_id,
+    get_reply_by_id,
+    get_topic_by_id,
+)
 from .services import (
     create_article,
     delete_article,
@@ -179,3 +187,58 @@ def article_delete(article_id: int):
     delete_article(article_id)
     flash("Article supprimé.", "info")
     return redirect(url_for("admin.articles_list"))
+
+
+# =========================
+# FORUM
+# =========================
+
+@bp.route("/forum", methods=["GET"])
+@admin_required
+def forum_list():
+    """Afficher la liste des sujets du forum côté admin."""
+    topics = get_all_topics_for_admin()
+    return render_template("admin/forum/list.html", topics=topics)
+
+
+@bp.route("/forum/<int:topic_id>", methods=["GET"])
+@admin_required
+def forum_detail(topic_id: int):
+    """Afficher le détail d'un sujet du forum côté admin."""
+    topic = get_topic_by_id(topic_id)
+
+    if topic is None:
+        abort(404)
+
+    replies = get_replies_by_topic_id(topic_id)
+    return render_template("admin/forum/detail.html", topic=topic, replies=replies)
+
+
+@bp.route("/forum/<int:topic_id>/delete", methods=["POST"])
+@admin_required
+def forum_delete_topic(topic_id: int):
+    """Supprimer un sujet du forum côté admin."""
+    topic = get_topic_by_id(topic_id)
+
+    if topic is None:
+        abort(404)
+
+    delete_topic_by_id(topic_id)
+    flash("Sujet supprimé.", "info")
+    return redirect(url_for("admin.forum_list"))
+
+
+@bp.route("/forum/replies/<int:reply_id>/delete", methods=["POST"])
+@admin_required
+def forum_delete_reply(reply_id: int):
+    """Supprimer une réponse du forum côté admin."""
+    reply = get_reply_by_id(reply_id)
+
+    if reply is None:
+        abort(404)
+
+    topic_id = reply["topic_id"]
+
+    delete_reply_by_id(reply_id)
+    flash("Réponse supprimée.", "info")
+    return redirect(url_for("admin.forum_detail", topic_id=topic_id))
