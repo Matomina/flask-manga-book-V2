@@ -54,10 +54,9 @@ def register_extensions(app: Flask) -> None:
 
 def register_blueprints(app: Flask) -> None:
     """Enregistrer les blueprints de l'application."""
-
     from .admin.routes import bp as admin_bp
     from .auth.routes import bp as auth_bp
-    from .forum.routes import bp as forum_bp
+    from .forum import bp as forum_bp
     from .public.routes import bp as public_bp
 
     app.register_blueprint(public_bp)
