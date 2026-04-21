@@ -3,6 +3,58 @@
 {% block title %}Forum{% endblock %}
 
 {% block content %}
+
 <h2>Forum</h2>
-<p>Forum MangaBook en cours de construction.</p>
+
+<div class="forum-header">
+    {% if session.user_id %}
+        <a href="{{ url_for('forum.create') }}" class="btn btn-primary">
+            Créer un sujet
+        </a>
+    {% else %}
+        <p>
+            <a href="{{ url_for('auth.login') }}">Connectez-vous</a>
+            pour créer un sujet.
+        </p>
+    {% endif %}
+</div>
+
+<hr>
+
+{% if topics %}
+
+    <div class="forum-list">
+        {% for topic in topics %}
+            <div class="forum-item">
+
+                <h3>
+                    <a href="{{ url_for('forum.topic_detail', topic_id=topic.id) }}">
+                        {{ topic.title }}
+                    </a>
+                </h3>
+
+                <p>
+                    Par {{ topic.author_first_name }} {{ topic.author_last_name }}
+                    — {{ topic.created_at }}
+                </p>
+
+                <p>
+                    {{ topic.message[:150] }}{% if topic.message|length > 150 %}...{% endif %}
+                </p>
+
+                <p>
+                    {{ topic.reply_count }} réponse{% if topic.reply_count > 1 %}s{% endif %}
+                </p>
+
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+
+{% else %}
+
+    <p>Aucun sujet pour le moment.</p>
+
+{% endif %}
+
 {% endblock %}
