@@ -1,0 +1,93 @@
+{% extends "base.html" %} {% block title %}Administration - Sujet forum{%
+endblock %} {% block content %}
+
+<section class="admin-forum-detail">
+  <header class="admin-page-header">
+    <div>
+      <h2>{{ topic.title }}</h2>
+      <p>
+        Sujet publié par
+        <strong
+          >{{ topic.author_first_name }} {{ topic.author_last_name }}</strong
+        >
+        — rôle : {{ topic.author_role }} — {{ topic.created_at }}
+      </p>
+    </div>
+
+    <div class="admin-page-header__actions">
+      <a href="{{ url_for('admin.forum_list') }}" class="btn btn-secondary">
+        ← Retour à la modération forum
+      </a>
+
+      <form
+        action="{{ url_for('admin.forum_delete_topic', topic_id=topic.id) }}"
+        method="post"
+        class="admin-inline-form"
+        onsubmit="
+          return confirm('Supprimer ce sujet et toutes ses réponses ?');
+        "
+      >
+        <button type="submit" class="btn btn-danger">Supprimer le sujet</button>
+      </form>
+    </div>
+  </header>
+
+  <article class="admin-forum-topic-card">
+    <header class="admin-forum-topic-card__header">
+      <h3>Sujet principal</h3>
+    </header>
+
+    <div class="admin-forum-topic-card__content">
+      {% for paragraph in topic.message.split('\n') if paragraph.strip() %}
+      <p>{{ paragraph }}</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <section class="admin-forum-replies">
+    <header class="admin-section-header">
+      <h3>
+        Réponses
+        <span>({{ replies|length }})</span>
+      </h3>
+    </header>
+
+    {% if replies %}
+    <div class="admin-forum-replies__list">
+      {% for reply in replies %}
+      <article class="admin-forum-reply-card">
+        <header class="admin-forum-reply-card__header">
+          <div>
+            <strong>
+              {{ reply.author_first_name }} {{ reply.author_last_name }}
+            </strong>
+            <p>Rôle : {{ reply.author_role }} — {{ reply.created_at }}</p>
+          </div>
+
+          <form
+            action="{{ url_for('admin.forum_delete_reply', reply_id=reply.id) }}"
+            method="post"
+            class="admin-inline-form"
+            onsubmit="return confirm('Supprimer cette réponse ?');"
+          >
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+          </form>
+        </header>
+
+        <div class="admin-forum-reply-card__content">
+          {% for paragraph in reply.message.split('\n') if paragraph.strip() %}
+          <p>{{ paragraph }}</p>
+          {% endfor %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="admin-empty-state">
+      <p>Aucune réponse n’a encore été publiée sur ce sujet.</p>
+    </div>
+    {% endif %}
+  </section>
+</section>
+
+{% endblock %}

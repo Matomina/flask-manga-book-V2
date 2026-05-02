@@ -11,6 +11,7 @@ from app.forum.services import (
     get_reply_by_id,
     get_topic_by_id,
 )
+
 from .services import (
     create_article,
     delete_article,
@@ -37,6 +38,7 @@ bp = Blueprint(
 # HELPERS
 # =========================
 
+
 def _flash_errors(errors: list[str]) -> None:
     """Afficher une liste d'erreurs dans les messages flash."""
     for error in errors:
@@ -46,6 +48,7 @@ def _flash_errors(errors: list[str]) -> None:
 # =========================
 # DASHBOARD
 # =========================
+
 
 @bp.route("/", methods=["GET"])
 @admin_required
@@ -57,6 +60,7 @@ def dashboard():
 # =========================
 # CONTACTS
 # =========================
+
 
 @bp.route("/contact", methods=["GET"])
 @admin_required
@@ -84,6 +88,7 @@ def contact_detail(contact_id: int):
 # ARTICLES
 # =========================
 
+
 @bp.route("/articles", methods=["GET"])
 @admin_required
 def articles_list():
@@ -108,7 +113,10 @@ def article_create():
         elif image_path is not None:
             data["image"] = image_path
 
-        clean_data, validation_errors = validate_article_data(data, require_image=True)
+        clean_data, validation_errors = validate_article_data(
+            data,
+            require_image=True,
+        )
         errors.extend(validation_errors)
 
         if errors:
@@ -155,7 +163,10 @@ def article_edit(article_id: int):
         elif image_path is not None:
             data["image"] = image_path
 
-        clean_data, validation_errors = validate_article_data(data, require_image=False)
+        clean_data, validation_errors = validate_article_data(
+            data,
+            require_image=False,
+        )
         errors.extend(validation_errors)
 
         if not clean_data["image"]:
@@ -192,6 +203,7 @@ def article_delete(article_id: int):
 # =========================
 # FORUM
 # =========================
+
 
 @bp.route("/forum", methods=["GET"])
 @admin_required

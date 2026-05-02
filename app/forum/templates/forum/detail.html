@@ -1,122 +1,106 @@
-{% extends "base.html" %}
-
-{% block title %}{{ topic.title }} - Forum{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}{{ topic.title }} - Forum{% endblock
+%} {% block content %}
 
 <section class="forum-detail">
+  <div class="forum-detail__topbar">
+    <a href="{{ url_for('forum.index') }}" class="btn btn-secondary">
+      ← Retour au forum
+    </a>
 
-    <div class="forum-detail__topbar">
-        <a href="{{ url_for('forum.index') }}" class="btn btn-secondary">
-            ← Retour au forum
-        </a>
+    {% if session.get("user_id") %}
+    <a href="{{ url_for('forum.create') }}" class="btn btn-primary">
+      Créer un sujet
+    </a>
+    {% endif %}
+  </div>
 
-        {% if session.get("user_id") %}
-            <a href="{{ url_for('forum.create') }}" class="btn btn-primary">
-                Créer un sujet
-            </a>
-        {% endif %}
+  <article class="forum-topic-card">
+    <header class="forum-topic-card__header">
+      <h2 class="forum-topic-card__title">{{ topic.title }}</h2>
+
+      <p class="forum-topic-card__infos">
+        Par {{ topic.author_first_name }} {{ topic.author_last_name }} — {{
+        topic.created_at }} — {{ topic.reply_count }} réponse{% if
+        topic.reply_count > 1 %}s{% endif %}
+      </p>
+    </header>
+
+    <div class="forum-topic-card__content">
+      {% for paragraph in topic.message.split('\n') if paragraph.strip() %}
+      <p>{{ paragraph }}</p>
+      {% endfor %}
     </div>
+  </article>
 
-    <article class="forum-topic-card">
-        <header class="forum-topic-card__header">
-            <div class="forum-topic-card__meta">
-                <h2 class="forum-topic-card__title">{{ topic.title }}</h2>
+  <section class="forum-replies">
+    <header class="forum-replies__header">
+      <h3>Réponses</h3>
+    </header>
 
-                <p class="forum-topic-card__infos">
-                    <span>
-                        Par {{ topic.author_first_name }} {{ topic.author_last_name }}
-                    </span>
-                    <span>—</span>
-                    <span>{{ topic.created_at }}</span>
-                    <span>—</span>
-                    <span>
-                        {{ topic.reply_count }} réponse{% if topic.reply_count > 1 %}s{% endif %}
-                    </span>
-                </p>
-            </div>
+    {% if replies %}
+    <div class="forum-replies__list">
+      {% for reply in replies %}
+      <article class="forum-reply-card">
+        <header class="forum-reply-card__header">
+          <p class="forum-reply-card__infos">
+            {{ reply.author_first_name }} {{ reply.author_last_name }} — {{
+            reply.created_at }}
+          </p>
         </header>
 
-        <div class="forum-topic-card__content">
-            {% for paragraph in topic.message.split('\n') if paragraph.strip() %}
-                <p>{{ paragraph }}</p>
-            {% endfor %}
+        <div class="forum-reply-card__content">
+          {% for paragraph in reply.message.split('\n') if paragraph.strip() %}
+          <p>{{ paragraph }}</p>
+          {% endfor %}
         </div>
-    </article>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="forum-empty-state">
+      <p>Aucune réponse pour le moment. Soyez le premier à participer.</p>
+    </div>
+    {% endif %}
+  </section>
 
-    <section class="forum-replies">
-        <header class="forum-replies__header">
-            <h3>Réponses</h3>
-        </header>
+  <section class="forum-reply-form-section">
+    <header class="forum-reply-form-section__header">
+      <h3>Ajouter une réponse</h3>
+    </header>
 
-        {% if replies %}
-            <div class="forum-replies__list">
-                {% for reply in replies %}
-                    <article class="forum-reply-card">
-                        <header class="forum-reply-card__header">
-                            <p class="forum-reply-card__infos">
-                                <span>
-                                    {{ reply.author_first_name }} {{ reply.author_last_name }}
-                                </span>
-                                <span>—</span>
-                                <span>{{ reply.created_at }}</span>
-                            </p>
-                        </header>
+    {% if session.get("user_id") %}
+    <form
+      action="{{ url_for('forum.reply', topic_id=topic.id) }}"
+      method="post"
+      class="forum-form"
+    >
+      <div class="forum-form__group">
+        <label for="message">Votre réponse</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="8"
+          required
+          placeholder="Écrivez votre réponse ici..."
+        ></textarea>
+      </div>
 
-                        <div class="forum-reply-card__content">
-                            {% for paragraph in reply.message.split('\n') if paragraph.strip() %}
-                                <p>{{ paragraph }}</p>
-                            {% endfor %}
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="forum-empty-state">
-                <p>Aucune réponse pour le moment. Soyez le premier à participer à la discussion.</p>
-            </div>
-        {% endif %}
-    </section>
-
-    <section class="forum-reply-form-section">
-        <header class="forum-reply-form-section__header">
-            <h3>Ajouter une réponse</h3>
-        </header>
-
-        {% if session.get("user_id") %}
-            <form
-                action="{{ url_for('forum.reply', topic_id=topic.id) }}"
-                method="post"
-                class="forum-form"
-            >
-                <div class="forum-form__group">
-                    <label for="message">Votre réponse</label>
-                    <textarea
-                        id="message"
-                        name="message"
-                        rows="8"
-                        required
-                        placeholder="Écrivez votre réponse ici..."
-                    ></textarea>
-                </div>
-
-                <div class="forum-form__actions">
-                    <button type="submit" class="btn btn-primary">
-                        Publier la réponse
-                    </button>
-                </div>
-            </form>
-        {% else %}
-            <div class="forum-login-warning">
-                <p>
-                    Vous devez
-                    <a href="{{ url_for('auth.login') }}">vous connecter</a>
-                    pour répondre à ce sujet.
-                </p>
-            </div>
-        {% endif %}
-    </section>
-
+      <div class="forum-form__actions">
+        <button type="submit" class="btn btn-primary">
+          Publier la réponse
+        </button>
+      </div>
+    </form>
+    {% else %}
+    <div class="forum-login-warning">
+      <p>
+        Vous devez
+        <a href="{{ url_for('auth.login') }}">vous connecter</a>
+        pour répondre à ce sujet.
+      </p>
+    </div>
+    {% endif %}
+  </section>
 </section>
 
 {% endblock %}

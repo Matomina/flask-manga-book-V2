@@ -4,7 +4,6 @@ import sqlite3
 
 from app.db import get_db
 
-
 TOPIC_COLUMNS = """
 t.id,
 t.user_id,

@@ -1,37 +1,48 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard Admin - MangaBook V2{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Dashboard Admin - MangaBook V2{%
+endblock %} {% block content %}
 <h2>Dashboard Admin</h2>
 <p>Vue d’ensemble de l’administration MangaBook.</p>
 
-<section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 20px 0;">
-    <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px;">
-        <h3>Utilisateurs</h3>
-        <p style="font-size: 24px; font-weight: bold;">{{ stats.users }}</p>
-    </article>
+<section
+  style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  "
+>
+  <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
+    <h3>Utilisateurs</h3>
+    <p style="font-size: 24px; font-weight: bold">{{ stats.users }}</p>
+  </article>
 
-    <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px;">
-        <h3>Articles</h3>
-        <p style="font-size: 24px; font-weight: bold;">{{ stats.articles }}</p>
-    </article>
+  <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
+    <h3>Articles</h3>
+    <p style="font-size: 24px; font-weight: bold">{{ stats.articles }}</p>
+  </article>
 
-    <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px;">
-        <h3>Commandes</h3>
-        <p style="font-size: 24px; font-weight: bold;">{{ stats.orders }}</p>
-    </article>
+  <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
+    <h3>Commandes</h3>
+    <p style="font-size: 24px; font-weight: bold">{{ stats.orders }}</p>
+  </article>
 
-    <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px;">
-        <h3>Messages</h3>
-        <p style="font-size: 24px; font-weight: bold;">{{ stats.contacts }}</p>
-    </article>
+  <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
+    <h3>Messages</h3>
+    <p style="font-size: 24px; font-weight: bold">{{ stats.contacts }}</p>
+  </article>
 </section>
 
-<hr>
+<hr />
 
-<nav style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
-    <a href="{{ url_for('admin.articles_list') }}">Gérer les articles</a>
-    <a href="{{ url_for('admin.contact_list') }}">Voir les messages</a>
-</nav>
+<section style="margin-top: 20px">
+  <h3>Actions rapides</h3>
+
+  <nav style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px">
+    <a href="{{ url_for('admin.articles_list') }}"> Gérer les articles </a>
+
+    <a href="{{ url_for('admin.contact_list') }}"> Voir les messages </a>
+
+    <a href="{{ url_for('admin.forum_list') }}"> Modération forum </a>
+  </nav>
+</section>
 {% endblock %}

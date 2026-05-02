@@ -1,0 +1,83 @@
+{% extends "base.html" %} {% block title %}Administration - Forum{% endblock %}
+{% block content %}
+
+<section class="admin-forum-list">
+  <header class="admin-page-header">
+    <div>
+      <h2>Modération du forum</h2>
+      <p>
+        Gérez les sujets publiés par les utilisateurs et accédez aux discussions
+        pour modérer les réponses.
+      </p>
+    </div>
+
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+      ← Retour au tableau de bord
+    </a>
+  </header>
+
+  {% if topics %}
+  <div class="admin-table-wrapper">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Sujet</th>
+          <th>Auteur</th>
+          <th>Rôle</th>
+          <th>Réponses</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for topic in topics %}
+        <tr>
+          <td>
+            <strong>{{ topic.title }}</strong>
+            <p class="admin-table__excerpt">
+              {{ topic.message[:120] }}{% if topic.message|length > 120 %}...{%
+              endif %}
+            </p>
+          </td>
+
+          <td>{{ topic.author_first_name }} {{ topic.author_last_name }}</td>
+
+          <td>{{ topic.author_role }}</td>
+
+          <td>{{ topic.reply_count }}</td>
+
+          <td>{{ topic.created_at }}</td>
+
+          <td class="admin-table__actions">
+            <a
+              href="{{ url_for('admin.forum_detail', topic_id=topic.id) }}"
+              class="btn btn-primary"
+            >
+              Voir
+            </a>
+
+            <form
+              action="{{ url_for('admin.forum_delete_topic', topic_id=topic.id) }}"
+              method="post"
+              class="admin-inline-form"
+              onsubmit="
+                return confirm('Supprimer ce sujet et toutes ses réponses ?');
+              "
+            >
+              <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="admin-empty-state">
+    <p>Aucun sujet n’a encore été publié sur le forum.</p>
+  </div>
+  {% endif %}
+</section>
+
+{% endblock %}
