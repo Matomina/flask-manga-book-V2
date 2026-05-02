@@ -12,6 +12,7 @@ from flask import (
 )
 
 from app.core.security import login_required
+
 from .services import (
     add_favorite,
     add_to_history,
@@ -71,6 +72,7 @@ def article_detail(article_id: int):
 # FAVORIS
 # =========================
 
+
 @bp.route("/favorites")
 @login_required
 def favorites():
@@ -101,6 +103,7 @@ def remove_from_favorites(article_id: int):
 # HISTORIQUE
 # =========================
 
+
 @bp.route("/history")
 @login_required
 def history():
@@ -110,24 +113,34 @@ def history():
 
 
 # =========================
+# SUPPORT / CONTACT
+# =========================
+
+
+@bp.route("/contact", methods=["GET", "POST"])
+@login_required
+def contact():
+    """Afficher et traiter le formulaire de contact support."""
+    if request.method == "POST":
+        sujet = request.form.get("sujet", "").strip()
+        message = request.form.get("message", "").strip()
+
+        if not sujet or not message:
+            flash("Veuillez remplir le sujet et le message.", "warning")
+            return redirect(url_for("public.contact"))
+
+        create_contact_message(session["user_id"], sujet, message)
+        flash("Votre message a bien été envoyé au support.", "success")
+        return redirect(url_for("public.contact"))
+
+    return render_template("public/contact.html")
+
+
+# =========================
 # AUTRES
 # =========================
+
 
 @bp.route("/about")
 def about():
     return render_template("public/about.html")
-
-
-@bp.route("/contact", methods=["POST"])
-@login_required
-def contact():
-    sujet = request.form.get("sujet", "").strip()
-    message = request.form.get("message", "").strip()
-
-    if not sujet or not message:
-        flash("Veuillez remplir le sujet et le message.", "warning")
-        return redirect(url_for("public.home"))
-
-    create_contact_message(session["user_id"], sujet, message)
-    flash("Message envoyé.", "success")
-    return redirect(url_for("public.home"))

@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% block title %}Contact support - MangaBook V2{%
+endblock %} {% block content %}
+
+<section class="contact-support">
+  <div class="contact-support__topbar">
+    <a href="{{ url_for('public.home') }}" class="btn btn-secondary">
+      ← Retour à l’accueil
+    </a>
+  </div>
+
+  <header class="contact-support__header">
+    <h2>Contacter le support</h2>
+    <p>
+      Envoyez un message à l’administration de MangaBook. Votre demande sera
+      consultable depuis le back-office.
+    </p>
+  </header>
+
+  <section class="contact-support__card">
+    <form
+      action="{{ url_for('public.contact') }}"
+      method="post"
+      class="contact-form"
+    >
+      <div class="contact-form__group">
+        <label for="sujet">Sujet</label>
+        <input
+          type="text"
+          id="sujet"
+          name="sujet"
+          required
+          maxlength="150"
+          placeholder="Exemple : Problème avec mon compte"
+        />
+      </div>
+
+      <div class="contact-form__group">
+        <label for="message">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="8"
+          required
+          placeholder="Décrivez votre demande..."
+        ></textarea>
+      </div>
+
+      <div class="contact-form__actions">
+        <button type="submit" class="btn btn-primary">
+          Envoyer le message
+        </button>
+      </div>
+    </form>
+  </section>
+</section>
+
+{% endblock %}

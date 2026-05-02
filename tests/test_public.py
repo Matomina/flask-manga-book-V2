@@ -6,6 +6,11 @@ def assert_redirects_to_login(response) -> None:
     assert "/auth/login" in response.headers["Location"]
 
 
+# =========================
+# PAGES PUBLIQUES
+# =========================
+
+
 def test_home_page(client):
     response = client.get("/")
     assert response.status_code == 200
@@ -58,6 +63,11 @@ def test_article_detail_authenticated_adds_to_history(client, auth, monkeypatch)
 
     assert response.status_code == 200
     assert captured == {"user_id": user_id, "article_id": 1}
+
+
+# =========================
+# FAVORIS
+# =========================
 
 
 def test_favorites_requires_login(client):
@@ -134,6 +144,11 @@ def test_remove_from_favorites_success(client, auth, monkeypatch):
     assert captured == {"user_id": user_id, "article_id": 1}
 
 
+# =========================
+# HISTORIQUE
+# =========================
+
+
 def test_history_requires_login(client):
     response = client.get("/history", follow_redirects=False)
     assert_redirects_to_login(response)
@@ -147,17 +162,42 @@ def test_history_page(client, auth):
     assert response.status_code == 200
 
 
+# =========================
+# AUTRES PAGES
+# =========================
+
+
 def test_about_page(client):
     response = client.get("/about")
     assert response.status_code == 200
 
 
-def test_contact_requires_login(client):
+# =========================
+# CONTACT / SUPPORT
+# =========================
+
+
+def test_contact_page_requires_login(client):
+    response = client.get("/contact", follow_redirects=False)
+
+    assert_redirects_to_login(response)
+
+
+def test_contact_page_authenticated(client, auth):
+    auth.login_as_user()
+
+    response = client.get("/contact")
+
+    assert response.status_code == 200
+
+
+def test_contact_post_requires_login(client):
     response = client.post(
         "/contact",
         data={"sujet": "Commande", "message": "Bonjour"},
         follow_redirects=False,
     )
+
     assert_redirects_to_login(response)
 
 
@@ -176,7 +216,7 @@ def test_contact_authenticated(client, auth, db):
     )
 
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/")
+    assert response.headers["Location"].endswith("/contact")
 
     after = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
     assert after == before + 1
@@ -195,7 +235,7 @@ def test_contact_authenticated(client, auth, db):
     assert created["message"] == "Bonjour, ceci est un message de test."
 
 
-def test_contact_invalid_redirects_home_without_insert(client, auth, db):
+def test_contact_invalid_redirects_contact_without_insert(client, auth, db):
     auth.login_as_user()
 
     before = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
@@ -210,13 +250,17 @@ def test_contact_invalid_redirects_home_without_insert(client, auth, db):
     )
 
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/")
+    assert response.headers["Location"].endswith("/contact")
 
     after = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
     assert after == before
 
 
-def test_contact_blank_values_after_strip_redirects_home_without_insert(client, auth, db):
+def test_contact_blank_values_after_strip_redirects_contact_without_insert(
+    client,
+    auth,
+    db,
+):
     auth.login_as_user()
 
     before = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
@@ -231,7 +275,7 @@ def test_contact_blank_values_after_strip_redirects_home_without_insert(client, 
     )
 
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/")
+    assert response.headers["Location"].endswith("/contact")
 
     after = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
     assert after == before

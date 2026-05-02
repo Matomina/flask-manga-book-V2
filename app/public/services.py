@@ -4,7 +4,6 @@ import sqlite3
 
 from app.db import get_db
 
-
 ARTICLE_COLUMNS = """
 a.id,
 a.name,
@@ -28,6 +27,11 @@ def _execute_write(query: str, params: tuple = ()) -> None:
     db = get_db()
     db.execute(query, params)
     db.commit()
+
+
+def _normalize_text(value: str | None) -> str:
+    """Nettoyer une chaîne utilisateur."""
+    return (value or "").strip()
 
 
 def _article_exists(article_id: int) -> bool:
@@ -184,12 +188,14 @@ def get_user_history(user_id: int) -> list[sqlite3.Row]:
     ).fetchall()
 
 
-def create_contact_message(user_id: int, sujet: str, message: str) -> None:
+def create_contact_message(
+    user_id: int, sujet: str | None, message: str | None
+) -> None:
     """Créer un message de contact."""
-    sujet = sujet.strip()
-    message = message.strip()
+    normalized_sujet = _normalize_text(sujet)
+    normalized_message = _normalize_text(message)
 
-    if not sujet or not message:
+    if not normalized_sujet or not normalized_message:
         raise ValueError("Le sujet et le message sont obligatoires.")
 
     _execute_write(
@@ -197,5 +203,5 @@ def create_contact_message(user_id: int, sujet: str, message: str) -> None:
         INSERT INTO contact (user_id, sujet, message)
         VALUES (?, ?, ?)
         """,
-        (user_id, sujet, message),
+        (user_id, normalized_sujet, normalized_message),
     )
