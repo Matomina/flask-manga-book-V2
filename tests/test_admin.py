@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from io import BytesIO
 
+from app.admin.services import get_dashboard_stats
+
 
 def test_admin_requires_login(client):
     response = client.get("/admin/", follow_redirects=False)
@@ -16,6 +18,83 @@ def test_admin_dashboard_admin(client, auth):
     response = client.get("/admin/")
 
     assert response.status_code == 200
+
+
+def test_admin_dashboard_displays_enriched_stats(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Messages non lus" in html
+    assert "Articles en stock faible" in html
+    assert "Articles sans stock" in html
+    assert "Sujets forum" in html
+    assert "Réponses forum" in html
+
+
+def test_get_dashboard_stats_contains_enriched_keys(app):
+    with app.app_context():
+        stats = get_dashboard_stats()
+
+    expected_keys = {
+        "users",
+        "articles",
+        "orders",
+        "contacts",
+        "unread_contacts",
+        "forum_topics",
+        "forum_replies",
+        "low_stock_articles",
+        "out_of_stock_articles",
+    }
+
+    assert expected_keys.issubset(stats.keys())
+
+
+def test_get_dashboard_stats_counts_stock_alerts(app, db):
+    with app.app_context():
+        before = get_dashboard_stats()
+
+        db.execute(
+            """
+            INSERT INTO articles (name, genres, universe, image, price, stock, release_day)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "Article stock faible test",
+                "manga",
+                "naruto",
+                "uploads/low-stock-test.webp",
+                9.90,
+                5,
+                "Lundi",
+            ),
+        )
+
+        db.execute(
+            """
+            INSERT INTO articles (name, genres, universe, image, price, stock, release_day)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "Article rupture stock test",
+                "goodies",
+                "dragon_ball",
+                "uploads/out-stock-test.webp",
+                14.90,
+                0,
+                "Mardi",
+            ),
+        )
+
+        db.commit()
+
+        after = get_dashboard_stats()
+
+    assert after["low_stock_articles"] == before["low_stock_articles"] + 1
+    assert after["out_of_stock_articles"] == before["out_of_stock_articles"] + 1
 
 
 def test_admin_forbidden_for_regular_user(client, auth):
@@ -143,9 +222,9 @@ def test_admin_article_create_success(client, auth, db, monkeypatch):
 def test_admin_article_create_invalid_returns_400(client, auth, db):
     auth.login_as_admin()
 
-    count_before = db.execute(
-        "SELECT COUNT(*) AS count FROM articles"
-    ).fetchone()["count"]
+    count_before = db.execute("SELECT COUNT(*) AS count FROM articles").fetchone()[
+        "count"
+    ]
 
     response = client.post(
         "/admin/articles/create",
@@ -162,9 +241,9 @@ def test_admin_article_create_invalid_returns_400(client, auth, db):
 
     assert response.status_code == 400
 
-    count_after = db.execute(
-        "SELECT COUNT(*) AS count FROM articles"
-    ).fetchone()["count"]
+    count_after = db.execute("SELECT COUNT(*) AS count FROM articles").fetchone()[
+        "count"
+    ]
 
     assert count_after == count_before
 
@@ -177,9 +256,9 @@ def test_admin_article_create_invalid_image_format_returns_400(
 ):
     auth.login_as_admin()
 
-    count_before = db.execute(
-        "SELECT COUNT(*) AS count FROM articles"
-    ).fetchone()["count"]
+    count_before = db.execute("SELECT COUNT(*) AS count FROM articles").fetchone()[
+        "count"
+    ]
 
     monkeypatch.setattr("app.admin.routes.save_image", lambda _file: None)
 
@@ -200,9 +279,9 @@ def test_admin_article_create_invalid_image_format_returns_400(
 
     assert response.status_code == 400
 
-    count_after = db.execute(
-        "SELECT COUNT(*) AS count FROM articles"
-    ).fetchone()["count"]
+    count_after = db.execute("SELECT COUNT(*) AS count FROM articles").fetchone()[
+        "count"
+    ]
 
     assert count_after == count_before
 

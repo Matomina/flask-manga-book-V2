@@ -1,48 +1,155 @@
 {% extends "base.html" %} {% block title %}Dashboard Admin - MangaBook V2{%
 endblock %} {% block content %}
-<h2>Dashboard Admin</h2>
-<p>Vue d’ensemble de l’administration MangaBook.</p>
 
-<section
-  style="
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-    margin: 20px 0;
-  "
->
-  <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
-    <h3>Utilisateurs</h3>
-    <p style="font-size: 24px; font-weight: bold">{{ stats.users }}</p>
-  </article>
+<section class="admin-dashboard">
+  <header class="admin-dashboard__header">
+    <h2>Dashboard Admin</h2>
+    <p>Vue d’ensemble de l’administration MangaBook.</p>
+  </header>
 
-  <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
-    <h3>Articles</h3>
-    <p style="font-size: 24px; font-weight: bold">{{ stats.articles }}</p>
-  </article>
+  <section class="admin-dashboard__stats">
+    <h3>Statistiques générales</h3>
 
-  <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
-    <h3>Commandes</h3>
-    <p style="font-size: 24px; font-weight: bold">{{ stats.orders }}</p>
-  </article>
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+      "
+    >
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Utilisateurs</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("users", 0) }}
+        </p>
+      </article>
 
-  <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
-    <h3>Messages</h3>
-    <p style="font-size: 24px; font-weight: bold">{{ stats.contacts }}</p>
-  </article>
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Articles</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("articles", 0) }}
+        </p>
+      </article>
+
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Commandes</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("orders", 0) }}
+        </p>
+      </article>
+
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Messages</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("contacts", 0) }}
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="admin-dashboard__alerts">
+    <h3>Points de vigilance</h3>
+
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+      "
+    >
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Messages non lus</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("unread_contacts", 0) }}
+        </p>
+
+        <a href="{{ url_for('admin.contact_list') }}"> Voir les messages </a>
+      </article>
+
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Articles en stock faible</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("low_stock_articles", 0) }}
+        </p>
+
+        <a href="{{ url_for('admin.articles_list') }}"> Gérer les articles </a>
+      </article>
+
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Articles sans stock</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("out_of_stock_articles", 0) }}
+        </p>
+
+        <a href="{{ url_for('admin.articles_list') }}"> Vérifier le stock </a>
+      </article>
+    </div>
+  </section>
+
+  <section class="admin-dashboard__forum">
+    <h3>Forum</h3>
+
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+      "
+    >
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Sujets forum</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("forum_topics", 0) }}
+        </p>
+      </article>
+
+      <article
+        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
+      >
+        <h4>Réponses forum</h4>
+        <p style="font-size: 24px; font-weight: bold">
+          {{ stats.get("forum_replies", 0) }}
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <hr />
+
+  <section class="admin-dashboard__actions" style="margin-top: 20px">
+    <h3>Actions rapides</h3>
+
+    <nav style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px">
+      <a href="{{ url_for('admin.articles_list') }}"> Gérer les articles </a>
+
+      <a href="{{ url_for('admin.contact_list') }}"> Voir les messages </a>
+
+      <a href="{{ url_for('admin.forum_list') }}"> Modération forum </a>
+
+      <a href="{{ url_for('public.articles') }}"> Voir le catalogue public </a>
+
+      <a href="{{ url_for('public.planning') }}"> Voir le planning public </a>
+    </nav>
+  </section>
 </section>
 
-<hr />
-
-<section style="margin-top: 20px">
-  <h3>Actions rapides</h3>
-
-  <nav style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px">
-    <a href="{{ url_for('admin.articles_list') }}"> Gérer les articles </a>
-
-    <a href="{{ url_for('admin.contact_list') }}"> Voir les messages </a>
-
-    <a href="{{ url_for('admin.forum_list') }}"> Modération forum </a>
-  </nav>
-</section>
 {% endblock %}

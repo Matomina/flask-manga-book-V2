@@ -11,7 +11,6 @@ from werkzeug.utils import secure_filename
 
 from app.db import get_db
 
-
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 VALID_ARTICLE_GENRES = {"manga", "figurine", "textile", "vaisselle", "goodies"}
 VALID_RELEASE_DAYS = {
@@ -31,6 +30,7 @@ UPLOAD_FOLDER = "uploads"
 # HELPERS
 # =========================
 
+
 def _normalize_str(value: Any) -> str:
     """Nettoyer une valeur texte et garantir une chaîne."""
     return str(value or "").strip()
@@ -45,6 +45,7 @@ def _normalize_optional_str(value: Any) -> str | None:
 # =========================
 # CONTACTS
 # =========================
+
 
 def get_all_contacts() -> list[sqlite3.Row]:
     """Récupérer tous les messages de contact."""
@@ -94,6 +95,7 @@ def mark_contact_as_read(contact_id: int) -> None:
 # DASHBOARD
 # =========================
 
+
 def get_dashboard_stats() -> dict[str, int]:
     """Récupérer les statistiques globales du dashboard admin."""
     db = get_db()
@@ -104,7 +106,20 @@ def get_dashboard_stats() -> dict[str, int]:
             (SELECT COUNT(*) FROM user) AS users,
             (SELECT COUNT(*) FROM articles) AS articles,
             (SELECT COUNT(*) FROM orders) AS orders,
-            (SELECT COUNT(*) FROM contact) AS contacts
+            (SELECT COUNT(*) FROM contact) AS contacts,
+            (SELECT COUNT(*) FROM contact WHERE status != 'read') AS unread_contacts,
+            (SELECT COUNT(*) FROM topics) AS forum_topics,
+            (SELECT COUNT(*) FROM replies) AS forum_replies,
+            (
+                SELECT COUNT(*)
+                FROM articles
+                WHERE stock > 0 AND stock <= 5
+            ) AS low_stock_articles,
+            (
+                SELECT COUNT(*)
+                FROM articles
+                WHERE stock <= 0
+            ) AS out_of_stock_articles
         """
     ).fetchone()
 
@@ -113,12 +128,18 @@ def get_dashboard_stats() -> dict[str, int]:
         "articles": row["articles"],
         "orders": row["orders"],
         "contacts": row["contacts"],
+        "unread_contacts": row["unread_contacts"],
+        "forum_topics": row["forum_topics"],
+        "forum_replies": row["forum_replies"],
+        "low_stock_articles": row["low_stock_articles"],
+        "out_of_stock_articles": row["out_of_stock_articles"],
     }
 
 
 # =========================
 # ARTICLES ADMIN
 # =========================
+
 
 def get_all_articles_admin() -> list[sqlite3.Row]:
     """Récupérer tous les articles pour l'administration."""
@@ -208,6 +229,7 @@ def delete_article(article_id: int) -> None:
 # VALIDATION ARTICLES
 # =========================
 
+
 def validate_article_data(
     data: dict[str, Any],
     *,
@@ -266,6 +288,7 @@ def validate_article_data(
 # =========================
 # UPLOAD IMAGE
 # =========================
+
 
 def allowed_file(filename: str) -> bool:
     """Vérifier si l'extension du fichier est autorisée."""
