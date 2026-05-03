@@ -3,8 +3,11 @@ from __future__ import annotations
 from io import BytesIO
 
 from app.admin.services import (
+    get_all_orders_admin,
     get_all_users_admin,
     get_dashboard_stats,
+    get_order_by_id_admin,
+    get_order_items_by_order_id,
     get_user_by_id_admin,
 )
 
@@ -26,6 +29,48 @@ def _insert_contact(
         VALUES (?, ?, ?, ?)
         """,
         (user_id, sujet, message, status),
+    )
+    db.commit()
+    return int(cursor.lastrowid)
+
+
+def _insert_order(
+    db,
+    *,
+    user_id: int = 2,
+    total_amount: float = 99.90,
+    status: str = "pending",
+) -> int:
+    cursor = db.execute(
+        """
+        INSERT INTO orders (user_id, total_amount, status)
+        VALUES (?, ?, ?)
+        """,
+        (user_id, total_amount, status),
+    )
+    db.commit()
+    return int(cursor.lastrowid)
+
+
+def _insert_order_item(
+    db,
+    *,
+    order_id: int,
+    article_id: int = 1,
+    quantity: int = 2,
+    unit_price: float = 19.90,
+) -> int:
+    cursor = db.execute(
+        """
+        INSERT INTO orders_articles (
+            order_id,
+            article_id,
+            quantity,
+            unit_price
+        )
+        VALUES (?, ?, ?, ?)
+        """,
+        (order_id, article_id, quantity, unit_price),
     )
     db.commit()
     return int(cursor.lastrowid)
@@ -256,6 +301,206 @@ def test_admin_dashboard_displays_users_action(client, auth):
 
     assert response.status_code == 200
     assert "Gérer les utilisateurs" in html
+
+
+# =========================
+# ORDERS ADMIN
+# =========================
+
+
+def test_get_all_orders_admin_returns_orders(app, db):
+    with app.app_context():
+        order_id = _insert_order(db, status="pending")
+        orders = get_all_orders_admin()
+
+    assert len(orders) > 0
+    assert any(order["id"] == order_id for order in orders)
+    assert "id" in orders[0].keys()
+    assert "total_amount" in orders[0].keys()
+    assert "status" in orders[0].keys()
+    assert "email" in orders[0].keys()
+
+
+def test_get_all_orders_admin_filters_status(app, db):
+    with app.app_context():
+        paid_order_id = _insert_order(db, status="paid")
+        _insert_order(db, status="cancelled")
+
+        orders = get_all_orders_admin(status_filter="paid")
+
+    assert len(orders) > 0
+    assert any(order["id"] == paid_order_id for order in orders)
+    assert all(order["status"] == "paid" for order in orders)
+
+
+def test_get_all_orders_admin_invalid_filter_returns_all(app, db):
+    with app.app_context():
+        order_id = _insert_order(db, status="pending")
+        orders = get_all_orders_admin(status_filter="invalid")
+
+    assert len(orders) > 0
+    assert any(order["id"] == order_id for order in orders)
+
+
+def test_get_order_by_id_admin_returns_order(app, db):
+    with app.app_context():
+        order_id = _insert_order(db, status="paid")
+        order = get_order_by_id_admin(order_id)
+
+    assert order is not None
+    assert order["id"] == order_id
+    assert order["status"] == "paid"
+    assert "email" in order.keys()
+    assert "address" in order.keys()
+
+
+def test_get_order_by_id_admin_returns_none_when_missing(app):
+    with app.app_context():
+        order = get_order_by_id_admin(999999)
+
+    assert order is None
+
+
+def test_get_order_items_by_order_id_returns_items(app, db):
+    with app.app_context():
+        order_id = _insert_order(db, status="paid")
+        item_id = _insert_order_item(db, order_id=order_id)
+
+        items = get_order_items_by_order_id(order_id)
+
+    assert len(items) > 0
+    assert any(item["id"] == item_id for item in items)
+    assert "name" in items[0].keys()
+    assert "quantity" in items[0].keys()
+    assert "unit_price" in items[0].keys()
+
+
+def test_admin_orders_requires_login(client):
+    response = client.get("/admin/orders", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
+
+def test_admin_order_detail_requires_login(client):
+    response = client.get("/admin/orders/1", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
+
+def test_admin_orders_list_admin(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/orders")
+
+    assert response.status_code == 200
+
+
+def test_admin_orders_list_displays_orders(client, auth, db):
+    _insert_order(
+        db,
+        total_amount=42.50,
+        status="pending",
+    )
+
+    auth.login_as_admin()
+
+    response = client.get("/admin/orders")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Gestion des commandes" in html
+    assert "Consultez les commandes enregistrées" in html
+    assert "Commande #" in html
+    assert "Voir la commande" in html
+
+
+def test_admin_orders_list_filters_status(client, auth, db):
+    paid_order_id = _insert_order(
+        db,
+        total_amount=59.90,
+        status="paid",
+    )
+    cancelled_order_id = _insert_order(
+        db,
+        total_amount=19.90,
+        status="cancelled",
+    )
+
+    auth.login_as_admin()
+
+    response = client.get("/admin/orders?status=paid")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert f"Commande #{paid_order_id}" in html
+    assert f"Commande #{cancelled_order_id}" not in html
+    assert "Payée" in html
+
+
+def test_admin_orders_list_invalid_filter_falls_back_to_all(client, auth, db):
+    order_id = _insert_order(
+        db,
+        total_amount=24.90,
+        status="pending",
+    )
+
+    auth.login_as_admin()
+
+    response = client.get("/admin/orders?status=invalid")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert f"Commande #{order_id}" in html
+    assert "Filtre actif" in html
+    assert "all" in html
+
+
+def test_admin_order_detail_admin(client, auth, db):
+    order_id = _insert_order(
+        db,
+        total_amount=39.80,
+        status="paid",
+    )
+    _insert_order_item(
+        db,
+        order_id=order_id,
+        quantity=2,
+        unit_price=19.90,
+    )
+
+    auth.login_as_admin()
+
+    response = client.get(f"/admin/orders/{order_id}")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert f"Commande #{order_id}" in html
+    assert "ID commande" in html
+    assert "Client" in html
+    assert "Articles commandés" in html
+    assert "Prix unitaire" in html
+    assert "Total" in html
+    assert "Retour aux commandes" in html
+
+
+def test_admin_order_detail_404(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/orders/999999")
+
+    assert response.status_code == 404
+
+
+def test_admin_dashboard_displays_orders_action(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Gérer les commandes" in html
 
 
 # =========================

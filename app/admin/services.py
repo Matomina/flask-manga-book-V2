@@ -204,6 +204,99 @@ def get_user_by_id_admin(user_id: int) -> sqlite3.Row | None:
 
 
 # =========================
+# ORDERS ADMIN
+# =========================
+
+
+def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
+    """Récupérer toutes les commandes pour l'administration."""
+    db = get_db()
+
+    where_sql = ""
+    params: tuple[str, ...] = ()
+
+    if status_filter in {
+        "pending",
+        "paid",
+        "shipped",
+        "delivered",
+        "cancelled",
+    }:
+        where_sql = "WHERE o.status = ?"
+        params = (status_filter,)
+
+    return db.execute(
+        f"""
+        SELECT
+            o.id,
+            o.user_id,
+            o.total_amount,
+            o.status,
+            o.created_at,
+            u.first_name,
+            u.last_name,
+            u.email
+        FROM orders AS o
+        JOIN user AS u ON u.id = o.user_id
+        {where_sql}
+        ORDER BY o.created_at DESC, o.id DESC
+        """,
+        params,
+    ).fetchall()
+
+
+def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
+    """Récupérer une commande admin par son identifiant."""
+    db = get_db()
+
+    return db.execute(
+        """
+        SELECT
+            o.id,
+            o.user_id,
+            o.total_amount,
+            o.status,
+            o.created_at,
+            u.first_name,
+            u.last_name,
+            u.email,
+            u.phone,
+            u.address,
+            u.city
+        FROM orders AS o
+        JOIN user AS u ON u.id = o.user_id
+        WHERE o.id = ?
+        """,
+        (order_id,),
+    ).fetchone()
+
+
+def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
+    """Récupérer les lignes d'articles d'une commande."""
+    db = get_db()
+
+    return db.execute(
+        """
+        SELECT
+            oa.id,
+            oa.order_id,
+            oa.article_id,
+            oa.quantity,
+            oa.unit_price,
+            a.name,
+            a.genres,
+            a.universe,
+            a.image
+        FROM orders_articles AS oa
+        JOIN articles AS a ON a.id = oa.article_id
+        WHERE oa.order_id = ?
+        ORDER BY oa.id ASC
+        """,
+        (order_id,),
+    ).fetchall()
+
+
+# =========================
 # ARTICLES ADMIN
 # =========================
 

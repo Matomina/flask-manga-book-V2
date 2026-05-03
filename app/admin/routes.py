@@ -17,10 +17,13 @@ from .services import (
     delete_article,
     get_all_articles_admin,
     get_all_contacts,
+    get_all_orders_admin,
     get_all_users_admin,
     get_article_by_id_admin,
     get_contact_by_id,
     get_dashboard_stats,
+    get_order_by_id_admin,
+    get_order_items_by_order_id,
     get_user_by_id_admin,
     mark_contact_as_read,
     save_image,
@@ -82,6 +85,54 @@ def user_detail(user_id: int):
         abort(404)
 
     return render_template("admin/users/detail.html", user=user)
+
+
+# =========================
+# ORDERS
+# =========================
+
+
+@bp.route("/orders", methods=["GET"])
+@admin_required
+def orders_list():
+    """Afficher la liste des commandes côté admin."""
+    status_filter = request.args.get("status", "all").strip()
+
+    if status_filter not in {
+        "all",
+        "pending",
+        "paid",
+        "shipped",
+        "delivered",
+        "cancelled",
+    }:
+        status_filter = "all"
+
+    orders = get_all_orders_admin(status_filter=status_filter)
+
+    return render_template(
+        "admin/orders/list.html",
+        orders=orders,
+        status_filter=status_filter,
+    )
+
+
+@bp.route("/orders/<int:order_id>", methods=["GET"])
+@admin_required
+def order_detail(order_id: int):
+    """Afficher le détail d'une commande côté admin."""
+    order = get_order_by_id_admin(order_id)
+
+    if order is None:
+        abort(404)
+
+    items = get_order_items_by_order_id(order_id)
+
+    return render_template(
+        "admin/orders/detail.html",
+        order=order,
+        items=items,
+    )
 
 
 # =========================

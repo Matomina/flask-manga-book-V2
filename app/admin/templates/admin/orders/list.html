@@ -1,0 +1,171 @@
+{% extends "base.html" %} {% block title %}Commandes Admin - MangaBook V2{%
+endblock %} {% block content %}
+
+<section class="admin-orders-page">
+  <header>
+    <h2>Gestion des commandes</h2>
+    <p>Consultez les commandes enregistrées sur MangaBook.</p>
+  </header>
+
+  <section style="margin: 20px 0">
+    <h3>Filtres</h3>
+
+    <nav style="display: flex; gap: 12px; flex-wrap: wrap">
+      <a href="{{ url_for('admin.orders_list') }}"> Tous </a>
+
+      <a href="{{ url_for('admin.orders_list', status='pending') }}">
+        En attente
+      </a>
+
+      <a href="{{ url_for('admin.orders_list', status='paid') }}"> Payées </a>
+
+      <a href="{{ url_for('admin.orders_list', status='shipped') }}">
+        Expédiées
+      </a>
+
+      <a href="{{ url_for('admin.orders_list', status='delivered') }}">
+        Livrées
+      </a>
+
+      <a href="{{ url_for('admin.orders_list', status='cancelled') }}">
+        Annulées
+      </a>
+    </nav>
+
+    <p style="margin-top: 12px">
+      <strong>Filtre actif :</strong>
+      {{ status_filter }}
+    </p>
+  </section>
+
+  {% if orders %}
+  <section style="display: flex; flex-direction: column; gap: 12px">
+    {% for order in orders %}
+    <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
+      <header
+        style="
+          display: flex;
+          justify-content: space-between;
+          gap: 12px;
+          flex-wrap: wrap;
+        "
+      >
+        <div>
+          <h3 style="margin: 0 0 8px 0">Commande #{{ order["id"] }}</h3>
+
+          <p style="margin: 0">
+            <strong>Client :</strong>
+            {{ order["first_name"] }} {{ order["last_name"] }}
+          </p>
+
+          <p style="margin: 4px 0 0">
+            <strong>Email :</strong>
+            {{ order["email"] }}
+          </p>
+        </div>
+
+        <div>
+          {% if order["status"] == "pending" %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #f9a825;
+              border-radius: 999px;
+            "
+          >
+            En attente
+          </span>
+          {% elif order["status"] == "paid" %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #2e7d32;
+              border-radius: 999px;
+            "
+          >
+            Payée
+          </span>
+          {% elif order["status"] == "shipped" %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #1976d2;
+              border-radius: 999px;
+            "
+          >
+            Expédiée
+          </span>
+          {% elif order["status"] == "delivered" %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #00897b;
+              border-radius: 999px;
+            "
+          >
+            Livrée
+          </span>
+          {% elif order["status"] == "cancelled" %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #c62828;
+              border-radius: 999px;
+            "
+          >
+            Annulée
+          </span>
+          {% else %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #777;
+              border-radius: 999px;
+            "
+          >
+            {{ order["status"] }}
+          </span>
+          {% endif %}
+        </div>
+      </header>
+
+      <hr />
+
+      <section
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 8px 16px;
+        "
+      >
+        <p>
+          <strong>Total :</strong>
+          {{ order["total_amount"] }} €
+        </p>
+
+        <p>
+          <strong>Date :</strong>
+          {{ order["created_at"] }}
+        </p>
+      </section>
+
+      <div style="margin-top: 12px">
+        <a href="{{ url_for('admin.order_detail', order_id=order['id']) }}">
+          Voir la commande
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <p>Aucune commande trouvée.</p>
+  {% endif %}
+</section>
+
+{% endblock %}
