@@ -12,7 +12,6 @@ from flask import (
 
 from .services import authenticate_user
 
-
 bp = Blueprint(
     "auth",
     __name__,
@@ -23,9 +22,11 @@ bp = Blueprint(
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
+    """Connecter un utilisateur ou un administrateur."""
     if session.get("user_id") is not None:
         if session.get("user_role") == "admin":
             return redirect(url_for("admin.dashboard"))
+
         return redirect(url_for("public.home"))
 
     if request.method == "POST":
@@ -59,11 +60,13 @@ def login():
 
 @bp.route("/register", methods=["GET"])
 def register():
+    """Afficher la page d'inscription."""
     return render_template("auth/register.html")
 
 
-@bp.route("/logout", methods=["GET"])
+@bp.route("/logout", methods=["POST"])
 def logout():
+    """Déconnecter l'utilisateur courant."""
     session.clear()
     flash("Vous avez été déconnecté.", "info")
     return redirect(url_for("public.home"))

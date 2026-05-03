@@ -1,88 +1,117 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Créer un article - MangaBook V2{%
+endblock %} {% block content %} {% set current_name = data.get("name", "") if
+data else "" %} {% set current_genres = data.get("genres", "") if data else ""
+%} {% set current_universe = data.get("universe", "") if data else "" %} {% set
+current_price = data.get("price", "") if data else "" %} {% set current_stock =
+data.get("stock", "") if data else "" %} {% set current_release_day =
+data.get("release_day", "") if data else "" %}
 
-{% block title %}Modifier un article - MangaBook V2{% endblock %}
+<section class="admin-article-form-page">
+  <p>
+    <a href="{{ url_for('admin.articles_list') }}">
+      ← Retour à la liste des articles
+    </a>
+  </p>
 
-{% block content %}
-<h2>Modifier un article</h2>
+  <header>
+    <h2>Créer un article</h2>
+    <p>Ajoutez un nouvel article au catalogue MangaBook.</p>
+  </header>
 
-<form method="post" enctype="multipart/form-data" style="max-width: 700px;">
-    <div style="margin-bottom: 12px;">
-        <label for="name">Nom</label><br>
-        <input
-            id="name"
-            name="name"
-            value="{{ (data.name if data else article['name']) }}"
-            required
-        >
+  <form method="post" enctype="multipart/form-data" style="max-width: 700px">
+    <div style="margin-bottom: 12px">
+      <label for="name">Nom</label><br />
+      <input id="name" name="name" value="{{ current_name }}" required />
     </div>
 
-    <div style="margin-bottom: 12px;">
-        <label for="genres">Genre</label><br>
-        <select id="genres" name="genres" required>
-            {% set current_genre = data.genres if data else article['genres'] %}
-            {% for g in ["manga", "figurine", "textile", "vaisselle", "goodies"] %}
-                <option value="{{ g }}" {% if current_genre == g %}selected{% endif %}>{{ g }}</option>
-            {% endfor %}
-        </select>
+    <div style="margin-bottom: 12px">
+      <label for="genres">Genre</label><br />
+      <select id="genres" name="genres" required>
+        <option value="">-- Choisir un genre --</option>
+
+        {% for genre in ["manga", "figurine", "textile", "vaisselle", "goodies"]
+        %} {% if current_genres == genre %}
+        <option value="{{ genre }}" selected>{{ genre }}</option>
+        {% else %}
+        <option value="{{ genre }}">{{ genre }}</option>
+        {% endif %} {% endfor %}
+      </select>
     </div>
 
-    <div style="margin-bottom: 12px;">
-        <label for="universe">Univers</label><br>
-        <input
-            id="universe"
-            name="universe"
-            value="{{ (data.universe if data else article['universe']) or '' }}"
-        >
+    <div style="margin-bottom: 12px">
+      <label for="universe">Univers</label><br />
+      <select id="universe" name="universe">
+        <option value="">-- Aucun univers --</option>
+
+        {% set universes = [ ("naruto", "Naruto"), ("jujutsu_kaisen", "Jujutsu
+        Kaisen"), ("one_piece", "One Piece"), ("demon_slayer", "Demon Slayer"),
+        ("dragon_ball", "Dragon Ball") ] %} {% for value, label in universes %}
+        {% if current_universe == value %}
+        <option value="{{ value }}" selected>{{ label }}</option>
+        {% else %}
+        <option value="{{ value }}">{{ label }}</option>
+        {% endif %} {% endfor %}
+      </select>
     </div>
 
-    <div style="margin-bottom: 12px;">
-        <label for="image">Chemin image</label><br>
-        <input
-            id="image"
-            name="image"
-            value="{{ (data.image if data else article['image']) }}"
-        >
+    <div style="margin-bottom: 12px">
+      <label for="image">Image</label><br />
+      <input
+        id="image"
+        type="file"
+        name="image"
+        accept=".png,.jpg,.jpeg,.webp"
+        required
+      />
+      <p style="font-size: 13px">Formats acceptés : png, jpg, jpeg, webp.</p>
     </div>
 
-    <div style="margin-bottom: 12px;">
-        <label for="image_file">Remplacer par upload</label><br>
-        <input id="image_file" type="file" name="image">
+    <div style="margin-bottom: 12px">
+      <label for="price">Prix</label><br />
+      <input
+        id="price"
+        name="price"
+        type="number"
+        step="0.01"
+        min="0"
+        value="{{ current_price }}"
+        required
+      />
     </div>
 
-    <div style="margin-bottom: 12px;">
-        <label for="price">Prix</label><br>
-        <input
-            id="price"
-            name="price"
-            type="number"
-            step="0.01"
-            value="{{ data.price if data else article['price'] }}"
-            required
-        >
+    <div style="margin-bottom: 12px">
+      <label for="stock">Stock</label><br />
+      <input
+        id="stock"
+        name="stock"
+        type="number"
+        min="0"
+        value="{{ current_stock }}"
+        required
+      />
     </div>
 
-    <div style="margin-bottom: 12px;">
-        <label for="stock">Stock</label><br>
-        <input
-            id="stock"
-            name="stock"
-            type="number"
-            value="{{ data.stock if data else article['stock'] }}"
-            required
-        >
+    <div style="margin-bottom: 12px">
+      <label for="release_day">Jour de sortie</label><br />
+      <select id="release_day" name="release_day">
+        <option value="">-- Aucun jour --</option>
+
+        {% for day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi",
+        "Samedi", "Dimanche", "Sans jour fixe"] %} {% if current_release_day ==
+        day %}
+        <option value="{{ day }}" selected>{{ day }}</option>
+        {% else %}
+        <option value="{{ day }}">{{ day }}</option>
+        {% endif %} {% endfor %}
+      </select>
     </div>
 
-    <div style="margin-bottom: 12px;">
-        <label for="release_day">Jour de sortie</label><br>
-        {% set current_day = data.release_day if data else article['release_day'] %}
-        <select id="release_day" name="release_day">
-            <option value="">-- Aucun --</option>
-            {% for day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche", "Sans jour fixe"] %}
-                <option value="{{ day }}" {% if current_day == day %}selected{% endif %}>{{ day }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px">
+      <button type="submit">Créer l’article</button>
 
-    <button type="submit">Enregistrer</button>
-</form>
+      <a href="{{ url_for('admin.articles_list') }}"> Annuler </a>
+    </div>
+  </form>
+</section>
+
 {% endblock %}

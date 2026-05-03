@@ -7,7 +7,6 @@ from pathlib import Path
 
 import pytest
 
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -92,6 +91,6 @@ def auth(client):
             )
 
         def logout(self, follow_redirects: bool = False):
-            return client.get("/auth/logout", follow_redirects=follow_redirects)
+            return client.post("/auth/logout", follow_redirects=follow_redirects)
 
     return AuthActions()

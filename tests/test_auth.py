@@ -62,20 +62,21 @@ def test_register_page_get(client):
     assert response.status_code == 200
 
 
-def test_logout(client, auth):
+def test_logout_post_clears_session_and_redirects_home(client, auth):
     auth.login_as_admin()
-    response = auth.logout()
+
+    response = client.post("/auth/logout", follow_redirects=False)
 
     assert response.status_code == 302
     assert response.headers["Location"].endswith("/")
 
     protected_response = client.get("/admin/", follow_redirects=False)
+
     assert protected_response.status_code == 302
     assert "/auth/login" in protected_response.headers["Location"]
 
 
-def test_logout_route_get(client):
+def test_logout_get_is_not_allowed(client):
     response = client.get("/auth/logout", follow_redirects=False)
 
-    assert response.status_code == 302
-    assert response.headers["Location"].endswith("/")
+    assert response.status_code == 405
