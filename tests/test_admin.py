@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from io import BytesIO
 
-from app.admin.services import get_dashboard_stats
+from app.admin.services import (
+    get_all_users_admin,
+    get_dashboard_stats,
+    get_user_by_id_admin,
+)
 
 CONTACT_STATUS_PENDING = "pending"
 CONTACT_STATUS_READ = "read"
@@ -142,6 +146,116 @@ def test_admin_forbidden_for_regular_user(client, auth):
 
     assert response.status_code == 302
     assert "Location" in response.headers
+
+
+# =========================
+# USERS ADMIN
+# =========================
+
+
+def test_get_all_users_admin_returns_users(app):
+    with app.app_context():
+        users = get_all_users_admin()
+
+    assert len(users) > 0
+    assert "id" in users[0].keys()
+    assert "email" in users[0].keys()
+    assert "role" in users[0].keys()
+    assert "password" not in users[0].keys()
+
+
+def test_get_user_by_id_admin_returns_user(app):
+    with app.app_context():
+        users = get_all_users_admin()
+        user = get_user_by_id_admin(users[0]["id"])
+
+    assert user is not None
+    assert user["id"] == users[0]["id"]
+    assert "email" in user.keys()
+    assert "role" in user.keys()
+    assert "password" not in user.keys()
+
+
+def test_get_user_by_id_admin_returns_none_when_missing(app):
+    with app.app_context():
+        user = get_user_by_id_admin(999999)
+
+    assert user is None
+
+
+def test_admin_users_list_admin(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/users")
+
+    assert response.status_code == 200
+
+
+def test_admin_users_list_displays_users(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/users")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Gestion des utilisateurs" in html
+    assert "Voir le profil" in html
+
+
+def test_admin_user_detail_admin(client, auth, db):
+    user = db.execute(
+        """
+        SELECT id
+        FROM user
+        ORDER BY id ASC
+        LIMIT 1
+        """
+    ).fetchone()
+
+    assert user is not None
+
+    auth.login_as_admin()
+
+    response = client.get(f"/admin/users/{user['id']}")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "ID utilisateur" in html
+    assert "Informations principales" in html
+    assert "Email" in html
+    assert "Date de création" in html
+
+
+def test_admin_user_detail_404(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/users/999999")
+
+    assert response.status_code == 404
+
+
+def test_admin_users_requires_login(client):
+    response = client.get("/admin/users", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
+
+def test_admin_user_detail_requires_login(client):
+    response = client.get("/admin/users/1", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
+
+def test_admin_dashboard_displays_users_action(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Gérer les utilisateurs" in html
 
 
 # =========================

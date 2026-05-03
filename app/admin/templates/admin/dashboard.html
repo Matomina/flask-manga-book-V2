@@ -139,6 +139,8 @@ endblock %} {% block content %}
     <h3>Actions rapides</h3>
 
     <nav style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px">
+      <a href="{{ url_for('admin.users_list') }}"> Gérer les utilisateurs </a>
+
       <a href="{{ url_for('admin.articles_list') }}"> Gérer les articles </a>
 
       <a href="{{ url_for('admin.contact_list') }}"> Voir les messages </a>

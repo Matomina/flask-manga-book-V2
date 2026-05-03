@@ -154,6 +154,56 @@ def get_dashboard_stats() -> dict[str, int]:
 
 
 # =========================
+# USERS ADMIN
+# =========================
+
+
+def get_all_users_admin() -> list[sqlite3.Row]:
+    """Récupérer tous les utilisateurs pour l'administration."""
+    db = get_db()
+
+    return db.execute(
+        """
+        SELECT
+            id,
+            first_name,
+            last_name,
+            email,
+            phone,
+            address,
+            city,
+            role,
+            created_at
+        FROM user
+        ORDER BY created_at DESC, id DESC
+        """
+    ).fetchall()
+
+
+def get_user_by_id_admin(user_id: int) -> sqlite3.Row | None:
+    """Récupérer un utilisateur admin par son identifiant."""
+    db = get_db()
+
+    return db.execute(
+        """
+        SELECT
+            id,
+            first_name,
+            last_name,
+            email,
+            phone,
+            address,
+            city,
+            role,
+            created_at
+        FROM user
+        WHERE id = ?
+        """,
+        (user_id,),
+    ).fetchone()
+
+
+# =========================
 # ARTICLES ADMIN
 # =========================
 

@@ -1,0 +1,129 @@
+{% extends "base.html" %} {% block title %}Utilisateur Admin - MangaBook V2{%
+endblock %} {% block content %}
+
+<section class="admin-user-detail">
+  <p>
+    <a href="{{ url_for('admin.users_list') }}"> ← Retour aux utilisateurs </a>
+  </p>
+
+  <article
+    style="
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 16px;
+      max-width: 800px;
+    "
+  >
+    <header
+      style="
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      "
+    >
+      <div>
+        <h2>{{ user["first_name"] }} {{ user["last_name"] }}</h2>
+
+        <p>
+          <strong>ID utilisateur :</strong>
+          {{ user["id"] }}
+        </p>
+      </div>
+
+      <div>
+        {% if user["role"] == "admin" %}
+        <span
+          style="
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #7b1fa2;
+            border-radius: 999px;
+          "
+        >
+          Admin
+        </span>
+        {% else %}
+        <span
+          style="
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #1976d2;
+            border-radius: 999px;
+          "
+        >
+          Utilisateur
+        </span>
+        {% endif %}
+      </div>
+    </header>
+
+    <hr />
+
+    <section>
+      <h3>Informations principales</h3>
+
+      <div
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 8px 16px;
+        "
+      >
+        <p>
+          <strong>Email :</strong>
+          {{ user["email"] }}
+        </p>
+
+        <p>
+          <strong>Téléphone :</strong>
+          {{ user["phone"] or "Non renseigné" }}
+        </p>
+
+        <p>
+          <strong>Prénom :</strong>
+          {{ user["first_name"] }}
+        </p>
+
+        <p>
+          <strong>Nom :</strong>
+          {{ user["last_name"] }}
+        </p>
+
+        <p>
+          <strong>Ville :</strong>
+          {{ user["city"] or "Non renseignée" }}
+        </p>
+
+        <p>
+          <strong>Date de création :</strong>
+          {{ user["created_at"] }}
+        </p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section>
+      <h3>Adresse</h3>
+
+      {% if user["address"] %}
+      <p>{{ user["address"] }}</p>
+      {% else %}
+      <p>Adresse non renseignée.</p>
+      {% endif %}
+    </section>
+
+    <hr />
+
+    <section>
+      <h3>Actions</h3>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap">
+        <a href="{{ url_for('admin.users_list') }}"> Retour à la liste </a>
+      </div>
+    </section>
+  </article>
+</section>
+
+{% endblock %}

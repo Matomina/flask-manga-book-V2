@@ -17,9 +17,11 @@ from .services import (
     delete_article,
     get_all_articles_admin,
     get_all_contacts,
+    get_all_users_admin,
     get_article_by_id_admin,
     get_contact_by_id,
     get_dashboard_stats,
+    get_user_by_id_admin,
     mark_contact_as_read,
     save_image,
     update_article,
@@ -55,6 +57,31 @@ def _flash_errors(errors: list[str]) -> None:
 def dashboard():
     stats = get_dashboard_stats()
     return render_template("admin/dashboard.html", stats=stats)
+
+
+# =========================
+# USERS
+# =========================
+
+
+@bp.route("/users", methods=["GET"])
+@admin_required
+def users_list():
+    """Afficher la liste des utilisateurs côté admin."""
+    users = get_all_users_admin()
+    return render_template("admin/users/list.html", users=users)
+
+
+@bp.route("/users/<int:user_id>", methods=["GET"])
+@admin_required
+def user_detail(user_id: int):
+    """Afficher le détail d'un utilisateur côté admin."""
+    user = get_user_by_id_admin(user_id)
+
+    if user is None:
+        abort(404)
+
+    return render_template("admin/users/detail.html", user=user)
 
 
 # =========================

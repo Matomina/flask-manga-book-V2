@@ -1,0 +1,100 @@
+{% extends "base.html" %} {% block title %}Utilisateurs Admin - MangaBook V2{%
+endblock %} {% block content %}
+
+<section class="admin-users-page">
+  <header>
+    <h2>Gestion des utilisateurs</h2>
+    <p>Consultez les comptes utilisateurs enregistrés sur MangaBook.</p>
+  </header>
+
+  {% if users %}
+  <section
+    style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px"
+  >
+    {% for user in users %}
+    <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
+      <header
+        style="
+          display: flex;
+          justify-content: space-between;
+          gap: 12px;
+          flex-wrap: wrap;
+        "
+      >
+        <div>
+          <h3 style="margin: 0 0 8px 0">
+            {{ user["first_name"] }} {{ user["last_name"] }}
+          </h3>
+
+          <p style="margin: 0">
+            <strong>Email :</strong>
+            {{ user["email"] }}
+          </p>
+        </div>
+
+        <div>
+          {% if user["role"] == "admin" %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #7b1fa2;
+              border-radius: 999px;
+            "
+          >
+            Admin
+          </span>
+          {% else %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #1976d2;
+              border-radius: 999px;
+            "
+          >
+            Utilisateur
+          </span>
+          {% endif %}
+        </div>
+      </header>
+
+      <hr />
+
+      <section
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 8px 16px;
+        "
+      >
+        <p>
+          <strong>Téléphone :</strong>
+          {{ user["phone"] or "Non renseigné" }}
+        </p>
+
+        <p>
+          <strong>Ville :</strong>
+          {{ user["city"] or "Non renseignée" }}
+        </p>
+
+        <p>
+          <strong>Créé le :</strong>
+          {{ user["created_at"] }}
+        </p>
+      </section>
+
+      <div style="margin-top: 12px">
+        <a href="{{ url_for('admin.user_detail', user_id=user['id']) }}">
+          Voir le profil
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <p>Aucun utilisateur enregistré.</p>
+  {% endif %}
+</section>
+
+{% endblock %}
