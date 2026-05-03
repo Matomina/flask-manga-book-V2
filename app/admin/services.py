@@ -23,6 +23,13 @@ VALID_RELEASE_DAYS = {
     "Dimanche",
     "Sans jour fixe",
 }
+VALID_ARTICLE_UNIVERSES = {
+    "naruto",
+    "jujutsu_kaisen",
+    "one_piece",
+    "demon_slayer",
+    "dragon_ball",
+}
 UPLOAD_FOLDER = "uploads"
 
 
@@ -265,6 +272,9 @@ def validate_article_data(
 
     if genres not in VALID_ARTICLE_GENRES:
         errors.append("Genre invalide.")
+
+    if universe is not None and universe not in VALID_ARTICLE_UNIVERSES:
+        errors.append("Univers invalide.")
 
     if release_day is not None and release_day not in VALID_RELEASE_DAYS:
         errors.append("Jour de sortie invalide.")

@@ -248,6 +248,47 @@ def test_admin_article_create_invalid_returns_400(client, auth, db):
     assert count_after == count_before
 
 
+def test_admin_article_create_invalid_universe_returns_400(
+    client,
+    auth,
+    db,
+    monkeypatch,
+):
+    auth.login_as_admin()
+
+    count_before = db.execute("SELECT COUNT(*) AS count FROM articles").fetchone()[
+        "count"
+    ]
+
+    monkeypatch.setattr(
+        "app.admin.routes.save_image",
+        lambda _file: "uploads/invalid-universe.webp",
+    )
+
+    response = client.post(
+        "/admin/articles/create",
+        data={
+            "name": "Article univers invalide",
+            "genres": "manga",
+            "universe": "bleach",
+            "price": "9.90",
+            "stock": "5",
+            "release_day": "Lundi",
+            "image": (BytesIO(b"fake-image"), "invalid.webp"),
+        },
+        content_type="multipart/form-data",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 400
+
+    count_after = db.execute("SELECT COUNT(*) AS count FROM articles").fetchone()[
+        "count"
+    ]
+
+    assert count_after == count_before
+
+
 def test_admin_article_create_invalid_image_format_returns_400(
     client,
     auth,
@@ -370,6 +411,49 @@ def test_admin_article_edit_invalid_returns_400(client, auth, db):
     ).fetchone()
     assert after is not None
     assert after["name"] == before["name"]
+
+
+def test_admin_article_edit_invalid_universe_returns_400(client, auth, db):
+    before = db.execute(
+        """
+        SELECT name, universe
+        FROM articles
+        WHERE id = ?
+        """,
+        (1,),
+    ).fetchone()
+
+    assert before is not None
+
+    auth.login_as_admin()
+
+    response = client.post(
+        "/admin/articles/1/edit",
+        data={
+            "name": "Article univers invalide edit",
+            "genres": "manga",
+            "universe": "bleach",
+            "price": "9.90",
+            "stock": "5",
+            "release_day": "Lundi",
+        },
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 400
+
+    after = db.execute(
+        """
+        SELECT name, universe
+        FROM articles
+        WHERE id = ?
+        """,
+        (1,),
+    ).fetchone()
+
+    assert after is not None
+    assert after["name"] == before["name"]
+    assert after["universe"] == before["universe"]
 
 
 def test_admin_article_edit_404(client, auth):
