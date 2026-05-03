@@ -1,31 +1,25 @@
 {% extends "base.html" %} {% block title %}Message contact - Admin{% endblock %}
 {% block content %}
+<section class="admin-page admin-contact-detail">
+  <header class="admin-page-header">
+    <div>
+      <h2>{{ message["sujet"] }}</h2>
+      <p>Consultez le détail du message envoyé via le support MangaBook.</p>
+    </div>
 
-<section class="admin-contact-detail">
-  <p>
-    <a href="{{ url_for('admin.contact_list') }}"> ← Retour aux messages </a>
-  </p>
+    <div class="admin-page-header__actions">
+      <a class="btn btn-secondary" href="{{ url_for('admin.contact_list') }}">
+        ← Retour aux messages
+      </a>
+    </div>
+  </header>
 
-  <article
-    style="
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 16px;
-      max-width: 800px;
-    "
-  >
-    <header
-      style="
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-      "
-    >
+  <article class="admin-card admin-contact-detail-card">
+    <header class="admin-contact-detail-card__header">
       <div>
-        <h2>{{ message["sujet"] }}</h2>
+        <h3 class="admin-contact-detail-card__title">{{ message["sujet"] }}</h3>
 
-        <p>
+        <p class="admin-contact-detail-card__meta">
           <strong>ID message :</strong>
           {{ message["id"] }}
         </p>
@@ -33,93 +27,74 @@
 
       <div>
         {% if message["status"] == "read" %}
-        <span
-          style="
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #2e7d32;
-            border-radius: 999px;
-          "
-        >
-          Lu
-        </span>
+        <span class="admin-badge admin-badge--read">Lu</span>
         {% else %}
-        <span
-          style="
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #c77700;
-            border-radius: 999px;
-          "
-        >
-          Non lu
-        </span>
+        <span class="admin-badge admin-badge--unread">Non lu</span>
         {% endif %}
       </div>
     </header>
 
-    <hr />
+    <section class="admin-detail-section">
+      <div class="admin-section-header">
+        <h3>Informations</h3>
+      </div>
 
-    <section
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 8px 16px;
-      "
-    >
-      <p>
-        <strong>Email utilisateur :</strong>
-        {{ message["email"] or "Utilisateur supprimé / inconnu" }}
-      </p>
+      <div class="admin-detail-grid">
+        <div class="admin-info-item">
+          <span>Email utilisateur</span>
+          <strong
+            >{{ message["email"] or "Utilisateur supprimé / inconnu" }}</strong
+          >
+        </div>
 
-      <p>
-        <strong>Statut :</strong>
-        {% if message["status"] == "read" %} Lu {% else %} Non lu {% endif %}
-      </p>
+        <div class="admin-info-item">
+          <span>Statut</span>
+          <strong>
+            {% if message["status"] == "read" %} Lu {% else %} Non lu {% endif
+            %}
+          </strong>
+        </div>
 
-      <p>
-        <strong>Date d’envoi :</strong>
-        {{ message["created_at"] }}
-      </p>
-    </section>
-
-    <hr />
-
-    <section>
-      <h3>Message</h3>
-
-      <div
-        style="
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          padding: 14px;
-          white-space: pre-wrap;
-        "
-      >
-        {{ message["message"] }}
+        <div class="admin-info-item">
+          <span>Date d’envoi</span>
+          <strong>{{ message["created_at"] }}</strong>
+        </div>
       </div>
     </section>
 
-    <hr />
+    <section class="admin-detail-section">
+      <div class="admin-section-header">
+        <h3>Message</h3>
+      </div>
 
-    <section>
-      <h3>Actions</h3>
+      <div class="admin-message-content">{{ message["message"] }}</div>
+    </section>
 
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px">
-        <a href="{{ url_for('admin.contact_list') }}">
+    <section class="admin-detail-section">
+      <div class="admin-section-header">
+        <h3>Actions</h3>
+      </div>
+
+      <div class="admin-table__actions">
+        <a class="btn btn-secondary" href="{{ url_for('admin.contact_list') }}">
           Retour à tous les messages
         </a>
 
-        <a href="{{ url_for('admin.contact_list', status='unread') }}">
+        <a
+          class="btn btn-secondary"
+          href="{{ url_for('admin.contact_list', status='unread') }}"
+        >
           Voir les non lus
         </a>
 
-        <a href="{{ url_for('admin.contact_list', status='read') }}">
+        <a
+          class="btn btn-secondary"
+          href="{{ url_for('admin.contact_list', status='read') }}"
+        >
           Voir les lus
         </a>
       </div>
     </section>
   </article>
 </section>
-
 {% endblock %}

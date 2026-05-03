@@ -1,84 +1,52 @@
 {% extends "base.html" %} {% block title %}Articles Admin - MangaBook V2{%
 endblock %} {% block content %}
+<section class="admin-page admin-articles-page">
+  <header class="admin-page-header">
+    <div>
+      <h2>Gestion des articles</h2>
+      <p>
+        Gérez les articles du catalogue MangaBook : stock, univers, jour de
+        sortie, modification et suppression.
+      </p>
+    </div>
 
-<section class="admin-articles-page">
-  <header class="admin-articles-page__header">
-    <h2>Gestion des articles</h2>
-    <p>
-      Gérez les articles du catalogue MangaBook : stock, univers, jour de
-      sortie, modification et suppression.
-    </p>
+    <div class="admin-page-header__actions">
+      <a class="btn btn-primary" href="{{ url_for('admin.article_create') }}">
+        ➕ Créer un article
+      </a>
+    </div>
   </header>
 
-  <p>
-    <a href="{{ url_for('admin.article_create') }}"> ➕ Créer un article </a>
-  </p>
-
   {% if articles %}
-  <section style="display: flex; flex-direction: column; gap: 12px">
+  <section class="admin-articles-list" aria-label="Liste des articles">
     {% for article in articles %}
-    <article style="border: 1px solid #ccc; border-radius: 8px; padding: 12px">
-      <header
-        style="
-          display: flex;
-          justify-content: space-between;
-          gap: 12px;
-          flex-wrap: wrap;
-        "
-      >
+    <article class="admin-card admin-article-card">
+      <header class="admin-article-card__header">
         <div>
-          <h3 style="margin: 0 0 8px 0">{{ article["name"] }}</h3>
+          <h3 class="admin-article-card__title">{{ article["name"] }}</h3>
 
-          <p style="margin: 0"><strong>ID :</strong> {{ article["id"] }}</p>
+          <p class="admin-article-card__meta">
+            <strong>ID :</strong>
+            {{ article["id"] }}
+          </p>
         </div>
 
         <div>
           {% if article["stock"] <= 0 %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #b00020;
-              border-radius: 999px;
-            "
-          >
+          <span class="admin-badge admin-badge--stock-out">
             Rupture de stock
           </span>
           {% elif article["stock"] <= 5 %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #c77700;
-              border-radius: 999px;
-            "
-          >
-            Stock faible
-          </span>
+          <span class="admin-badge admin-badge--stock-low"> Stock faible </span>
           {% else %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #2e7d32;
-              border-radius: 999px;
-            "
-          >
+          <span class="admin-badge admin-badge--stock-ok">
             Stock disponible
           </span>
           {% endif %}
         </div>
       </header>
 
-      <hr />
-
-      <div
-        style="
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 8px 16px;
-        "
-      >
+      <div class="admin-article-card__infos">
         <p>
           <strong>Genre :</strong>
           {{ article["genres"] }}
@@ -86,8 +54,7 @@ endblock %} {% block content %}
 
         <p>
           <strong>Univers :</strong>
-          {% if article["universe"] %} {{ article["universe"] }} {% else %} Non
-          renseigné {% endif %}
+          {{ article["universe"] or "Non renseigné" }}
         </p>
 
         <p>
@@ -102,8 +69,7 @@ endblock %} {% block content %}
 
         <p>
           <strong>Jour de sortie :</strong>
-          {% if article["release_day"] %} {{ article["release_day"] }} {% else
-          %} Non renseigné {% endif %}
+          {{ article["release_day"] or "Non renseigné" }}
         </p>
 
         <p>
@@ -112,31 +78,34 @@ endblock %} {% block content %}
         </p>
       </div>
 
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px">
+      <div class="admin-article-card__actions">
         <a
+          class="btn btn-secondary"
           href="{{ url_for('admin.article_detail', article_id=article['id']) }}"
         >
           Voir
         </a>
 
-        <a href="{{ url_for('admin.article_edit', article_id=article['id']) }}">
+        <a
+          class="btn btn-primary"
+          href="{{ url_for('admin.article_edit', article_id=article['id']) }}"
+        >
           Modifier
         </a>
 
         <form
+          class="admin-inline-form"
           action="{{ url_for('admin.article_delete', article_id=article['id']) }}"
           method="post"
-          style="display: inline"
         >
-          <button type="submit">Supprimer</button>
+          <button class="btn btn-danger" type="submit">Supprimer</button>
         </form>
       </div>
     </article>
     {% endfor %}
   </section>
   {% else %}
-  <p>Aucun article disponible.</p>
+  <div class="admin-empty-state">Aucun article disponible.</div>
   {% endif %}
 </section>
-
 {% endblock %}

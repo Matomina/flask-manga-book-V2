@@ -1,47 +1,58 @@
 {% extends "base.html" %} {% block title %}Messages Admin - MangaBook V2{%
 endblock %} {% block content %}
-
-<section class="admin-contacts-page">
-  <header>
-    <h2>Messages de contact</h2>
-    <p>
-      Consultez les messages envoyés par les utilisateurs via le support
-      MangaBook.
-    </p>
+<section class="admin-page admin-contacts-page">
+  <header class="admin-page-header">
+    <div>
+      <h2>Messages de contact</h2>
+      <p>
+        Consultez les messages envoyés par les utilisateurs via le support
+        MangaBook.
+      </p>
+    </div>
   </header>
 
-  <nav style="display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0">
-    <a href="{{ url_for('admin.contact_list') }}"> Tous </a>
+  <section class="admin-contacts-filters">
+    <div class="admin-section-header">
+      <h3>Filtres</h3>
+    </div>
 
-    <a href="{{ url_for('admin.contact_list', status='unread') }}"> Non lus </a>
+    <nav class="admin-filters-nav" aria-label="Filtres des messages de contact">
+      <a class="btn btn-secondary" href="{{ url_for('admin.contact_list') }}">
+        Tous
+      </a>
 
-    <a href="{{ url_for('admin.contact_list', status='read') }}"> Lus </a>
-  </nav>
+      <a
+        class="btn btn-secondary"
+        href="{{ url_for('admin.contact_list', status='unread') }}"
+      >
+        Non lus
+      </a>
 
-  <p>
-    Filtre actif :
-    <strong>
+      <a
+        class="btn btn-secondary"
+        href="{{ url_for('admin.contact_list', status='read') }}"
+      >
+        Lus
+      </a>
+    </nav>
+
+    <p class="admin-active-filter">
+      <strong>Filtre actif :</strong>
+
       {% if status_filter == "unread" %} Non lus {% elif status_filter == "read"
       %} Lus {% else %} Tous {% endif %}
-    </strong>
-  </p>
+    </p>
+  </section>
 
   {% if messages %}
-  <section style="display: flex; flex-direction: column; gap: 12px">
+  <section class="admin-contacts-list" aria-label="Liste des messages">
     {% for msg in messages %}
-    <article style="border: 1px solid #ccc; border-radius: 8px; padding: 12px">
-      <header
-        style="
-          display: flex;
-          justify-content: space-between;
-          gap: 12px;
-          flex-wrap: wrap;
-        "
-      >
+    <article class="admin-card admin-contact-card">
+      <header class="admin-contact-card__header">
         <div>
-          <h3 style="margin: 0 0 8px 0">{{ msg["sujet"] }}</h3>
+          <h3 class="admin-contact-card__title">{{ msg["sujet"] }}</h3>
 
-          <p style="margin: 0">
+          <p class="admin-contact-card__meta">
             <strong>Email :</strong>
             {{ msg["email"] or "Utilisateur supprimé / inconnu" }}
           </p>
@@ -49,50 +60,38 @@ endblock %} {% block content %}
 
         <div>
           {% if msg["status"] == "read" %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #2e7d32;
-              border-radius: 999px;
-            "
-          >
-            Lu
-          </span>
+          <span class="admin-badge admin-badge--read">Lu</span>
           {% else %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #c77700;
-              border-radius: 999px;
-            "
-          >
-            Non lu
-          </span>
+          <span class="admin-badge admin-badge--unread">Non lu</span>
           {% endif %}
         </div>
       </header>
 
-      <p>
-        <strong>Date :</strong>
-        {{ msg["created_at"] }}
-      </p>
+      <div class="admin-contact-card__body">
+        <p class="admin-contact-card__date">
+          <strong>Date :</strong>
+          {{ msg["created_at"] }}
+        </p>
 
-      <p>
-        {{ msg["message"][:140] }} {% if msg["message"]|length > 140 %}...{%
-        endif %}
-      </p>
+        <p class="admin-contact-card__excerpt">
+          {{ msg["message"][:140] }}{% if msg["message"]|length > 140 %}...{%
+          endif %}
+        </p>
+      </div>
 
-      <a href="{{ url_for('admin.contact_detail', contact_id=msg['id']) }}">
-        Voir le message
-      </a>
+      <div class="admin-contact-card__actions">
+        <a
+          class="btn btn-primary"
+          href="{{ url_for('admin.contact_detail', contact_id=msg['id']) }}"
+        >
+          Voir le message
+        </a>
+      </div>
     </article>
     {% endfor %}
   </section>
   {% else %}
-  <p>Aucun message pour ce filtre.</p>
+  <div class="admin-empty-state">Aucun message pour ce filtre.</div>
   {% endif %}
 </section>
-
 {% endblock %}

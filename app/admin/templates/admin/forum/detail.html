@@ -1,7 +1,6 @@
 {% extends "base.html" %} {% block title %}Administration - Sujet forum{%
 endblock %} {% block content %}
-
-<section class="admin-forum-detail">
+<section class="admin-page admin-forum-detail">
   <header class="admin-page-header">
     <div>
       <h2>{{ topic.title }}</h2>
@@ -32,9 +31,20 @@ endblock %} {% block content %}
     </div>
   </header>
 
-  <article class="admin-forum-topic-card">
+  <article class="admin-card admin-forum-topic-card">
     <header class="admin-forum-topic-card__header">
-      <h3>Sujet principal</h3>
+      <div>
+        <h3>Sujet principal</h3>
+
+        <p>
+          Par {{ topic.author_first_name }} {{ topic.author_last_name }} · {{
+          topic.created_at }}
+        </p>
+      </div>
+
+      <span class="admin-badge admin-badge--neutral">
+        {{ topic.author_role }}
+      </span>
     </header>
 
     <div class="admin-forum-topic-card__content">
@@ -55,12 +65,13 @@ endblock %} {% block content %}
     {% if replies %}
     <div class="admin-forum-replies__list">
       {% for reply in replies %}
-      <article class="admin-forum-reply-card">
+      <article class="admin-card admin-forum-reply-card">
         <header class="admin-forum-reply-card__header">
           <div>
             <strong>
               {{ reply.author_first_name }} {{ reply.author_last_name }}
             </strong>
+
             <p>Rôle : {{ reply.author_role }} — {{ reply.created_at }}</p>
           </div>
 
@@ -89,5 +100,4 @@ endblock %} {% block content %}
     {% endif %}
   </section>
 </section>
-
 {% endblock %}

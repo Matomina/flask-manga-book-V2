@@ -1,0 +1,112 @@
+/* =========================
+   MangaBook V2 — Base neutre
+   ========================= */
+
+/* =========================
+   Tokens communs
+   ========================= */
+
+:root {
+  --mb-font-main:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --mb-white: #ffffff;
+  --mb-black: #111827;
+
+  --mb-gray-50: #f9fafb;
+  --mb-gray-100: #f3f4f6;
+  --mb-gray-200: #e5e7eb;
+  --mb-gray-300: #d1d5db;
+  --mb-gray-500: #6b7280;
+  --mb-gray-700: #374151;
+  --mb-gray-900: #111827;
+
+  --mb-blue-600: #2563eb;
+  --mb-blue-700: #1d4ed8;
+  --mb-red-600: #dc2626;
+  --mb-red-700: #b91c1c;
+  --mb-green-700: #15803d;
+  --mb-orange-700: #b45309;
+
+  --mb-radius-sm: 6px;
+  --mb-radius-md: 10px;
+  --mb-radius-lg: 18px;
+
+  --mb-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --mb-shadow-md: 0 8px 30px rgba(15, 23, 42, 0.08);
+
+  --mb-container: 1120px;
+}
+
+/* =========================
+   Reset minimal
+   ========================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  font-family: var(--mb-font-main);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+/* =========================
+   Accessibilité
+   ========================= */
+
+:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+/* =========================
+   Utilitaires simples
+   ========================= */
+
+.mb-container {
+  width: min(100% - 32px, var(--mb-container));
+  margin-inline: auto;
+}
+
+.mb-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+}

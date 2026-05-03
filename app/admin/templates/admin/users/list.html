@@ -1,32 +1,24 @@
 {% extends "base.html" %} {% block title %}Utilisateurs Admin - MangaBook V2{%
 endblock %} {% block content %}
-
-<section class="admin-users-page">
-  <header>
-    <h2>Gestion des utilisateurs</h2>
-    <p>Consultez les comptes utilisateurs enregistrés sur MangaBook.</p>
+<section class="admin-page admin-users-page">
+  <header class="admin-page-header">
+    <div>
+      <h2>Gestion des utilisateurs</h2>
+      <p>Consultez les comptes utilisateurs enregistrés sur MangaBook.</p>
+    </div>
   </header>
 
   {% if users %}
-  <section
-    style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px"
-  >
+  <section class="admin-users-list" aria-label="Liste des utilisateurs">
     {% for user in users %}
-    <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
-      <header
-        style="
-          display: flex;
-          justify-content: space-between;
-          gap: 12px;
-          flex-wrap: wrap;
-        "
-      >
+    <article class="admin-card admin-user-card">
+      <header class="admin-user-card__header">
         <div>
-          <h3 style="margin: 0 0 8px 0">
+          <h3 class="admin-user-card__title">
             {{ user["first_name"] }} {{ user["last_name"] }}
           </h3>
 
-          <p style="margin: 0">
+          <p class="admin-user-card__meta">
             <strong>Email :</strong>
             {{ user["email"] }}
           </p>
@@ -34,40 +26,14 @@ endblock %} {% block content %}
 
         <div>
           {% if user["role"] == "admin" %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #7b1fa2;
-              border-radius: 999px;
-            "
-          >
-            Admin
-          </span>
+          <span class="admin-badge admin-badge--admin">Admin</span>
           {% else %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #1976d2;
-              border-radius: 999px;
-            "
-          >
-            Utilisateur
-          </span>
+          <span class="admin-badge admin-badge--user">Utilisateur</span>
           {% endif %}
         </div>
       </header>
 
-      <hr />
-
-      <section
-        style="
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 8px 16px;
-        "
-      >
+      <div class="admin-user-card__infos">
         <p>
           <strong>Téléphone :</strong>
           {{ user["phone"] or "Non renseigné" }}
@@ -82,10 +48,13 @@ endblock %} {% block content %}
           <strong>Créé le :</strong>
           {{ user["created_at"] }}
         </p>
-      </section>
+      </div>
 
-      <div style="margin-top: 12px">
-        <a href="{{ url_for('admin.user_detail', user_id=user['id']) }}">
+      <div class="admin-user-card__actions">
+        <a
+          class="btn btn-primary"
+          href="{{ url_for('admin.user_detail', user_id=user['id']) }}"
+        >
           Voir le profil
         </a>
       </div>
@@ -93,8 +62,7 @@ endblock %} {% block content %}
     {% endfor %}
   </section>
   {% else %}
-  <p>Aucun utilisateur enregistré.</p>
+  <div class="admin-empty-state">Aucun utilisateur enregistré.</div>
   {% endif %}
 </section>
-
 {% endblock %}

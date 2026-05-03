@@ -1,64 +1,79 @@
 {% extends "base.html" %} {% block title %}Commandes Admin - MangaBook V2{%
 endblock %} {% block content %}
-
-<section class="admin-orders-page">
-  <header>
-    <h2>Gestion des commandes</h2>
-    <p>Consultez les commandes enregistrées sur MangaBook.</p>
+<section class="admin-page admin-orders-page">
+  <header class="admin-page-header">
+    <div>
+      <h2>Gestion des commandes</h2>
+      <p>Consultez les commandes enregistrées sur MangaBook.</p>
+    </div>
   </header>
 
-  <section style="margin: 20px 0">
-    <h3>Filtres</h3>
+  <section class="admin-orders-filters">
+    <div class="admin-section-header">
+      <h3>Filtres</h3>
+    </div>
 
-    <nav style="display: flex; gap: 12px; flex-wrap: wrap">
-      <a href="{{ url_for('admin.orders_list') }}"> Tous </a>
+    <nav class="admin-filters-nav" aria-label="Filtres des commandes">
+      <a class="btn btn-secondary" href="{{ url_for('admin.orders_list') }}">
+        Tous
+      </a>
 
-      <a href="{{ url_for('admin.orders_list', status='pending') }}">
+      <a
+        class="btn btn-secondary"
+        href="{{ url_for('admin.orders_list', status='pending') }}"
+      >
         En attente
       </a>
 
-      <a href="{{ url_for('admin.orders_list', status='paid') }}"> Payées </a>
+      <a
+        class="btn btn-secondary"
+        href="{{ url_for('admin.orders_list', status='paid') }}"
+      >
+        Payées
+      </a>
 
-      <a href="{{ url_for('admin.orders_list', status='shipped') }}">
+      <a
+        class="btn btn-secondary"
+        href="{{ url_for('admin.orders_list', status='shipped') }}"
+      >
         Expédiées
       </a>
 
-      <a href="{{ url_for('admin.orders_list', status='delivered') }}">
+      <a
+        class="btn btn-secondary"
+        href="{{ url_for('admin.orders_list', status='delivered') }}"
+      >
         Livrées
       </a>
 
-      <a href="{{ url_for('admin.orders_list', status='cancelled') }}">
+      <a
+        class="btn btn-secondary"
+        href="{{ url_for('admin.orders_list', status='cancelled') }}"
+      >
         Annulées
       </a>
     </nav>
 
-    <p style="margin-top: 12px">
+    <p class="admin-active-filter">
       <strong>Filtre actif :</strong>
       {{ status_filter }}
     </p>
   </section>
 
   {% if orders %}
-  <section style="display: flex; flex-direction: column; gap: 12px">
+  <section class="admin-orders-list" aria-label="Liste des commandes">
     {% for order in orders %}
-    <article style="border: 1px solid #ccc; border-radius: 10px; padding: 16px">
-      <header
-        style="
-          display: flex;
-          justify-content: space-between;
-          gap: 12px;
-          flex-wrap: wrap;
-        "
-      >
+    <article class="admin-card admin-order-card">
+      <header class="admin-order-card__header">
         <div>
-          <h3 style="margin: 0 0 8px 0">Commande #{{ order["id"] }}</h3>
+          <h3 class="admin-order-card__title">Commande #{{ order["id"] }}</h3>
 
-          <p style="margin: 0">
+          <p class="admin-order-card__meta">
             <strong>Client :</strong>
             {{ order["first_name"] }} {{ order["last_name"] }}
           </p>
 
-          <p style="margin: 4px 0 0">
+          <p class="admin-order-card__meta">
             <strong>Email :</strong>
             {{ order["email"] }}
           </p>
@@ -66,84 +81,24 @@ endblock %} {% block content %}
 
         <div>
           {% if order["status"] == "pending" %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #f9a825;
-              border-radius: 999px;
-            "
-          >
-            En attente
-          </span>
+          <span class="admin-badge admin-badge--pending">En attente</span>
           {% elif order["status"] == "paid" %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #2e7d32;
-              border-radius: 999px;
-            "
-          >
-            Payée
-          </span>
+          <span class="admin-badge admin-badge--paid">Payée</span>
           {% elif order["status"] == "shipped" %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #1976d2;
-              border-radius: 999px;
-            "
-          >
-            Expédiée
-          </span>
+          <span class="admin-badge admin-badge--shipped">Expédiée</span>
           {% elif order["status"] == "delivered" %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #00897b;
-              border-radius: 999px;
-            "
-          >
-            Livrée
-          </span>
+          <span class="admin-badge admin-badge--delivered">Livrée</span>
           {% elif order["status"] == "cancelled" %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #c62828;
-              border-radius: 999px;
-            "
-          >
-            Annulée
-          </span>
+          <span class="admin-badge admin-badge--cancelled">Annulée</span>
           {% else %}
-          <span
-            style="
-              display: inline-block;
-              padding: 4px 8px;
-              border: 1px solid #777;
-              border-radius: 999px;
-            "
-          >
+          <span class="admin-badge admin-badge--neutral">
             {{ order["status"] }}
           </span>
           {% endif %}
         </div>
       </header>
 
-      <hr />
-
-      <section
-        style="
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 8px 16px;
-        "
-      >
+      <div class="admin-order-card__infos">
         <p>
           <strong>Total :</strong>
           {{ order["total_amount"] }} €
@@ -153,10 +108,13 @@ endblock %} {% block content %}
           <strong>Date :</strong>
           {{ order["created_at"] }}
         </p>
-      </section>
+      </div>
 
-      <div style="margin-top: 12px">
-        <a href="{{ url_for('admin.order_detail', order_id=order['id']) }}">
+      <div class="admin-order-card__actions">
+        <a
+          class="btn btn-primary"
+          href="{{ url_for('admin.order_detail', order_id=order['id']) }}"
+        >
           Voir la commande
         </a>
       </div>
@@ -164,8 +122,7 @@ endblock %} {% block content %}
     {% endfor %}
   </section>
   {% else %}
-  <p>Aucune commande trouvée.</p>
+  <div class="admin-empty-state">Aucune commande trouvée.</div>
   {% endif %}
 </section>
-
 {% endblock %}

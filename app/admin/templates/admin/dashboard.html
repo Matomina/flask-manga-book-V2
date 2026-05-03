@@ -1,159 +1,141 @@
 {% extends "base.html" %} {% block title %}Dashboard Admin - MangaBook V2{%
 endblock %} {% block content %}
-
-<section class="admin-dashboard">
+<section class="admin-page admin-dashboard">
   <header class="admin-dashboard__header">
-    <h2>Dashboard Admin</h2>
-    <p>Vue d’ensemble de l’administration MangaBook.</p>
+    <div>
+      <h2>Dashboard Admin</h2>
+      <p>Vue d’ensemble de l’administration MangaBook.</p>
+    </div>
   </header>
 
   <section class="admin-dashboard__stats">
-    <h3>Statistiques générales</h3>
+    <div class="admin-section-header">
+      <h3>Statistiques générales</h3>
+    </div>
 
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 16px;
-        margin: 20px 0;
-      "
-    >
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+    <div class="admin-dashboard__grid">
+      <article class="admin-card">
         <h4>Utilisateurs</h4>
-        <p style="font-size: 24px; font-weight: bold">
-          {{ stats.get("users", 0) }}
-        </p>
+        <p class="admin-card__value">{{ stats.get("users", 0) }}</p>
       </article>
 
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+      <article class="admin-card">
         <h4>Articles</h4>
-        <p style="font-size: 24px; font-weight: bold">
-          {{ stats.get("articles", 0) }}
-        </p>
+        <p class="admin-card__value">{{ stats.get("articles", 0) }}</p>
       </article>
 
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+      <article class="admin-card">
         <h4>Commandes</h4>
-        <p style="font-size: 24px; font-weight: bold">
-          {{ stats.get("orders", 0) }}
-        </p>
+        <p class="admin-card__value">{{ stats.get("orders", 0) }}</p>
       </article>
 
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+      <article class="admin-card">
         <h4>Messages</h4>
-        <p style="font-size: 24px; font-weight: bold">
-          {{ stats.get("contacts", 0) }}
-        </p>
+        <p class="admin-card__value">{{ stats.get("contacts", 0) }}</p>
       </article>
     </div>
   </section>
 
   <section class="admin-dashboard__alerts">
-    <h3>Points de vigilance</h3>
+    <div class="admin-section-header">
+      <h3>Points de vigilance</h3>
+    </div>
 
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 16px;
-        margin: 20px 0;
-      "
-    >
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+    <div class="admin-dashboard__grid">
+      <article class="admin-card">
         <h4>Messages non lus</h4>
-        <p style="font-size: 24px; font-weight: bold">
-          {{ stats.get("unread_contacts", 0) }}
-        </p>
+        <p class="admin-card__value">{{ stats.get("unread_contacts", 0) }}</p>
 
-        <a href="{{ url_for('admin.contact_list') }}"> Voir les messages </a>
+        <a
+          class="admin-card__link btn btn-primary"
+          href="{{ url_for('admin.contact_list') }}"
+        >
+          Voir les messages
+        </a>
       </article>
 
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+      <article class="admin-card">
         <h4>Articles en stock faible</h4>
-        <p style="font-size: 24px; font-weight: bold">
+        <p class="admin-card__value">
           {{ stats.get("low_stock_articles", 0) }}
         </p>
 
-        <a href="{{ url_for('admin.articles_list') }}"> Gérer les articles </a>
+        <a
+          class="admin-card__link btn btn-primary"
+          href="{{ url_for('admin.articles_list') }}"
+        >
+          Gérer les articles
+        </a>
       </article>
 
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+      <article class="admin-card">
         <h4>Articles sans stock</h4>
-        <p style="font-size: 24px; font-weight: bold">
+        <p class="admin-card__value">
           {{ stats.get("out_of_stock_articles", 0) }}
         </p>
 
-        <a href="{{ url_for('admin.articles_list') }}"> Vérifier le stock </a>
+        <a
+          class="admin-card__link btn btn-primary"
+          href="{{ url_for('admin.articles_list') }}"
+        >
+          Vérifier le stock
+        </a>
       </article>
     </div>
   </section>
 
   <section class="admin-dashboard__forum">
-    <h3>Forum</h3>
+    <div class="admin-section-header">
+      <h3>Forum</h3>
+    </div>
 
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 16px;
-        margin: 20px 0;
-      "
-    >
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+    <div class="admin-dashboard__grid">
+      <article class="admin-card">
         <h4>Sujets forum</h4>
-        <p style="font-size: 24px; font-weight: bold">
-          {{ stats.get("forum_topics", 0) }}
-        </p>
+        <p class="admin-card__value">{{ stats.get("forum_topics", 0) }}</p>
       </article>
 
-      <article
-        style="border: 1px solid #ccc; border-radius: 10px; padding: 16px"
-      >
+      <article class="admin-card">
         <h4>Réponses forum</h4>
-        <p style="font-size: 24px; font-weight: bold">
-          {{ stats.get("forum_replies", 0) }}
-        </p>
+        <p class="admin-card__value">{{ stats.get("forum_replies", 0) }}</p>
       </article>
     </div>
   </section>
 
-  <hr />
+  <section class="admin-dashboard__actions">
+    <div class="admin-section-header">
+      <h3>Actions rapides</h3>
+    </div>
 
-  <section class="admin-dashboard__actions" style="margin-top: 20px">
-    <h3>Actions rapides</h3>
+    <nav class="admin-dashboard__nav" aria-label="Actions rapides admin">
+      <a class="btn btn-secondary" href="{{ url_for('admin.users_list') }}">
+        Gérer les utilisateurs
+      </a>
 
-    <nav style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px">
-      <a href="{{ url_for('admin.users_list') }}"> Gérer les utilisateurs </a>
+      <a class="btn btn-secondary" href="{{ url_for('admin.orders_list') }}">
+        Gérer les commandes
+      </a>
 
-      <a href="{{ url_for('admin.orders_list') }}"> Gérer les commandes </a>
+      <a class="btn btn-secondary" href="{{ url_for('admin.articles_list') }}">
+        Gérer les articles
+      </a>
 
-      <a href="{{ url_for('admin.articles_list') }}"> Gérer les articles </a>
+      <a class="btn btn-secondary" href="{{ url_for('admin.contact_list') }}">
+        Voir les messages
+      </a>
 
-      <a href="{{ url_for('admin.contact_list') }}"> Voir les messages </a>
+      <a class="btn btn-secondary" href="{{ url_for('admin.forum_list') }}">
+        Modération forum
+      </a>
 
-      <a href="{{ url_for('admin.forum_list') }}"> Modération forum </a>
+      <a class="btn btn-primary" href="{{ url_for('public.articles') }}">
+        Voir le catalogue public
+      </a>
 
-      <a href="{{ url_for('public.articles') }}"> Voir le catalogue public </a>
-
-      <a href="{{ url_for('public.planning') }}"> Voir le planning public </a>
+      <a class="btn btn-primary" href="{{ url_for('public.planning') }}">
+        Voir le planning public
+      </a>
     </nav>
   </section>
 </section>
-
 {% endblock %}
