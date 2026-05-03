@@ -19,7 +19,9 @@ from .services import (
     add_to_history,
     create_contact_message,
     get_article_by_id,
+    get_articles_grouped_by_release_day,
     get_featured_articles,
+    get_goodies_articles,
     get_user_favorites,
     get_user_history,
     remove_favorite,
@@ -85,6 +87,28 @@ def article_detail(article_id: int):
         add_to_history(user_id, article_id)
 
     return render_template("public/article_detail.html", article=article)
+
+
+# =========================
+# GOODIES / PLANNING
+# =========================
+
+
+@bp.route("/goodies")
+def goodies():
+    """Afficher les articles de type goodies."""
+    goodies_articles = get_goodies_articles()
+    return render_template("public/goodies.html", articles=goodies_articles)
+
+
+@bp.route("/planning")
+def planning():
+    """Afficher le planning des sorties par jour."""
+    grouped_articles = get_articles_grouped_by_release_day()
+    return render_template(
+        "public/planning.html",
+        grouped_articles=grouped_articles,
+    )
 
 
 # =========================

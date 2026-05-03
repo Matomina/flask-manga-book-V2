@@ -8,9 +8,12 @@
   <body>
     <header>
       <h1>MangaBook V2</h1>
+
       <nav>
         <a href="{{ url_for('public.home') }}">Accueil</a>
         <a href="{{ url_for('public.articles') }}">Catalogue</a>
+        <a href="{{ url_for('public.goodies') }}">Goodies</a>
+        <a href="{{ url_for('public.planning') }}">Planning</a>
         <a href="{{ url_for('public.favorites') }}">Favoris</a>
         <a href="{{ url_for('public.profile') }}">Profil</a>
         <a href="{{ url_for('public.history') }}">Historique</a>
@@ -20,6 +23,7 @@
         <a href="{{ url_for('forum.index') }}">Forum</a>
         <a href="{{ url_for('admin.dashboard') }}">Admin</a>
       </nav>
+
       <hr />
     </header>
 

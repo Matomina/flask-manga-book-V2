@@ -22,6 +22,17 @@ SELECT {ARTICLE_COLUMNS}
 FROM articles AS a
 """
 
+RELEASE_DAY_ORDER = [
+    "Lundi",
+    "Mardi",
+    "Mercredi",
+    "Jeudi",
+    "Vendredi",
+    "Samedi",
+    "Dimanche",
+    "Sans jour fixe",
+]
+
 
 def _execute_write(query: str, params: tuple = ()) -> None:
     """Exécuter une requête d'écriture et valider la transaction."""
@@ -113,6 +124,39 @@ def search_articles(
         """,
         tuple(params),
     ).fetchall()
+
+
+def get_goodies_articles() -> list[sqlite3.Row]:
+    """Récupérer les articles de type goodies."""
+    return search_articles(genre="goodies")
+
+
+def get_articles_grouped_by_release_day() -> dict[str, list[sqlite3.Row]]:
+    """Récupérer les articles groupés par jour de sortie."""
+    db = get_db()
+
+    rows = db.execute(
+        f"""
+        {ARTICLE_SELECT}
+        WHERE a.release_day IS NOT NULL
+        ORDER BY a.release_day ASC, a.created_at DESC, a.id DESC
+        """
+    ).fetchall()
+
+    grouped_articles: dict[str, list[sqlite3.Row]] = {
+        day: [] for day in RELEASE_DAY_ORDER
+    }
+
+    for article in rows:
+        release_day = article["release_day"] or "Sans jour fixe"
+
+        if release_day not in grouped_articles:
+            grouped_articles["Sans jour fixe"].append(article)
+            continue
+
+        grouped_articles[release_day].append(article)
+
+    return grouped_articles
 
 
 def get_featured_articles(limit: int = 8) -> list[sqlite3.Row]:

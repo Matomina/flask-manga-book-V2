@@ -1,0 +1,115 @@
+{% extends "base.html" %} {% block title %}Planning des sorties - MangaBook V2{%
+endblock %} {% block content %} {% set days = [ "Lundi", "Mardi", "Mercredi",
+"Jeudi", "Vendredi", "Samedi", "Dimanche", "Sans jour fixe" ] %}
+
+<section class="planning-page">
+  <header class="planning-page__header">
+    <h2>Planning des sorties</h2>
+    <p>Consultez les articles MangaBook organisés par jour de sortie.</p>
+  </header>
+
+  <div class="planning-page__topbar">
+    <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
+      Voir le catalogue
+    </a>
+
+    <a href="{{ url_for('public.goodies') }}" class="btn btn-secondary">
+      Voir les goodies
+    </a>
+  </div>
+
+  <section class="planning-list">
+    {% for day in days %} {% set articles = grouped_articles[day] if
+    grouped_articles and day in grouped_articles else [] %}
+
+    <article
+      class="planning-day"
+      style="
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 16px;
+      "
+    >
+      <header class="planning-day__header">
+        <h3>{{ day }}</h3>
+        <p>
+          {{ articles|length }} article{% if articles|length > 1 %}s{% endif %}
+        </p>
+      </header>
+
+      {% if articles %}
+      <div
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+          gap: 16px;
+        "
+      >
+        {% for article in articles %}
+        <article
+          style="border: 1px solid #ddd; padding: 12px; border-radius: 8px"
+        >
+          <h4>{{ article["name"] }}</h4>
+
+          {% if article["image"] %}
+          <img
+            src="{{ url_for('static', filename=article['image']) }}"
+            alt="{{ article['name'] }}"
+            style="
+              width: 100%;
+              max-height: 160px;
+              object-fit: cover;
+              border-radius: 6px;
+            "
+          />
+          {% endif %}
+
+          <p>
+            <strong>{{ article["price"] }} €</strong>
+          </p>
+
+          <p style="font-size: 14px">
+            {{ article["genres"] }} {% if article["universe"] %} • {{
+            article["universe"] }} {% endif %}
+          </p>
+
+          <p style="font-size: 13px">Stock : {{ article["stock"] }}</p>
+
+          <div
+            style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap"
+          >
+            <a
+              href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+            >
+              Voir le détail
+            </a>
+
+            {% if session.get("user_id") %} {% if article["id"] in favorites_ids
+            %}
+            <span>✔ Déjà en favori</span>
+            {% else %}
+            <form
+              method="post"
+              action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
+            >
+              <button type="submit">❤️ Favori</button>
+            </form>
+            {% endif %} {% else %}
+            <a href="{{ url_for('auth.login') }}">
+              Se connecter pour ajouter aux favoris
+            </a>
+            {% endif %}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p>Aucune sortie prévue ce jour.</p>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </section>
+</section>
+
+{% endblock %}

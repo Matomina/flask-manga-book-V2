@@ -6,7 +6,9 @@ from app.public.services import (
     create_contact_message,
     get_all_articles,
     get_article_by_id,
+    get_articles_grouped_by_release_day,
     get_featured_articles,
+    get_goodies_articles,
     get_user_favorites,
     get_user_history,
     remove_favorite,
@@ -52,6 +54,56 @@ def test_search_articles_without_filters_returns_articles(db, app):
     assert len(articles) > 0
     assert "id" in articles[0].keys()
     assert "name" in articles[0].keys()
+
+
+def test_get_goodies_articles_returns_only_goodies(db, app):
+    with app.app_context():
+        article_id = _create_catalog_article(
+            db,
+            name="Goodie test dédié",
+            genres="goodies",
+            universe="dragon_ball",
+            release_day="Dimanche",
+        )
+
+        articles = get_goodies_articles()
+
+    assert any(article["id"] == article_id for article in articles)
+    assert all(article["genres"] == "goodies" for article in articles)
+
+
+def test_get_articles_grouped_by_release_day_returns_expected_days(db, app):
+    with app.app_context():
+        grouped_articles = get_articles_grouped_by_release_day()
+
+    expected_days = [
+        "Lundi",
+        "Mardi",
+        "Mercredi",
+        "Jeudi",
+        "Vendredi",
+        "Samedi",
+        "Dimanche",
+        "Sans jour fixe",
+    ]
+
+    assert list(grouped_articles.keys()) == expected_days
+    assert all(isinstance(grouped_articles[day], list) for day in expected_days)
+
+
+def test_get_articles_grouped_by_release_day_contains_inserted_article(db, app):
+    with app.app_context():
+        article_id = _create_catalog_article(
+            db,
+            name="Planning samedi test",
+            genres="manga",
+            universe="naruto",
+            release_day="Samedi",
+        )
+
+        grouped_articles = get_articles_grouped_by_release_day()
+
+    assert any(article["id"] == article_id for article in grouped_articles["Samedi"])
 
 
 def test_search_articles_by_query(db, app):

@@ -71,6 +71,59 @@ def test_articles_page_passes_filters_to_search_service(client, monkeypatch):
     }
 
 
+# =========================
+# GOODIES / PLANNING
+# =========================
+
+
+def test_goodies_page(client):
+    response = client.get("/goodies")
+
+    assert response.status_code == 200
+
+
+def test_goodies_page_uses_goodies_service(client, monkeypatch):
+    called = {"value": False}
+
+    def fake_get_goodies_articles():
+        called["value"] = True
+        return []
+
+    monkeypatch.setattr(
+        "app.public.routes.get_goodies_articles",
+        fake_get_goodies_articles,
+    )
+
+    response = client.get("/goodies")
+
+    assert response.status_code == 200
+    assert called["value"] is True
+
+
+def test_planning_page(client):
+    response = client.get("/planning")
+
+    assert response.status_code == 200
+
+
+def test_planning_page_uses_grouped_release_day_service(client, monkeypatch):
+    called = {"value": False}
+
+    def fake_get_articles_grouped_by_release_day():
+        called["value"] = True
+        return {}
+
+    monkeypatch.setattr(
+        "app.public.routes.get_articles_grouped_by_release_day",
+        fake_get_articles_grouped_by_release_day,
+    )
+
+    response = client.get("/planning")
+
+    assert response.status_code == 200
+    assert called["value"] is True
+
+
 def test_article_detail_page(client):
     response = client.get("/articles/1")
     assert response.status_code == 200
