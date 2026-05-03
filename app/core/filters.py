@@ -4,7 +4,6 @@ from datetime import datetime
 
 from flask import Flask
 
-
 MONTHS_FR = {
     1: "janvier",
     2: "février",

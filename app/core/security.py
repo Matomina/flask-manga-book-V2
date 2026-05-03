@@ -5,7 +5,6 @@ from typing import Any, Callable, TypeVar
 
 from flask import flash, redirect, session, url_for
 
-
 F = TypeVar("F", bound=Callable[..., Any])
 
 

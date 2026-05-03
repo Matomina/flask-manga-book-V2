@@ -6,7 +6,6 @@ from pathlib import Path
 import click
 from flask import Flask, current_app, g
 
-
 BASE_DIR = Path(__file__).resolve().parent
 SCHEMA_PATH = BASE_DIR / "schema.sql"
 SEED_PATH = BASE_DIR / "seed.sql"

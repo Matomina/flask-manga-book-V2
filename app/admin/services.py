@@ -214,7 +214,14 @@ def update_article(article_id: int, data: dict[str, Any]) -> None:
     db.execute(
         """
         UPDATE articles
-        SET name = ?, genres = ?, universe = ?, image = ?, price = ?, stock = ?, release_day = ?
+        SET
+            name = ?,
+            genres = ?,
+            universe = ?,
+            image = ?,
+            price = ?,
+            stock = ?,
+            release_day = ?
         WHERE id = ?
         """,
         (

@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 INSTANCE_DIR = BASE_DIR / "instance"
 
@@ -27,4 +26,6 @@ class TestConfig(Config):
     DATABASE = str(INSTANCE_DIR / "test.sqlite")
 
     UPLOAD_FOLDER = "app/static/uploads"
+
+
 MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2MB

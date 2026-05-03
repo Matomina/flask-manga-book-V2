@@ -81,7 +81,15 @@ def test_get_dashboard_stats_counts_stock_alerts(app, db):
 
         db.execute(
             """
-            INSERT INTO articles (name, genres, universe, image, price, stock, release_day)
+            INSERT INTO articles (
+                name,
+                genres,
+                universe,
+                image,
+                price,
+                stock,
+                release_day
+            )
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
@@ -97,7 +105,15 @@ def test_get_dashboard_stats_counts_stock_alerts(app, db):
 
         db.execute(
             """
-            INSERT INTO articles (name, genres, universe, image, price, stock, release_day)
+            INSERT INTO articles (
+                name,
+                genres,
+                universe,
+                image,
+                price,
+                stock,
+                release_day
+            )
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
