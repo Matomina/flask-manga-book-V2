@@ -54,17 +54,27 @@ def _normalize_optional_str(value: Any) -> str | None:
 # =========================
 
 
-def get_all_contacts() -> list[sqlite3.Row]:
-    """Récupérer tous les messages de contact."""
+def get_all_contacts(status_filter: str = "all") -> list[sqlite3.Row]:
+    """Récupérer les messages de contact avec filtre optionnel."""
     db = get_db()
 
+    where_sql = ""
+    params: tuple = ()
+
+    if status_filter == "unread":
+        where_sql = "WHERE c.status != 'read'"
+    elif status_filter == "read":
+        where_sql = "WHERE c.status = 'read'"
+
     return db.execute(
-        """
+        f"""
         SELECT c.id, c.sujet, c.message, c.status, c.created_at, u.email
         FROM contact AS c
         LEFT JOIN user AS u ON u.id = c.user_id
+        {where_sql}
         ORDER BY c.created_at DESC, c.id DESC
-        """
+        """,
+        params,
     ).fetchall()
 
 

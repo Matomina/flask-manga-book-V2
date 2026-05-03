@@ -65,8 +65,19 @@ def dashboard():
 @bp.route("/contact", methods=["GET"])
 @admin_required
 def contact_list():
-    messages = get_all_contacts()
-    return render_template("admin/contacts/list.html", messages=messages)
+    """Afficher les messages de contact avec filtre de statut."""
+    status_filter = request.args.get("status", "all").strip()
+
+    if status_filter not in {"all", "unread", "read"}:
+        status_filter = "all"
+
+    messages = get_all_contacts(status_filter=status_filter)
+
+    return render_template(
+        "admin/contacts/list.html",
+        messages=messages,
+        status_filter=status_filter,
+    )
 
 
 @bp.route("/contact/<int:contact_id>", methods=["GET"])

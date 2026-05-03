@@ -1,27 +1,98 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Messages Admin - MangaBook V2{%
+endblock %} {% block content %}
 
-{% block title %}Messages Admin - MangaBook V2{% endblock %}
+<section class="admin-contacts-page">
+  <header>
+    <h2>Messages de contact</h2>
+    <p>
+      Consultez les messages envoyés par les utilisateurs via le support
+      MangaBook.
+    </p>
+  </header>
 
-{% block content %}
-<h2>Messages de contact</h2>
+  <nav style="display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0">
+    <a href="{{ url_for('admin.contact_list') }}"> Tous </a>
 
-{% if messages %}
-    <section style="display: flex; flex-direction: column; gap: 12px;">
-        {% for msg in messages %}
-            <article style="border: 1px solid #ccc; border-radius: 8px; padding: 12px;">
-                <h3 style="margin: 0 0 8px 0;">{{ msg["sujet"] }}</h3>
+    <a href="{{ url_for('admin.contact_list', status='unread') }}"> Non lus </a>
 
-                <p><strong>Email :</strong> {{ msg["email"] or "Utilisateur supprimé / inconnu" }}</p>
-                <p><strong>Statut :</strong> {{ msg["status"] }}</p>
-                <p><strong>Date :</strong> {{ msg["created_at"] }}</p>
+    <a href="{{ url_for('admin.contact_list', status='read') }}"> Lus </a>
+  </nav>
 
-                <p style="margin-top: 10px;">
-                    <a href="{{ url_for('admin.contact_detail', contact_id=msg['id']) }}">Voir le message</a>
-                </p>
-            </article>
-        {% endfor %}
-    </section>
-{% else %}
-    <p>Aucun message pour le moment.</p>
-{% endif %}
+  <p>
+    Filtre actif :
+    <strong>
+      {% if status_filter == "unread" %} Non lus {% elif status_filter == "read"
+      %} Lus {% else %} Tous {% endif %}
+    </strong>
+  </p>
+
+  {% if messages %}
+  <section style="display: flex; flex-direction: column; gap: 12px">
+    {% for msg in messages %}
+    <article style="border: 1px solid #ccc; border-radius: 8px; padding: 12px">
+      <header
+        style="
+          display: flex;
+          justify-content: space-between;
+          gap: 12px;
+          flex-wrap: wrap;
+        "
+      >
+        <div>
+          <h3 style="margin: 0 0 8px 0">{{ msg["sujet"] }}</h3>
+
+          <p style="margin: 0">
+            <strong>Email :</strong>
+            {{ msg["email"] or "Utilisateur supprimé / inconnu" }}
+          </p>
+        </div>
+
+        <div>
+          {% if msg["status"] == "read" %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #2e7d32;
+              border-radius: 999px;
+            "
+          >
+            Lu
+          </span>
+          {% else %}
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #c77700;
+              border-radius: 999px;
+            "
+          >
+            Non lu
+          </span>
+          {% endif %}
+        </div>
+      </header>
+
+      <p>
+        <strong>Date :</strong>
+        {{ msg["created_at"] }}
+      </p>
+
+      <p>
+        {{ msg["message"][:140] }} {% if msg["message"]|length > 140 %}...{%
+        endif %}
+      </p>
+
+      <a href="{{ url_for('admin.contact_detail', contact_id=msg['id']) }}">
+        Voir le message
+      </a>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <p>Aucun message pour ce filtre.</p>
+  {% endif %}
+</section>
+
 {% endblock %}

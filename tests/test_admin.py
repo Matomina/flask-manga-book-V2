@@ -4,6 +4,28 @@ from io import BytesIO
 
 from app.admin.services import get_dashboard_stats
 
+CONTACT_STATUS_PENDING = "pending"
+CONTACT_STATUS_READ = "read"
+
+
+def _insert_contact(
+    db,
+    *,
+    sujet: str,
+    message: str,
+    status: str = CONTACT_STATUS_PENDING,
+    user_id: int = 2,
+) -> int:
+    cursor = db.execute(
+        """
+        INSERT INTO contact (user_id, sujet, message, status)
+        VALUES (?, ?, ?, ?)
+        """,
+        (user_id, sujet, message, status),
+    )
+    db.commit()
+    return int(cursor.lastrowid)
+
 
 def test_admin_requires_login(client):
     response = client.get("/admin/", follow_redirects=False)
@@ -106,6 +128,11 @@ def test_admin_forbidden_for_regular_user(client, auth):
     assert "Location" in response.headers
 
 
+# =========================
+# CONTACTS ADMIN
+# =========================
+
+
 def test_admin_contact_list_admin(client, auth):
     auth.login_as_admin()
 
@@ -114,13 +141,108 @@ def test_admin_contact_list_admin(client, auth):
     assert response.status_code == 200
 
 
+def test_admin_contact_list_displays_enhanced_layout(client, auth, db):
+    _insert_contact(
+        db,
+        sujet="Message contact layout test",
+        message="Ceci est un message de test pour vérifier l’affichage admin.",
+        status=CONTACT_STATUS_PENDING,
+    )
+
+    auth.login_as_admin()
+
+    response = client.get("/admin/contact")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Messages de contact" in html
+    assert "Filtre actif" in html
+    assert "Tous" in html
+    assert "Non lus" in html
+    assert "Lus" in html
+    assert "Message contact layout test" in html
+    assert "Voir le message" in html
+
+
+def test_admin_contact_list_filter_unread(client, auth, db):
+    _insert_contact(
+        db,
+        sujet="Message lu filtre admin test",
+        message="Message déjà lu.",
+        status=CONTACT_STATUS_READ,
+    )
+    _insert_contact(
+        db,
+        sujet="Message non lu filtre admin test",
+        message="Message pas encore lu.",
+        status=CONTACT_STATUS_PENDING,
+    )
+
+    auth.login_as_admin()
+
+    response = client.get("/admin/contact?status=unread")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Message non lu filtre admin test" in html
+    assert "Message lu filtre admin test" not in html
+
+
+def test_admin_contact_list_filter_read(client, auth, db):
+    _insert_contact(
+        db,
+        sujet="Message lu uniquement admin test",
+        message="Message déjà lu.",
+        status=CONTACT_STATUS_READ,
+    )
+    _insert_contact(
+        db,
+        sujet="Message non lu uniquement admin test",
+        message="Message pas encore lu.",
+        status=CONTACT_STATUS_PENDING,
+    )
+
+    auth.login_as_admin()
+
+    response = client.get("/admin/contact?status=read")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Message lu uniquement admin test" in html
+    assert "Message non lu uniquement admin test" not in html
+
+
+def test_admin_contact_list_invalid_filter_falls_back_to_all(client, auth, db):
+    _insert_contact(
+        db,
+        sujet="Message filtre invalide lu test",
+        message="Message lu.",
+        status=CONTACT_STATUS_READ,
+    )
+    _insert_contact(
+        db,
+        sujet="Message filtre invalide non lu test",
+        message="Message non lu.",
+        status=CONTACT_STATUS_PENDING,
+    )
+
+    auth.login_as_admin()
+
+    response = client.get("/admin/contact?status=invalid")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Message filtre invalide lu test" in html
+    assert "Message filtre invalide non lu test" in html
+
+
 def test_admin_contact_detail_marks_as_read(client, auth, db):
     before = db.execute(
         "SELECT status FROM contact WHERE id = ?",
         (1,),
     ).fetchone()
     assert before is not None
-    assert before["status"] != "read"
+    assert before["status"] != CONTACT_STATUS_READ
 
     auth.login_as_admin()
     response = client.get("/admin/contact/1")
@@ -132,7 +254,32 @@ def test_admin_contact_detail_marks_as_read(client, auth, db):
         (1,),
     ).fetchone()
     assert after is not None
-    assert after["status"] == "read"
+    assert after["status"] == CONTACT_STATUS_READ
+
+
+def test_admin_contact_detail_displays_enhanced_layout(client, auth, db):
+    contact_id = _insert_contact(
+        db,
+        sujet="Message détail contact admin test",
+        message="Contenu complet du message de détail admin.",
+        status=CONTACT_STATUS_PENDING,
+    )
+
+    auth.login_as_admin()
+
+    response = client.get(f"/admin/contact/{contact_id}")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Message détail contact admin test" in html
+    assert "ID message" in html
+    assert "Email utilisateur" in html
+    assert "Statut" in html
+    assert "Date d’envoi" in html
+    assert "Contenu complet du message de détail admin." in html
+    assert "Retour à tous les messages" in html
+    assert "Voir les non lus" in html
+    assert "Voir les lus" in html
 
 
 def test_admin_contact_detail_404(client, auth):
@@ -141,6 +288,11 @@ def test_admin_contact_detail_404(client, auth):
     response = client.get("/admin/contact/999999")
 
     assert response.status_code == 404
+
+
+# =========================
+# ARTICLES ADMIN
+# =========================
 
 
 def test_admin_articles_list_admin(client, auth):
