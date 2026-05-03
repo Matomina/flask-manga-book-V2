@@ -1,61 +1,122 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}{{ article["name"] }} - MangaBook
+V2{% endblock %} {% block content %}
 
-{% block title %}{{ article["name"] }} - MangaBook V2{% endblock %}
+<section class="article-detail-page">
+  <div class="article-detail-page__topbar">
+    <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
+      ← Retour au catalogue
+    </a>
+  </div>
 
-{% block content %}
+  <article
+    class="article-detail-card"
+    style="
+      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: 10px;
+      max-width: 720px;
+    "
+  >
+    <header class="article-detail-card__header">
+      <h2>{{ article["name"] }}</h2>
 
-<p>
-    <a href="{{ url_for('public.articles') }}">← Retour au catalogue</a>
-</p>
+      <p>
+        <strong>{{ article["price"] }} €</strong>
+      </p>
+    </header>
 
-<article style="border: 1px solid #ccc; padding: 16px; border-radius: 10px; max-width: 500px;">
+    {% if article["image"] %}
+    <div class="article-detail-card__image">
+      <img
+        src="{{ url_for('static', filename=article['image']) }}"
+        alt="{{ article['name'] }}"
+        style="
+          width: 100%;
+          max-height: 320px;
+          object-fit: cover;
+          border-radius: 8px;
+        "
+      />
+    </div>
+    {% endif %}
 
-    <h2>{{ article["name"] }}</h2>
-
-    <p><strong>{{ article["price"] }} €</strong></p>
-
-    <p>
+    <section class="article-detail-card__meta">
+      <p>
+        <strong>Genre :</strong>
         {{ article["genres"] }}
-        {% if article["universe"] %}
-            • {{ article["universe"] }}
-        {% endif %}
-    </p>
+      </p>
 
-    <p>Stock : {{ article["stock"] }}</p>
+      {% if article["universe"] %}
+      <p>
+        <strong>Univers :</strong>
+        {{ article["universe"] }}
+      </p>
+      {% endif %}
 
-    {% if article["release_day"] %}
-        <p>Sortie : {{ article["release_day"] }}</p>
-    {% endif %}
+      <p>
+        <strong>Stock :</strong>
+        {{ article["stock"] }}
+      </p>
 
-    <p style="font-size: 13px;">
-        Image : {{ article["image"] }}
-    </p>
+      {% if article["release_day"] %}
+      <p>
+        <strong>Jour de sortie :</strong>
+        {{ article["release_day"] }}
+      </p>
+      {% endif %}
+    </section>
 
-    <hr>
+    {% if article["description"] %}
+    <section class="article-detail-card__description">
+      <h3>Description</h3>
 
-    <!-- FAVORIS -->
-    {% if session.get("user_id") %}
-
-        {% if article["id"] in favorites_ids %}
-            <p>✔ Déjà dans vos favoris</p>
-
-            <form action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}" method="post">
-                <button type="submit">❌ Retirer des favoris</button>
-            </form>
-
-        {% else %}
-            <form action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}" method="post">
-                <button type="submit">❤️ Ajouter aux favoris</button>
-            </form>
-        {% endif %}
-
+      {% for paragraph in article["description"].split('\n') if
+      paragraph.strip() %}
+      <p>{{ paragraph }}</p>
+      {% endfor %}
+    </section>
     {% else %}
-        <p>
-            <a href="{{ url_for('auth.login') }}">Connectez-vous</a>
-            pour ajouter cet article aux favoris.
-        </p>
+    <section class="article-detail-card__description">
+      <h3>Description</h3>
+      <p>
+        Aucune description détaillée n’est encore disponible pour cet article.
+      </p>
+    </section>
     {% endif %}
 
-</article>
+    <hr />
+
+    <section class="article-detail-card__actions">
+      <h3>Favoris</h3>
+
+      {% if session.get("user_id") %} {% if article["id"] in favorites_ids %}
+      <p>✔ Cet article est déjà dans vos favoris.</p>
+
+      <form
+        action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
+        method="post"
+      >
+        <button type="submit" class="btn btn-danger">
+          Retirer des favoris
+        </button>
+      </form>
+      {% else %}
+      <form
+        action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
+        method="post"
+      >
+        <button type="submit" class="btn btn-primary">
+          Ajouter aux favoris
+        </button>
+      </form>
+      {% endif %} {% else %}
+      <p>
+        <a href="{{ url_for('auth.login') }}">Connectez-vous</a>
+        pour ajouter cet article à vos favoris.
+      </p>
+      {% endif %}
+    </section>
+  </article>
+</section>
 
 {% endblock %}

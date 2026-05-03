@@ -1,65 +1,176 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Catalogue - MangaBook V2{% endblock
+%} {% block content %} {% set current_q = filters["q"] if filters else "" %} {%
+set current_genre = filters["genre"] if filters else "" %} {% set
+current_universe = filters["universe"] if filters else "" %} {% set
+current_release_day = filters["release_day"] if filters else "" %}
 
-{% block title %}Catalogue - MangaBook V2{% endblock %}
+<section class="catalog-page">
+  <header class="catalog-page__header">
+    <h2>Catalogue des articles</h2>
+    <p>Découvrez tous les articles disponibles sur MangaBook.</p>
+  </header>
 
-{% block content %}
-<h2>Catalogue des articles</h2>
-<p>Découvrez tous les articles disponibles sur MangaBook.</p>
+  <section class="catalog-search">
+    <form
+      action="{{ url_for('public.articles') }}"
+      method="get"
+      class="catalog-search__form"
+    >
+      <div class="catalog-search__group">
+        <label for="q">Recherche</label>
+        <input
+          type="search"
+          id="q"
+          name="q"
+          value="{{ current_q }}"
+          placeholder="Nom, genre, univers..."
+        />
+      </div>
 
-{% if articles %}
-<section>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px;">
-        
-        {% for article in articles %}
-            <article style="border: 1px solid #ccc; padding: 12px; border-radius: 8px;">
+      <div class="catalog-search__group">
+        <label for="genre">Genre</label>
+        <select id="genre" name="genre">
+          <option value="">Tous les genres</option>
 
-                <h3>{{ article["name"] }}</h3>
+          {% for genre in ["manga", "figurine", "textile", "vaisselle",
+          "goodies"] %} {% if current_genre == genre %}
+          <option value="{{ genre }}" selected>{{ genre|capitalize }}</option>
+          {% else %}
+          <option value="{{ genre }}">{{ genre|capitalize }}</option>
+          {% endif %} {% endfor %}
+        </select>
+      </div>
 
-                <p><strong>{{ article["price"] }} €</strong></p>
+      <div class="catalog-search__group">
+        <label for="universe">Univers</label>
+        <select id="universe" name="universe">
+          <option value="">Tous les univers</option>
 
-                <p style="font-size: 14px;">
-                    {{ article["genres"] }}
-                    {% if article["universe"] %}
-                        • {{ article["universe"] }}
-                    {% endif %}
-                </p>
+          {% set universes = [ ("naruto", "Naruto"), ("jujutsu_kaisen", "Jujutsu
+          Kaisen"), ("one_piece", "One Piece"), ("demon_slayer", "Demon
+          Slayer"), ("dragon_ball", "Dragon Ball") ] %} {% for value, label in
+          universes %} {% if current_universe == value %}
+          <option value="{{ value }}" selected>{{ label }}</option>
+          {% else %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endif %} {% endfor %}
+        </select>
+      </div>
 
-                <p style="font-size: 13px;">
-                    Stock : {{ article["stock"] }}
-                </p>
+      <div class="catalog-search__group">
+        <label for="release_day">Jour de sortie</label>
+        <select id="release_day" name="release_day">
+          <option value="">Tous les jours</option>
 
-                {% if article["release_day"] %}
-                    <p style="font-size: 13px;">
-                        Sortie : {{ article["release_day"] }}
-                    </p>
-                {% endif %}
+          {% for day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi",
+          "Samedi", "Dimanche", "Sans jour fixe"] %} {% if current_release_day
+          == day %}
+          <option value="{{ day }}" selected>{{ day }}</option>
+          {% else %}
+          <option value="{{ day }}">{{ day }}</option>
+          {% endif %} {% endfor %}
+        </select>
+      </div>
 
-                <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <div class="catalog-search__actions">
+        <button type="submit" class="btn btn-primary">Rechercher</button>
 
-                    <!-- Voir détail -->
-                    <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
-                        Voir
-                    </a>
+        <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
+          Réinitialiser
+        </a>
+      </div>
+    </form>
+  </section>
 
-                    <!-- Favoris -->
-                    {% if session.get("user_id") %}
-                        {% if article["id"] in favorites_ids %}
-                            <span>✔ Déjà en favori</span>
-                        {% else %}
-                            <form method="post" action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}">
-                                <button type="submit">❤️ Favori</button>
-                            </form>
-                        {% endif %}
-                    {% endif %}
+  {% if articles %}
+  <section class="catalog-results">
+    <header class="catalog-results__header">
+      <h3>Résultats</h3>
+      <p>
+        {{ articles|length }} article{% if articles|length > 1 %}s{% endif %}
+        trouvé{% if articles|length > 1 %}s{% endif %}.
+      </p>
+    </header>
 
-                </div>
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 16px;
+      "
+    >
+      {% for article in articles %}
+      <article
+        style="border: 1px solid #ccc; padding: 12px; border-radius: 8px"
+      >
+        <h3>{{ article["name"] }}</h3>
 
-            </article>
-        {% endfor %}
+        {% if article["image"] %}
+        <img
+          src="{{ url_for('static', filename=article['image']) }}"
+          alt="{{ article['name'] }}"
+          style="
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
+          "
+        />
+        {% endif %}
 
+        <p>
+          <strong>{{ article["price"] }} €</strong>
+        </p>
+
+        <p style="font-size: 14px">
+          {{ article["genres"] }} {% if article["universe"] %} • {{
+          article["universe"] }} {% endif %}
+        </p>
+
+        <p style="font-size: 13px">Stock : {{ article["stock"] }}</p>
+
+        {% if article["release_day"] %}
+        <p style="font-size: 13px">Sortie : {{ article["release_day"] }}</p>
+        {% endif %}
+
+        <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap">
+          <a
+            href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+          >
+            Voir
+          </a>
+
+          {% if session.get("user_id") %} {% if article["id"] in favorites_ids
+          %}
+          <span>✔ Déjà en favori</span>
+          {% else %}
+          <form
+            method="post"
+            action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
+          >
+            <button type="submit">❤️ Favori</button>
+          </form>
+          {% endif %} {% else %}
+          <a href="{{ url_for('auth.login') }}">
+            Se connecter pour ajouter aux favoris
+          </a>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
     </div>
-</section>
-{% else %}
+  </section>
+  {% else %}
+  <div class="empty-state">
+    {% if current_q or current_genre or current_universe or current_release_day
+    %}
+    <p>Aucun article ne correspond à votre recherche.</p>
+    <a href="{{ url_for('public.articles') }}">Réinitialiser la recherche</a>
+    {% else %}
     <p>Aucun article disponible pour le moment.</p>
-{% endif %}
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+
 {% endblock %}

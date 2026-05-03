@@ -7,7 +7,7 @@ def assert_redirects_to_login(response) -> None:
 
 
 # =========================
-# PAGES PUBLIQUES
+# PAGES PUBLIQUES / CATALOGUE
 # =========================
 
 
@@ -19,6 +19,56 @@ def test_home_page(client):
 def test_articles_page(client):
     response = client.get("/articles")
     assert response.status_code == 200
+
+
+def test_articles_page_with_query_filter(client):
+    response = client.get("/articles?q=naruto")
+    assert response.status_code == 200
+
+
+def test_articles_page_with_genre_filter(client):
+    response = client.get("/articles?genre=manga")
+    assert response.status_code == 200
+
+
+def test_articles_page_with_universe_filter(client):
+    response = client.get("/articles?universe=one%20piece")
+    assert response.status_code == 200
+
+
+def test_articles_page_with_release_day_filter(client):
+    response = client.get("/articles?release_day=Lundi")
+    assert response.status_code == 200
+
+
+def test_articles_page_passes_filters_to_search_service(client, monkeypatch):
+    captured = {}
+
+    def fake_search_articles(
+        query=None,
+        genre=None,
+        universe=None,
+        release_day=None,
+    ):
+        captured["query"] = query
+        captured["genre"] = genre
+        captured["universe"] = universe
+        captured["release_day"] = release_day
+        return []
+
+    monkeypatch.setattr("app.public.routes.search_articles", fake_search_articles)
+
+    response = client.get(
+        "/articles?q=naruto&genre=manga&universe=konoha&release_day=Lundi"
+    )
+
+    assert response.status_code == 200
+    assert captured == {
+        "query": "naruto",
+        "genre": "manga",
+        "universe": "konoha",
+        "release_day": "Lundi",
+    }
 
 
 def test_article_detail_page(client):
@@ -161,9 +211,8 @@ def test_history_page(client, auth):
 
     assert response.status_code == 200
 
-    # =========================
 
-
+# =========================
 # PROFIL
 # =========================
 

@@ -18,12 +18,12 @@ from .services import (
     add_favorite,
     add_to_history,
     create_contact_message,
-    get_all_articles,
     get_article_by_id,
     get_featured_articles,
     get_user_favorites,
     get_user_history,
     remove_favorite,
+    search_articles,
 )
 
 bp = Blueprint(
@@ -54,8 +54,26 @@ def home():
 
 @bp.route("/articles")
 def articles():
-    articles_list = get_all_articles()
-    return render_template("public/articles.html", articles=articles_list)
+    """Afficher le catalogue avec recherche et filtres."""
+    filters = {
+        "q": request.args.get("q", "").strip(),
+        "genre": request.args.get("genre", "").strip(),
+        "universe": request.args.get("universe", "").strip(),
+        "release_day": request.args.get("release_day", "").strip(),
+    }
+
+    articles_list = search_articles(
+        query=filters["q"],
+        genre=filters["genre"],
+        universe=filters["universe"],
+        release_day=filters["release_day"],
+    )
+
+    return render_template(
+        "public/articles.html",
+        articles=articles_list,
+        filters=filters,
+    )
 
 
 @bp.route("/articles/<int:article_id>")

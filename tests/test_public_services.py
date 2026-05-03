@@ -10,7 +10,30 @@ from app.public.services import (
     get_user_favorites,
     get_user_history,
     remove_favorite,
+    search_articles,
 )
+
+
+def _create_catalog_article(
+    db,
+    *,
+    name: str = "Article recherche test",
+    genres: str = "manga",
+    universe: str = "one_piece",
+    image: str = "uploads/test.webp",
+    price: float = 12.99,
+    stock: int = 10,
+    release_day: str = "Lundi",
+) -> int:
+    cursor = db.execute(
+        """
+        INSERT INTO articles (name, genres, universe, image, price, stock, release_day)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (name, genres, universe, image, price, stock, release_day),
+    )
+    db.commit()
+    return int(cursor.lastrowid)
 
 
 def test_get_all_articles(db, app):
@@ -20,6 +43,105 @@ def test_get_all_articles(db, app):
     assert len(articles) > 0
     assert "id" in articles[0].keys()
     assert "name" in articles[0].keys()
+
+
+def test_search_articles_without_filters_returns_articles(db, app):
+    with app.app_context():
+        articles = search_articles()
+
+    assert len(articles) > 0
+    assert "id" in articles[0].keys()
+    assert "name" in articles[0].keys()
+
+
+def test_search_articles_by_query(db, app):
+    with app.app_context():
+        article_id = _create_catalog_article(
+            db,
+            name="Katana recherche unique",
+            genres="goodies",
+            universe="demon_slayer",
+            release_day="Mardi",
+        )
+
+        articles = search_articles(query="katana")
+
+    assert any(article["id"] == article_id for article in articles)
+
+
+def test_search_articles_by_genre(db, app):
+    with app.app_context():
+        article_id = _create_catalog_article(
+            db,
+            name="Figurine recherche test",
+            genres="figurine",
+            universe="naruto",
+            release_day="Mercredi",
+        )
+
+        articles = search_articles(genre="figurine")
+
+    assert any(article["id"] == article_id for article in articles)
+    assert all(article["genres"] == "figurine" for article in articles)
+
+
+def test_search_articles_by_universe(db, app):
+    with app.app_context():
+        article_id = _create_catalog_article(
+            db,
+            name="Produit univers recherche",
+            genres="manga",
+            universe="jujutsu_kaisen",
+            release_day="Jeudi",
+        )
+
+        articles = search_articles(universe="kaisen")
+
+    assert any(article["id"] == article_id for article in articles)
+
+
+def test_search_articles_by_release_day(db, app):
+    with app.app_context():
+        article_id = _create_catalog_article(
+            db,
+            name="Sortie vendredi recherche",
+            genres="textile",
+            universe="one_piece",
+            release_day="Vendredi",
+        )
+
+        articles = search_articles(release_day="Vendredi")
+
+    assert any(article["id"] == article_id for article in articles)
+    assert all(article["release_day"] == "Vendredi" for article in articles)
+
+
+def test_search_articles_with_combined_filters(db, app):
+    with app.app_context():
+        article_id = _create_catalog_article(
+            db,
+            name="Mug recherche combinée",
+            genres="vaisselle",
+            universe="dragon_ball",
+            release_day="Samedi",
+        )
+
+        articles = search_articles(
+            query="mug",
+            genre="vaisselle",
+            universe="dragon_ball",
+            release_day="Samedi",
+        )
+
+    assert len(articles) >= 1
+    assert any(article["id"] == article_id for article in articles)
+
+
+def test_search_articles_without_result_returns_empty_list(db, app):
+    with app.app_context():
+        articles = search_articles(query="article-introuvable-xyz-999")
+
+    assert articles == []
 
 
 def test_get_featured_articles_limit(db, app):
@@ -110,15 +232,11 @@ def test_add_to_history_upsert_does_not_duplicate(db, app):
 
 def test_create_contact_message(db, app):
     with app.app_context():
-        before = db.execute(
-            "SELECT COUNT(*) AS count FROM contact"
-        ).fetchone()["count"]
+        before = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
 
         create_contact_message(2, "Sujet test", "Message test")
 
-        after = db.execute(
-            "SELECT COUNT(*) AS count FROM contact"
-        ).fetchone()["count"]
+        after = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
 
         created = db.execute(
             """

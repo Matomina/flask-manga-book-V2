@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+from typing import Any
 
 from app.db import get_db
 
@@ -56,6 +57,61 @@ def get_all_articles() -> list[sqlite3.Row]:
         {ARTICLE_SELECT}
         ORDER BY a.created_at DESC, a.id DESC
         """
+    ).fetchall()
+
+
+def search_articles(
+    query: str | None = None,
+    genre: str | None = None,
+    universe: str | None = None,
+    release_day: str | None = None,
+) -> list[sqlite3.Row]:
+    """Rechercher et filtrer les articles du catalogue."""
+    normalized_query = _normalize_text(query).lower()
+    normalized_genre = _normalize_text(genre)
+    normalized_universe = _normalize_text(universe).lower()
+    normalized_release_day = _normalize_text(release_day)
+
+    where_clauses: list[str] = []
+    params: list[Any] = []
+
+    if normalized_query:
+        where_clauses.append(
+            """
+            (
+                LOWER(a.name) LIKE ?
+                OR LOWER(a.genres) LIKE ?
+                OR LOWER(COALESCE(a.universe, '')) LIKE ?
+            )
+            """
+        )
+        search_value = f"%{normalized_query}%"
+        params.extend([search_value, search_value, search_value])
+
+    if normalized_genre:
+        where_clauses.append("a.genres = ?")
+        params.append(normalized_genre)
+
+    if normalized_universe:
+        where_clauses.append("LOWER(COALESCE(a.universe, '')) LIKE ?")
+        params.append(f"%{normalized_universe}%")
+
+    if normalized_release_day:
+        where_clauses.append("a.release_day = ?")
+        params.append(normalized_release_day)
+
+    where_sql = ""
+    if where_clauses:
+        where_sql = "WHERE " + " AND ".join(where_clauses)
+
+    db = get_db()
+    return db.execute(
+        f"""
+        {ARTICLE_SELECT}
+        {where_sql}
+        ORDER BY a.created_at DESC, a.id DESC
+        """,
+        tuple(params),
     ).fetchall()
 
 
