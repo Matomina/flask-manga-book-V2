@@ -23,6 +23,13 @@ VALID_RELEASE_DAYS = {
     "Dimanche",
     "Sans jour fixe",
 }
+VALID_ORDER_STATUSES = {
+    "pending",
+    "paid",
+    "shipped",
+    "delivered",
+    "cancelled",
+}
 VALID_ARTICLE_UNIVERSES = {
     "naruto",
     "jujutsu_kaisen",
@@ -294,6 +301,28 @@ def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
         """,
         (order_id,),
     ).fetchall()
+
+
+def update_order_status_admin(order_id: int, status: str) -> bool:
+    """Mettre à jour le statut d'une commande admin."""
+    normalized_status = _normalize_str(status)
+
+    if normalized_status not in VALID_ORDER_STATUSES:
+        raise ValueError("Statut de commande invalide.")
+
+    db = get_db()
+
+    cursor = db.execute(
+        """
+        UPDATE orders
+        SET status = ?
+        WHERE id = ?
+        """,
+        (normalized_status, order_id),
+    )
+    db.commit()
+
+    return cursor.rowcount > 0
 
 
 # =========================

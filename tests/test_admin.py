@@ -9,6 +9,7 @@ from app.admin.services import (
     get_order_by_id_admin,
     get_order_items_by_order_id,
     get_user_by_id_admin,
+    update_order_status_admin,
 )
 
 CONTACT_STATUS_PENDING = "pending"
@@ -375,6 +376,65 @@ def test_get_order_items_by_order_id_returns_items(app, db):
     assert "unit_price" in items[0].keys()
 
 
+def test_update_order_status_admin_updates_status(app, db):
+    with app.app_context():
+        order_id = _insert_order(db, status="pending")
+
+        updated = update_order_status_admin(order_id, "paid")
+
+        order = db.execute(
+            """
+            SELECT status
+            FROM orders
+            WHERE id = ?
+            """,
+            (order_id,),
+        ).fetchone()
+
+    assert updated is True
+    assert order is not None
+    assert order["status"] == "paid"
+
+
+def test_update_order_status_admin_strips_status(app, db):
+    with app.app_context():
+        order_id = _insert_order(db, status="pending")
+
+        updated = update_order_status_admin(order_id, " shipped ")
+
+        order = db.execute(
+            """
+            SELECT status
+            FROM orders
+            WHERE id = ?
+            """,
+            (order_id,),
+        ).fetchone()
+
+    assert updated is True
+    assert order is not None
+    assert order["status"] == "shipped"
+
+
+def test_update_order_status_admin_returns_false_when_missing(app):
+    with app.app_context():
+        updated = update_order_status_admin(999999, "paid")
+
+    assert updated is False
+
+
+def test_update_order_status_admin_rejects_invalid_status(app, db):
+    with app.app_context():
+        order_id = _insert_order(db, status="pending")
+
+        try:
+            update_order_status_admin(order_id, "invalid")
+        except ValueError as error:
+            assert str(error) == "Statut de commande invalide."
+        else:
+            raise AssertionError("ValueError attendu pour un statut invalide.")
+
+
 def test_admin_orders_requires_login(client):
     response = client.get("/admin/orders", follow_redirects=False)
 
@@ -483,6 +543,115 @@ def test_admin_order_detail_admin(client, auth, db):
     assert "Prix unitaire" in html
     assert "Total" in html
     assert "Retour aux commandes" in html
+
+
+def test_admin_order_detail_displays_status_update_form(client, auth, db):
+    order_id = _insert_order(
+        db,
+        total_amount=39.80,
+        status="pending",
+    )
+
+    auth.login_as_admin()
+
+    response = client.get(f"/admin/orders/{order_id}")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Modifier le statut" in html
+    assert "Statut de la commande" in html
+    assert "Mettre à jour le statut" in html
+    assert f"/admin/orders/{order_id}/status" in html
+
+
+def test_admin_order_update_status_requires_login(client, db):
+    order_id = _insert_order(
+        db,
+        total_amount=39.80,
+        status="pending",
+    )
+
+    response = client.post(
+        f"/admin/orders/{order_id}/status",
+        data={"status": "paid"},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
+
+def test_admin_order_update_status_success(client, auth, db):
+    order_id = _insert_order(
+        db,
+        total_amount=39.80,
+        status="pending",
+    )
+
+    auth.login_as_admin()
+
+    response = client.post(
+        f"/admin/orders/{order_id}/status",
+        data={"status": "paid"},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+    assert f"/admin/orders/{order_id}" in response.headers["Location"]
+
+    order = db.execute(
+        """
+        SELECT status
+        FROM orders
+        WHERE id = ?
+        """,
+        (order_id,),
+    ).fetchone()
+
+    assert order is not None
+    assert order["status"] == "paid"
+
+
+def test_admin_order_update_status_invalid_returns_400(client, auth, db):
+    order_id = _insert_order(
+        db,
+        total_amount=39.80,
+        status="pending",
+    )
+
+    auth.login_as_admin()
+
+    response = client.post(
+        f"/admin/orders/{order_id}/status",
+        data={"status": "invalid"},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 400
+
+    order = db.execute(
+        """
+        SELECT status
+        FROM orders
+        WHERE id = ?
+        """,
+        (order_id,),
+    ).fetchone()
+
+    assert order is not None
+    assert order["status"] == "pending"
+
+
+def test_admin_order_update_status_404(client, auth):
+    auth.login_as_admin()
+
+    response = client.post(
+        "/admin/orders/999999/status",
+        data={"status": "paid"},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 404
 
 
 def test_admin_order_detail_404(client, auth):

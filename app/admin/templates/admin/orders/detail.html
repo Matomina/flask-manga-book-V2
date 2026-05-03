@@ -1,9 +1,14 @@
-{% extends "base.html" %} {% block title %}Commande #{{ order["id"] }} - Admin{%
-endblock %} {% block content %}
+{% extends "base.html" %}
+
+{% block title %}Commande #{{ order["id"] }} - Admin{% endblock %}
+
+{% block content %}
 
 <section class="admin-order-detail">
   <p>
-    <a href="{{ url_for('admin.orders_list') }}"> ← Retour aux commandes </a>
+    <a href="{{ url_for('admin.orders_list') }}">
+      ← Retour aux commandes
+    </a>
   </p>
 
   <article
@@ -38,71 +43,71 @@ endblock %} {% block content %}
 
       <div>
         {% if order["status"] == "pending" %}
-        <span
-          style="
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #f9a825;
-            border-radius: 999px;
-          "
-        >
-          En attente
-        </span>
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #f9a825;
+              border-radius: 999px;
+            "
+          >
+            En attente
+          </span>
         {% elif order["status"] == "paid" %}
-        <span
-          style="
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #2e7d32;
-            border-radius: 999px;
-          "
-        >
-          Payée
-        </span>
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #2e7d32;
+              border-radius: 999px;
+            "
+          >
+            Payée
+          </span>
         {% elif order["status"] == "shipped" %}
-        <span
-          style="
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #1976d2;
-            border-radius: 999px;
-          "
-        >
-          Expédiée
-        </span>
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #1976d2;
+              border-radius: 999px;
+            "
+          >
+            Expédiée
+          </span>
         {% elif order["status"] == "delivered" %}
-        <span
-          style="
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #00897b;
-            border-radius: 999px;
-          "
-        >
-          Livrée
-        </span>
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #00897b;
+              border-radius: 999px;
+            "
+          >
+            Livrée
+          </span>
         {% elif order["status"] == "cancelled" %}
-        <span
-          style="
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #c62828;
-            border-radius: 999px;
-          "
-        >
-          Annulée
-        </span>
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #c62828;
+              border-radius: 999px;
+            "
+          >
+            Annulée
+          </span>
         {% else %}
-        <span
-          style="
-            display: inline-block;
-            padding: 4px 8px;
-            border: 1px solid #777;
-            border-radius: 999px;
-          "
-        >
-          {{ order["status"] }}
-        </span>
+          <span
+            style="
+              display: inline-block;
+              padding: 4px 8px;
+              border: 1px solid #777;
+              border-radius: 999px;
+            "
+          >
+            {{ order["status"] }}
+          </span>
         {% endif %}
       </div>
     </header>
@@ -152,50 +157,52 @@ endblock %} {% block content %}
       <h3>Articles commandés</h3>
 
       {% if items %}
-      <div style="display: flex; flex-direction: column; gap: 12px">
-        {% for item in items %}
-        <article
-          style="border: 1px solid #ddd; border-radius: 8px; padding: 12px"
-        >
-          <h4 style="margin: 0 0 8px 0">{{ item["name"] }}</h4>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          {% for item in items %}
+            <article
+              style="border: 1px solid #ddd; border-radius: 8px; padding: 12px"
+            >
+              <h4 style="margin: 0 0 8px 0">
+                {{ item["name"] }}
+              </h4>
 
-          <div
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-              gap: 8px 16px;
-            "
-          >
-            <p>
-              <strong>Genre :</strong>
-              {{ item["genres"] }}
-            </p>
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                  gap: 8px 16px;
+                "
+              >
+                <p>
+                  <strong>Genre :</strong>
+                  {{ item["genres"] }}
+                </p>
 
-            <p>
-              <strong>Univers :</strong>
-              {{ item["universe"] or "Non renseigné" }}
-            </p>
+                <p>
+                  <strong>Univers :</strong>
+                  {{ item["universe"] or "Non renseigné" }}
+                </p>
 
-            <p>
-              <strong>Quantité :</strong>
-              {{ item["quantity"] }}
-            </p>
+                <p>
+                  <strong>Quantité :</strong>
+                  {{ item["quantity"] }}
+                </p>
 
-            <p>
-              <strong>Prix unitaire :</strong>
-              {{ item["unit_price"] }} €
-            </p>
-          </div>
+                <p>
+                  <strong>Prix unitaire :</strong>
+                  {{ item["unit_price"] }} €
+                </p>
+              </div>
 
-          <p>
-            <strong>Sous-total :</strong>
-            {{ item["quantity"] * item["unit_price"] }} €
-          </p>
-        </article>
-        {% endfor %}
-      </div>
+              <p>
+                <strong>Sous-total :</strong>
+                {{ item["quantity"] * item["unit_price"] }} €
+              </p>
+            </article>
+          {% endfor %}
+        </div>
       {% else %}
-      <p>Aucun article associé à cette commande.</p>
+        <p>Aucun article associé à cette commande.</p>
       {% endif %}
     </section>
 
@@ -212,10 +219,74 @@ endblock %} {% block content %}
     <hr />
 
     <section>
+      <h3>Modifier le statut</h3>
+
+      {% set current_status = order["status"] %}
+
+      <form
+        method="post"
+        action="{{ url_for('admin.order_update_status', order_id=order['id']) }}"
+        style="display: flex; gap: 12px; flex-wrap: wrap; align-items: end"
+      >
+        <div>
+          <label for="status">
+            Statut de la commande
+          </label>
+          <br />
+
+          <select id="status" name="status" required>
+            <option
+              value="pending"
+              {{ "selected" if current_status == "pending" else "" }}
+            >
+              En attente
+            </option>
+
+            <option
+              value="paid"
+              {{ "selected" if current_status == "paid" else "" }}
+            >
+              Payée
+            </option>
+
+            <option
+              value="shipped"
+              {{ "selected" if current_status == "shipped" else "" }}
+            >
+              Expédiée
+            </option>
+
+            <option
+              value="delivered"
+              {{ "selected" if current_status == "delivered" else "" }}
+            >
+              Livrée
+            </option>
+
+            <option
+              value="cancelled"
+              {{ "selected" if current_status == "cancelled" else "" }}
+            >
+              Annulée
+            </option>
+          </select>
+        </div>
+
+        <button type="submit">
+          Mettre à jour le statut
+        </button>
+      </form>
+    </section>
+
+    <hr />
+
+    <section>
       <h3>Actions</h3>
 
       <div style="display: flex; gap: 12px; flex-wrap: wrap">
-        <a href="{{ url_for('admin.orders_list') }}"> Retour aux commandes </a>
+        <a href="{{ url_for('admin.orders_list') }}">
+          Retour aux commandes
+        </a>
 
         <a href="{{ url_for('admin.orders_list', status=order['status']) }}">
           Voir les commandes avec ce statut

@@ -28,6 +28,7 @@ from .services import (
     mark_contact_as_read,
     save_image,
     update_article,
+    update_order_status_admin,
     validate_article_data,
 )
 
@@ -133,6 +134,25 @@ def order_detail(order_id: int):
         order=order,
         items=items,
     )
+
+
+@bp.route("/orders/<int:order_id>/status", methods=["POST"])
+@admin_required
+def order_update_status(order_id: int):
+    """Mettre à jour le statut d'une commande côté admin."""
+    status = request.form.get("status", "").strip()
+
+    try:
+        updated = update_order_status_admin(order_id, status)
+    except ValueError:
+        flash("Statut de commande invalide.", "danger")
+        abort(400)
+
+    if not updated:
+        abort(404)
+
+    flash("Statut de commande mis à jour.", "success")
+    return redirect(url_for("admin.order_detail", order_id=order_id))
 
 
 # =========================
