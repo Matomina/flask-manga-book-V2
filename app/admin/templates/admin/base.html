@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{% block title %}Administration - MangaBook V2{% endblock %}</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base.css') }}"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin/admin.css') }}"
+    />
+  </head>
+
+  <body class="admin-shell-body">
+    <div class="admin-shell">
+      <aside
+        class="admin-shell__sidebar"
+        aria-label="Navigation administration"
+      >
+        <div class="admin-shell__brand">
+          <a href="{{ url_for('admin.dashboard') }}" class="admin-shell__logo">
+            MB
+          </a>
+
+          <div>
+            <strong>MangaBook</strong>
+            <span>Administration</span>
+          </div>
+        </div>
+
+        <nav class="admin-shell__nav" aria-label="Menu administration">
+          <a
+            href="{{ url_for('admin.dashboard') }}"
+            class="{% if request.endpoint == 'admin.dashboard' %}is-active{% endif %}"
+          >
+            Dashboard
+          </a>
+
+          <a
+            href="{{ url_for('admin.users_list') }}"
+            class="{% if request.endpoint and request.endpoint.startswith('admin.user') %}is-active{% endif %}"
+          >
+            Utilisateurs
+          </a>
+
+          <a
+            href="{{ url_for('admin.orders_list') }}"
+            class="{% if request.endpoint and request.endpoint.startswith('admin.order') %}is-active{% endif %}"
+          >
+            Commandes
+          </a>
+
+          <a
+            href="{{ url_for('admin.articles_list') }}"
+            class="{% if request.endpoint and request.endpoint.startswith('admin.article') %}is-active{% endif %}"
+          >
+            Articles
+          </a>
+
+          <a
+            href="{{ url_for('admin.contact_list') }}"
+            class="{% if request.endpoint and request.endpoint.startswith('admin.contact') %}is-active{% endif %}"
+          >
+            Messages
+          </a>
+
+          <a
+            href="{{ url_for('admin.forum_list') }}"
+            class="{% if request.endpoint and request.endpoint.startswith('admin.forum') %}is-active{% endif %}"
+          >
+            Forum
+          </a>
+        </nav>
+
+        <div class="admin-shell__footer">
+          <a href="{{ url_for('public.home') }}"> Voir le site public </a>
+        </div>
+      </aside>
+
+      <div class="admin-shell__main">
+        <header class="admin-shell__topbar">
+          <div>
+            <p class="admin-shell__eyebrow">Back-office</p>
+            <h1>{% block admin_title %}Administration{% endblock %}</h1>
+          </div>
+
+          <div class="admin-shell__actions">
+            <a class="btn btn-secondary" href="{{ url_for('public.home') }}">
+              Site public
+            </a>
+
+            <form
+              class="admin-inline-form"
+              method="post"
+              action="{{ url_for('auth.logout') }}"
+            >
+              <button class="btn btn-danger" type="submit">Déconnexion</button>
+            </form>
+          </div>
+        </header>
+
+        <main class="admin-shell__content">
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %}
+          <div class="admin-flashes">
+            {% for category, message in messages %}
+            <div class="admin-flash admin-flash--{{ category }}">
+              {{ message }}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %} {% endwith %} {% block admin_content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
