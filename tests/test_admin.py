@@ -77,6 +77,42 @@ def _insert_order_item(
     return int(cursor.lastrowid)
 
 
+def _insert_forum_topic(
+    db,
+    *,
+    user_id: int = 2,
+    title: str = "Sujet forum admin test",
+    message: str = "Message forum admin test.",
+) -> int:
+    cursor = db.execute(
+        """
+        INSERT INTO topics (user_id, title, message)
+        VALUES (?, ?, ?)
+        """,
+        (user_id, title, message),
+    )
+    db.commit()
+    return int(cursor.lastrowid)
+
+
+def _insert_forum_reply(
+    db,
+    *,
+    topic_id: int,
+    user_id: int = 2,
+    message: str = "Réponse forum admin test.",
+) -> int:
+    cursor = db.execute(
+        """
+        INSERT INTO replies (topic_id, user_id, message)
+        VALUES (?, ?, ?)
+        """,
+        (topic_id, user_id, message),
+    )
+    db.commit()
+    return int(cursor.lastrowid)
+
+
 def test_admin_requires_login(client):
     response = client.get("/admin/", follow_redirects=False)
 
@@ -830,6 +866,210 @@ def test_admin_contact_detail_404(client, auth):
     auth.login_as_admin()
 
     response = client.get("/admin/contact/999999")
+
+    assert response.status_code == 404
+
+
+# =========================
+# FORUM ADMIN
+# =========================
+
+
+def test_admin_forum_list_requires_login(client):
+    response = client.get("/admin/forum", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
+
+def test_admin_forum_detail_requires_login(client, db):
+    topic_id = _insert_forum_topic(
+        db,
+        title="Sujet forum accès protégé admin test",
+        message="Message protégé forum admin.",
+    )
+
+    response = client.get(f"/admin/forum/{topic_id}", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
+
+def test_admin_forum_list_displays_enhanced_layout(client, auth, db):
+    _insert_forum_topic(
+        db,
+        title="Sujet modération forum admin test",
+        message=(
+            "Ceci est un long message de forum utilisé pour vérifier "
+            "l’affichage de la liste admin forum et son extrait."
+        ),
+    )
+
+    auth.login_as_admin()
+
+    response = client.get("/admin/forum")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Modération du forum" in html
+    assert "Retour au tableau de bord" in html
+    assert "Sujet modération forum admin test" in html
+    assert "Réponses" in html
+    assert "Voir" in html
+    assert "Supprimer" in html
+
+
+def test_admin_forum_detail_displays_enhanced_layout(client, auth, db):
+    topic_id = _insert_forum_topic(
+        db,
+        title="Sujet détail forum admin test",
+        message="Premier paragraphe du sujet.\nDeuxième paragraphe du sujet.",
+    )
+    _insert_forum_reply(
+        db,
+        topic_id=topic_id,
+        message="Réponse détaillée pour la modération admin.",
+    )
+
+    auth.login_as_admin()
+
+    response = client.get(f"/admin/forum/{topic_id}")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Sujet détail forum admin test" in html
+    assert "Retour à la modération forum" in html
+    assert "Sujet principal" in html
+    assert "Premier paragraphe du sujet." in html
+    assert "Deuxième paragraphe du sujet." in html
+    assert "Réponses" in html
+    assert "Réponse détaillée pour la modération admin." in html
+    assert "Supprimer le sujet" in html
+    assert "Supprimer" in html
+
+
+def test_admin_forum_detail_displays_empty_replies_state(client, auth, db):
+    topic_id = _insert_forum_topic(
+        db,
+        title="Sujet sans réponse forum admin test",
+        message="Sujet sans réponse pour vérifier l’état vide.",
+    )
+
+    auth.login_as_admin()
+
+    response = client.get(f"/admin/forum/{topic_id}")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Sujet sans réponse forum admin test" in html
+    assert "Aucune réponse n’a encore été publiée sur ce sujet." in html
+
+
+def test_admin_forum_detail_404(client, auth):
+    auth.login_as_admin()
+
+    response = client.get("/admin/forum/999999")
+
+    assert response.status_code == 404
+
+
+def test_admin_forum_delete_topic_success(client, auth, db):
+    topic_id = _insert_forum_topic(
+        db,
+        title="Sujet à supprimer forum admin test",
+        message="Sujet destiné à être supprimé.",
+    )
+    _insert_forum_reply(
+        db,
+        topic_id=topic_id,
+        message="Réponse liée au sujet supprimé.",
+    )
+
+    auth.login_as_admin()
+
+    response = client.post(
+        f"/admin/forum/{topic_id}/delete",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+    assert "/admin/forum" in response.headers["Location"]
+
+    deleted_topic = db.execute(
+        """
+        SELECT id
+        FROM topics
+        WHERE id = ?
+        """,
+        (topic_id,),
+    ).fetchone()
+
+    deleted_replies = db.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM replies
+        WHERE topic_id = ?
+        """,
+        (topic_id,),
+    ).fetchone()
+
+    assert deleted_topic is None
+    assert deleted_replies is not None
+    assert deleted_replies["count"] == 0
+
+
+def test_admin_forum_delete_topic_404(client, auth):
+    auth.login_as_admin()
+
+    response = client.post(
+        "/admin/forum/999999/delete",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 404
+
+
+def test_admin_forum_delete_reply_success(client, auth, db):
+    topic_id = _insert_forum_topic(
+        db,
+        title="Sujet suppression réponse admin test",
+        message="Sujet contenant une réponse à supprimer.",
+    )
+    reply_id = _insert_forum_reply(
+        db,
+        topic_id=topic_id,
+        message="Réponse à supprimer côté admin.",
+    )
+
+    auth.login_as_admin()
+
+    response = client.post(
+        f"/admin/forum/replies/{reply_id}/delete",
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 302
+    assert f"/admin/forum/{topic_id}" in response.headers["Location"]
+
+    deleted_reply = db.execute(
+        """
+        SELECT id
+        FROM replies
+        WHERE id = ?
+        """,
+        (reply_id,),
+    ).fetchone()
+
+    assert deleted_reply is None
+
+
+def test_admin_forum_delete_reply_404(client, auth):
+    auth.login_as_admin()
+
+    response = client.post(
+        "/admin/forum/replies/999999/delete",
+        follow_redirects=False,
+    )
 
     assert response.status_code == 404
 
