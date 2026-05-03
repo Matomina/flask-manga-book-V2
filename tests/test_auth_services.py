@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from app.auth.services import authenticate_user, get_user_by_email
+from app.auth.services import authenticate_user, get_user_by_email, get_user_by_id
 
 
 def test_get_user_by_email_found(app):
@@ -23,6 +23,22 @@ def test_get_user_by_email_normalizes_email(app):
 def test_get_user_by_email_not_found(app):
     with app.app_context():
         user = get_user_by_email("unknown@test.com")
+
+    assert user is None
+
+
+def test_get_user_by_id_returns_user(app):
+    with app.app_context():
+        user = get_user_by_id(1)
+
+    assert user is not None
+    assert user["id"] == 1
+    assert user["email"]
+
+
+def test_get_user_by_id_returns_none_when_missing(app):
+    with app.app_context():
+        user = get_user_by_id(999999)
 
     assert user is None
 

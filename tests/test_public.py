@@ -161,6 +161,37 @@ def test_history_page(client, auth):
 
     assert response.status_code == 200
 
+    # =========================
+
+
+# PROFIL
+# =========================
+
+
+def test_profile_requires_login(client):
+    response = client.get("/profile", follow_redirects=False)
+
+    assert_redirects_to_login(response)
+
+
+def test_profile_page(client, auth):
+    auth.login_as_user()
+
+    response = client.get("/profile")
+
+    assert response.status_code == 200
+
+
+def test_profile_invalid_session_redirects_to_login(client, auth, monkeypatch):
+    auth.login_as_user()
+
+    monkeypatch.setattr("app.public.routes.get_user_by_id", lambda user_id: None)
+
+    response = client.get("/profile", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
 
 # =========================
 # AUTRES PAGES

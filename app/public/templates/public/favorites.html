@@ -1,37 +1,65 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Mes favoris - MangaBook V2{% endblock
+%} {% block content %}
 
-{% block title %}Mes favoris - MangaBook V2{% endblock %}
+<section class="favorites-page">
+  <header class="favorites-page__header">
+    <h2>Mes favoris</h2>
+    <p>Retrouvez les articles que vous avez sauvegardés.</p>
+  </header>
 
-{% block content %}
-<h2>Mes favoris</h2>
+  {% if articles %}
+  <div class="favorites-list">
+    {% for article in articles %}
+    <article class="favorite-card">
+      <h3>{{ article["name"] }}</h3>
 
-{% if articles %}
-    <section>
-        {% for article in articles %}
-            <article style="border: 1px solid #ccc; padding: 12px; margin-bottom: 12px;">
-                <h3>{{ article["name"] }}</h3>
-                <p><strong>Genre :</strong> {{ article["genres"] }}</p>
+      <p>
+        <strong>Genre :</strong>
+        {{ article["genres"] }}
+      </p>
 
-                {% if article["universe"] %}
-                    <p><strong>Univers :</strong> {{ article["universe"] }}</p>
-                {% endif %}
+      {% if article["universe"] %}
+      <p>
+        <strong>Univers :</strong>
+        {{ article["universe"] }}
+      </p>
+      {% endif %}
 
-                <p><strong>Prix :</strong> {{ article["price"] }} €</p>
-                <p><strong>Stock :</strong> {{ article["stock"] }}</p>
+      <p>
+        <strong>Prix :</strong>
+        {{ article["price"] }} €
+      </p>
 
-                <p>
-                    <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
-                        Voir le détail
-                    </a>
-                </p>
+      <p>
+        <strong>Stock :</strong>
+        {{ article["stock"] }}
+      </p>
 
-                <form action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}" method="post">
-                    <button type="submit">Retirer des favoris</button>
-                </form>
-            </article>
-        {% endfor %}
-    </section>
-{% else %}
+      <p>
+        <strong>Ajouté le :</strong>
+        {{ article["favorited_at"] }}
+      </p>
+
+      <a
+        href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+      >
+        Voir le détail
+      </a>
+
+      <form
+        action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
+        method="post"
+      >
+        <button type="submit">Retirer des favoris</button>
+      </form>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
     <p>Vous n'avez encore aucun favori.</p>
-{% endif %}
+  </div>
+  {% endif %}
+</section>
+
 {% endblock %}

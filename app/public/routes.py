@@ -11,6 +11,7 @@ from flask import (
     url_for,
 )
 
+from app.auth.services import get_user_by_id
 from app.core.security import login_required
 
 from .services import (
@@ -66,6 +67,25 @@ def article_detail(article_id: int):
         add_to_history(user_id, article_id)
 
     return render_template("public/article_detail.html", article=article)
+
+
+# =========================
+# PROFIL
+# =========================
+
+
+@bp.route("/profile")
+@login_required
+def profile():
+    """Afficher le profil de l'utilisateur connecté."""
+    user = get_user_by_id(session["user_id"])
+
+    if user is None:
+        session.clear()
+        flash("Session invalide. Veuillez vous reconnecter.", "warning")
+        return redirect(url_for("auth.login"))
+
+    return render_template("public/profile.html", user=user)
 
 
 # =========================

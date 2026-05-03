@@ -25,6 +25,23 @@ def get_user_by_email(email: str) -> sqlite3.Row | None:
         return None
 
 
+def get_user_by_id(user_id: int) -> sqlite3.Row | None:
+    """Récupérer un utilisateur par son identifiant."""
+    db = get_db()
+
+    try:
+        return db.execute(
+            """
+            SELECT id, first_name, last_name, email, role
+            FROM user
+            WHERE id = ?
+            """,
+            (user_id,),
+        ).fetchone()
+    except sqlite3.Error:
+        return None
+
+
 def authenticate_user(email: str, password: str) -> sqlite3.Row | None:
     """Authentifier un utilisateur avec son email et son mot de passe."""
     user = get_user_by_email(email)

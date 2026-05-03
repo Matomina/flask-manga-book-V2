@@ -1,35 +1,53 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Mon historique - MangaBook V2{%
+endblock %} {% block content %}
 
-{% block title %}Mon historique - MangaBook V2{% endblock %}
+<section class="history-page">
+  <header class="history-page__header">
+    <h2>Mon historique</h2>
+    <p>Retrouvez les articles que vous avez consultés récemment.</p>
+  </header>
 
-{% block content %}
-<h2>Mon historique</h2>
+  {% if articles %}
+  <div class="history-list">
+    {% for article in articles %}
+    <article class="history-card">
+      <h3>{{ article["name"] }}</h3>
 
-{% if articles %}
-    <section>
-        {% for article in articles %}
-            <article style="border: 1px solid #ccc; padding: 12px; margin-bottom: 12px;">
-                <h3>{{ article["name"] }}</h3>
+      <p>
+        <strong>Genre :</strong>
+        {{ article["genres"] }}
+      </p>
 
-                <p><strong>Genre :</strong> {{ article["genres"] }}</p>
+      {% if article["universe"] %}
+      <p>
+        <strong>Univers :</strong>
+        {{ article["universe"] }}
+      </p>
+      {% endif %}
 
-                {% if article["universe"] %}
-                    <p><strong>Univers :</strong> {{ article["universe"] }}</p>
-                {% endif %}
+      <p>
+        <strong>Prix :</strong>
+        {{ article["price"] }} €
+      </p>
 
-                <p><strong>Prix :</strong> {{ article["price"] }} €</p>
+      <p>
+        <strong>Vu le :</strong>
+        {{ article["viewed_at"] }}
+      </p>
 
-                <p>
-                    <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
-                        Revoir l’article
-                    </a>
-                </p>
-
-                <p><em>Vu le {{ article["created_at"] }}</em></p>
-            </article>
-        {% endfor %}
-    </section>
-{% else %}
+      <a
+        href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+      >
+        Revoir l’article
+      </a>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
     <p>Votre historique est vide.</p>
-{% endif %}
+  </div>
+  {% endif %}
+</section>
+
 {% endblock %}
