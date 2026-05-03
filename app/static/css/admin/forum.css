@@ -1,0 +1,333 @@
+/* =========================================================
+   Forum admin
+   Page forum du back-office MangaBook V2
+========================================================= */
+
+/* =========================
+   Forum layout
+========================= */
+
+.admin-forum-list,
+.admin-forum-detail {
+  max-width: 1240px;
+}
+
+/* =========================
+   Forum headers
+========================= */
+
+.admin-forum-list .admin-page-header,
+.admin-forum-detail .admin-page-header {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.admin-forum-list .admin-page-header p,
+.admin-forum-detail .admin-page-header p {
+  max-width: 680px;
+}
+
+.admin-forum-list .admin-page-header__actions,
+.admin-forum-detail .admin-page-header__actions {
+  gap: 12px;
+}
+
+.admin-forum-list .admin-page-header__actions .btn,
+.admin-forum-detail .admin-page-header__actions .btn,
+.admin-forum-detail .admin-page-header__actions button {
+  min-height: 48px;
+  padding-inline: 22px;
+  border-radius: var(--admin-radius-md);
+  white-space: nowrap;
+}
+
+/* =========================
+   Forum table wrapper
+========================= */
+
+.admin-forum-list .admin-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--admin-radius-xl);
+  background: var(--admin-surface);
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* =========================
+   Forum table
+========================= */
+
+.admin-forum-list .admin-table {
+  min-width: 1080px;
+  table-layout: fixed;
+}
+
+.admin-forum-list .admin-table th,
+.admin-forum-list .admin-table td {
+  padding: 18px 20px;
+  vertical-align: middle;
+  white-space: normal;
+}
+
+.admin-forum-list .admin-table th {
+  color: var(--admin-muted);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+/* Sujet */
+
+.admin-forum-list .admin-table th:nth-child(1),
+.admin-forum-list .admin-table td:nth-child(1) {
+  width: 32%;
+}
+
+.admin-forum-list .admin-table td:first-child {
+  min-width: 0;
+}
+
+.admin-forum-list .admin-table td:first-child strong {
+  display: block;
+  margin-bottom: 7px;
+
+  color: var(--admin-text);
+
+  font-size: 1rem;
+  font-weight: 950;
+  line-height: 1.25;
+}
+
+.admin-forum-list .admin-table__excerpt {
+  max-width: 380px;
+  margin: 0;
+
+  color: var(--admin-muted);
+
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* Auteur */
+
+.admin-forum-list .admin-table th:nth-child(2),
+.admin-forum-list .admin-table td:nth-child(2) {
+  width: 18%;
+}
+
+.admin-forum-list .admin-table td:nth-child(2) {
+  color: var(--admin-text);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+/* Rôle */
+
+.admin-forum-list .admin-table th:nth-child(3),
+.admin-forum-list .admin-table td:nth-child(3) {
+  width: 10%;
+  text-align: center;
+}
+
+.admin-forum-list .admin-table td:nth-child(3) .admin-badge {
+  min-width: 54px;
+}
+
+/* Réponses */
+
+.admin-forum-list .admin-table th:nth-child(4),
+.admin-forum-list .admin-table td:nth-child(4) {
+  width: 10%;
+  text-align: center;
+}
+
+.admin-forum-list .admin-table td:nth-child(4) strong {
+  color: var(--admin-text);
+  font-size: 1.05rem;
+  font-weight: 950;
+}
+
+/* Date */
+
+.admin-forum-list .admin-table th:nth-child(5),
+.admin-forum-list .admin-table td:nth-child(5) {
+  width: 15%;
+  white-space: nowrap;
+}
+
+/* Actions */
+
+.admin-forum-list .admin-table th:nth-child(6),
+.admin-forum-list .admin-table td:nth-child(6) {
+  width: 15%;
+  padding-right: 24px;
+  text-align: center;
+}
+
+/* =========================
+   Forum table actions
+========================= */
+
+.admin-forum-list td.admin-table__actions {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.admin-forum-list td.admin-table__actions > a,
+.admin-forum-list td.admin-table__actions > form {
+  width: 124px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.admin-forum-list td.admin-table__actions > a + form {
+  margin-top: 9px;
+}
+
+.admin-forum-list td.admin-table__actions .btn,
+.admin-forum-list td.admin-table__actions button {
+  width: 124px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0 14px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 950;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.admin-forum-list td.admin-table__actions .btn-primary {
+  border-color: transparent;
+
+  background: linear-gradient(
+    135deg,
+    var(--admin-primary),
+    var(--admin-primary-dark)
+  );
+  color: #ffffff;
+
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.22);
+}
+
+.admin-forum-list td.admin-table__actions .btn-danger {
+  border-color: transparent;
+
+  background: linear-gradient(
+    135deg,
+    var(--admin-danger),
+    var(--admin-danger-dark)
+  );
+  color: #ffffff;
+
+  box-shadow: 0 10px 22px rgba(220, 38, 38, 0.18);
+}
+
+/* =========================
+   Forum detail cards
+========================= */
+
+.admin-forum-detail {
+  display: grid;
+  gap: 22px;
+}
+
+.admin-forum-topic-card,
+.admin-forum-reply-card {
+  display: grid;
+  gap: 16px;
+
+  padding: 26px;
+  border-radius: var(--admin-radius-xl);
+
+  background: var(--admin-surface);
+
+  box-shadow:
+    0 18px 44px rgba(15, 23, 42, 0.075),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.admin-forum-topic-card__header,
+.admin-forum-reply-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-forum-topic-card__header h3 {
+  margin: 0 0 6px;
+
+  color: var(--admin-text);
+
+  font-size: 1.15rem;
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.admin-forum-topic-card__header p,
+.admin-forum-reply-card__header p {
+  margin: 0;
+
+  color: var(--admin-muted);
+
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.admin-forum-reply-card__header strong {
+  display: block;
+  margin-bottom: 6px;
+
+  color: var(--admin-text);
+
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.admin-forum-topic-card__content,
+.admin-forum-reply-card__content {
+  max-width: 920px;
+
+  color: var(--admin-text);
+
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.admin-forum-topic-card__content p,
+.admin-forum-reply-card__content p {
+  margin: 0 0 10px;
+}
+
+.admin-forum-topic-card__content p:last-child,
+.admin-forum-reply-card__content p:last-child {
+  margin-bottom: 0;
+}
+
+/* =========================
+   Forum replies
+========================= */
+
+.admin-forum-replies {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-forum-replies__list {
+  display: grid;
+  gap: 14px;
+}

@@ -1,0 +1,62 @@
+/* =========================================================
+   Admin tokens
+   Variables globales du back-office MangaBook V2
+========================================================= */
+
+:root {
+  /* =========================
+     Backgrounds
+  ========================= */
+
+  --admin-bg: #f4f6f9;
+  --admin-app-bg: #eef2f7;
+
+  --admin-surface: #ffffff;
+  --admin-surface-muted: #f9fafb;
+  --admin-surface-soft: #f8fafc;
+
+  /* =========================
+     Sidebar
+  ========================= */
+
+  --admin-sidebar: #111827;
+  --admin-sidebar-muted: #1f2937;
+
+  /* =========================
+     Texts
+  ========================= */
+
+  --admin-text: #111827;
+  --admin-muted: #6b7280;
+  --admin-border: #e5e7eb;
+
+  /* =========================
+     Actions
+  ========================= */
+
+  --admin-primary: #2563eb;
+  --admin-primary-dark: #1d4ed8;
+
+  --admin-danger: #dc2626;
+  --admin-danger-dark: #b91c1c;
+
+  --admin-success: #15803d;
+  --admin-warning: #b45309;
+
+  /* =========================
+     Radius
+  ========================= */
+
+  --admin-radius-sm: 10px;
+  --admin-radius-md: 14px;
+  --admin-radius-lg: 18px;
+  --admin-radius-xl: 24px;
+
+  /* =========================
+     Shadows
+  ========================= */
+
+  --admin-shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --admin-shadow-md: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --admin-shadow-lg: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
