@@ -1,9 +1,49 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    {% set page_title = meta.title if meta is defined and meta else self.title()|striptags %}
+    {% set page_description = meta.description if meta is defined and meta else "MangaBook référence les mangas, sorties, goodies et contenus associés." %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}MangaBook V2{% endblock %}</title>
+    <title>{{ page_title }}</title>
+    <meta name="description" content="{{ page_description }}" />
+    <meta name="robots" content="{{ meta.robots if meta is defined and meta else 'index, follow' }}" />
+    {% if meta is defined and meta and meta.canonical %}
+      <link rel="canonical" href="{{ meta.canonical }}" />
+    {% endif %}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ page_title }}" />
+    <meta property="og:description" content="{{ page_description }}" />
+    {% if meta is defined and meta and meta.image %}
+      <meta property="og:image" content="{{ meta.image }}" />
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ page_title }}" />
+    <meta name="twitter:description" content="{{ page_description }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/components.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/public.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/forum.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/auth.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin.css') }}"
+    />
   </head>
   <body>
     <header>
