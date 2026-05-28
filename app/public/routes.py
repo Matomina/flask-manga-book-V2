@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from flask import (
     Blueprint,
+    Response,
     abort,
     flash,
     redirect,
@@ -13,6 +14,7 @@ from flask import (
 
 from app.auth.services import get_user_by_id
 from app.core.security import login_required
+from app.core.seo import build_article_description, build_meta
 
 from .services import (
     add_favorite,
@@ -51,7 +53,18 @@ def _get_current_user_id() -> int | None:
 @bp.route("/")
 def home():
     featured_articles = get_featured_articles()
-    return render_template("public/home.html", articles=featured_articles)
+    return render_template(
+        "public/home.html",
+        articles=featured_articles,
+        meta=build_meta(
+            title="MangaBook - Catalogue manga et sorties",
+            description=(
+                "Découvrez les nouveautés manga, les sorties planifiées et les "
+                "goodies disponibles dans le catalogue MangaBook."
+            ),
+            canonical=url_for("public.home", _external=True),
+        ),
+    )
 
 
 @bp.route("/articles")
@@ -75,6 +88,14 @@ def articles():
         "public/articles.html",
         articles=articles_list,
         filters=filters,
+        meta=build_meta(
+            title="Catalogue manga - MangaBook",
+            description=(
+                "Parcourez le catalogue MangaBook par recherche, genre, univers "
+                "et jour de sortie."
+            ),
+            canonical=url_for("public.articles", _external=True),
+        ),
     )
 
 
@@ -86,7 +107,24 @@ def article_detail(article_id: int):
     if user_id is not None:
         add_to_history(user_id, article_id)
 
-    return render_template("public/article_detail.html", article=article)
+    article_image = None
+    if article["image"]:
+        article_image = url_for("static", filename=article["image"], _external=True)
+
+    return render_template(
+        "public/article_detail.html",
+        article=article,
+        meta=build_meta(
+            title=f"{article['name']} - MangaBook",
+            description=build_article_description(article),
+            canonical=url_for(
+                "public.article_detail",
+                article_id=article_id,
+                _external=True,
+            ),
+            image=article_image,
+        ),
+    )
 
 
 # =========================
@@ -98,7 +136,18 @@ def article_detail(article_id: int):
 def goodies():
     """Afficher les articles de type goodies."""
     goodies_articles = get_goodies_articles()
-    return render_template("public/goodies.html", articles=goodies_articles)
+    return render_template(
+        "public/goodies.html",
+        articles=goodies_articles,
+        meta=build_meta(
+            title="Goodies manga - MangaBook",
+            description=(
+                "Retrouvez les goodies manga disponibles dans le catalogue "
+                "MangaBook."
+            ),
+            canonical=url_for("public.goodies", _external=True),
+        ),
+    )
 
 
 @bp.route("/planning")
@@ -108,6 +157,13 @@ def planning():
     return render_template(
         "public/planning.html",
         grouped_articles=grouped_articles,
+        meta=build_meta(
+            title="Planning des sorties manga - MangaBook",
+            description=(
+                "Consultez le planning des sorties MangaBook organisé par jour."
+            ),
+            canonical=url_for("public.planning", _external=True),
+        ),
     )
 
 
@@ -127,7 +183,16 @@ def profile():
         flash("Session invalide. Veuillez vous reconnecter.", "warning")
         return redirect(url_for("auth.login"))
 
-    return render_template("public/profile.html", user=user)
+    return render_template(
+        "public/profile.html",
+        user=user,
+        meta=build_meta(
+            title="Mon profil - MangaBook",
+            description="Consultez les informations de votre compte MangaBook.",
+            canonical=url_for("public.profile", _external=True),
+            robots="noindex, nofollow",
+        ),
+    )
 
 
 # =========================
@@ -140,7 +205,16 @@ def profile():
 def favorites():
     user_id = session["user_id"]
     favorite_articles = get_user_favorites(user_id)
-    return render_template("public/favorites.html", articles=favorite_articles)
+    return render_template(
+        "public/favorites.html",
+        articles=favorite_articles,
+        meta=build_meta(
+            title="Mes favoris - MangaBook",
+            description="Retrouvez vos mangas et goodies favoris sur MangaBook.",
+            canonical=url_for("public.favorites", _external=True),
+            robots="noindex, nofollow",
+        ),
+    )
 
 
 @bp.route("/favorites/add/<int:article_id>", methods=["POST"])
@@ -171,7 +245,16 @@ def remove_from_favorites(article_id: int):
 def history():
     user_id = session["user_id"]
     history_articles = get_user_history(user_id)
-    return render_template("public/history.html", articles=history_articles)
+    return render_template(
+        "public/history.html",
+        articles=history_articles,
+        meta=build_meta(
+            title="Mon historique - MangaBook",
+            description="Consultez votre historique de consultation MangaBook.",
+            canonical=url_for("public.history", _external=True),
+            robots="noindex, nofollow",
+        ),
+    )
 
 
 # =========================
@@ -195,7 +278,15 @@ def contact():
         flash("Votre message a bien été envoyé au support.", "success")
         return redirect(url_for("public.contact"))
 
-    return render_template("public/contact.html")
+    return render_template(
+        "public/contact.html",
+        meta=build_meta(
+            title="Contact - MangaBook",
+            description="Contactez le support MangaBook depuis votre espace client.",
+            canonical=url_for("public.contact", _external=True),
+            robots="noindex, nofollow",
+        ),
+    )
 
 
 # =========================
@@ -205,4 +296,65 @@ def contact():
 
 @bp.route("/about")
 def about():
-    return render_template("public/about.html")
+    return render_template(
+        "public/about.html",
+        meta=build_meta(
+            title="À propos - MangaBook",
+            description=(
+                "Découvrez MangaBook, son catalogue manga, ses sorties et ses "
+                "fonctionnalités communautaires."
+            ),
+            canonical=url_for("public.about", _external=True),
+        ),
+    )
+
+
+@bp.route("/robots.txt")
+def robots_txt():
+    """Exposer les règles d'indexation pour les moteurs de recherche."""
+
+    sitemap_url = url_for("public.sitemap_xml", _external=True)
+    body = "\n".join(
+        [
+            "User-agent: *",
+            "Allow: /",
+            "Disallow: /admin",
+            "Disallow: /auth",
+            "Disallow: /favorites",
+            "Disallow: /history",
+            "Disallow: /profile",
+            f"Sitemap: {sitemap_url}",
+            "",
+        ]
+    )
+    return Response(body, mimetype="text/plain")
+
+
+@bp.route("/sitemap.xml")
+def sitemap_xml():
+    """Générer un sitemap XML public minimal."""
+
+    articles_list = search_articles()
+    static_urls = [
+        url_for("public.home", _external=True),
+        url_for("public.articles", _external=True),
+        url_for("public.goodies", _external=True),
+        url_for("public.planning", _external=True),
+        url_for("public.about", _external=True),
+    ]
+    article_urls = [
+        url_for("public.article_detail", article_id=article["id"], _external=True)
+        for article in articles_list
+    ]
+
+    url_items = "\n".join(
+        f"  <url><loc>{url}</loc></url>" for url in [*static_urls, *article_urls]
+    )
+    body = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{url_items}\n"
+        "</urlset>\n"
+    )
+
+    return Response(body, mimetype="application/xml")
