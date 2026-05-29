@@ -163,31 +163,28 @@ Conserver une checklist durable pour guider la migration V1 → V2.
 
 Terminé.
 
-## Étape 5 — Formatage local à pousser
+## Étape 5 — Formatage local Ruff
 
 ### Objectif
 
 Enregistrer le formatage appliqué localement par Ruff.
 
-### Fichiers modifiés localement
+### Fichiers impactés
 
 - `app/public/routes.py`
 - `tests/test_seo.py`
 
 ### État
 
-À terminer côté poste local.
+Terminé et poussé.
 
-### Commandes à lancer
+### Commit
 
-```bash
-git add app/public/routes.py tests/test_seo.py
-git commit -m "style: format seo changes"
-git push origin audit/parity-legacy-v1
-git status
+```text
+5dfec2e style: format seo changes
 ```
 
-### Validation attendue
+### Preuve
 
 ```text
 On branch audit/parity-legacy-v1
@@ -260,22 +257,26 @@ Ne jamais migrer les anciens utilisateurs, emails, téléphones, adresses ou mot
 | Tests SEO | OK |
 | Validation locale | OK : 168 tests, 94% coverage |
 | Ruff check | OK |
-| Ruff format | OK après formatage local |
+| Ruff format | OK |
 | Documentation parité | OK |
-| Formatage local | À committer/pusher |
+| Formatage local | OK : commit `5dfec2e` poussé |
 | Parité design | À faire |
 | Parité contenu | À faire |
 | PR finale | À faire |
 
 ## Prochaine action exacte
 
-Sur le poste local :
+Démarrer la parité design V1/V2 :
+
+1. synchroniser la branche localement ;
+2. inventorier les assets et templates V1 ;
+3. comparer les pages principales ;
+4. appliquer les corrections design sur une sous-branche ou sur `audit/parity-legacy-v1` selon le choix de workflow.
+
+Commandes de départ recommandées :
 
 ```bash
-git add app/public/routes.py tests/test_seo.py
-git commit -m "style: format seo changes"
-git push origin audit/parity-legacy-v1
+git pull origin audit/parity-legacy-v1
 git status
+git diff --stat origin/main...HEAD
 ```
-
-Ensuite, démarrer la parité design V1/V2.
