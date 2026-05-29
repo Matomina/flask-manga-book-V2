@@ -1,7 +1,26 @@
 {% extends "base.html" %} {% block title %}{{ article["name"] }} - MangaBook
 V2{% endblock %} {% block content %}
 
+<section class="banner page-banner">
+  {% if article["image"] %}
+  <img
+    src="{{ url_for('static', filename=article['image']) }}"
+    alt="Bannière {{ article['name'] }}"
+  />
+  {% else %}
+  <img
+    src="{{ url_for('static', filename='image/dragon_ball_z.jpeg') }}"
+    alt="Bannière article MangaBook"
+  />
+  {% endif %}
+</section>
+
 <section class="article-detail-page catalog-page catalogue-page">
+  <header class="catalog-page__header catalogue-content page-intro">
+    <h2>{{ article["name"] }}</h2>
+    <p>Découvrez le détail, le prix, le stock et les informations de cet article.</p>
+  </header>
+
   <div
     class="article-detail-page__topbar catalog-search__actions filters-buttons"
   >
@@ -22,7 +41,7 @@ V2{% endblock %} {% block content %}
         type="submit"
         aria-label="Retirer des favoris"
       >
-        ❤
+        Favori
       </button>
     </form>
     {% else %}
@@ -36,7 +55,7 @@ V2{% endblock %} {% block content %}
         type="submit"
         aria-label="Ajouter aux favoris"
       >
-        ❤
+        Favori
       </button>
     </form>
     {% endif %} {% endif %} {% if article["image"] %}
@@ -82,9 +101,7 @@ V2{% endblock %} {% block content %}
       </section>
 
       {% if article["description"] %}
-      <section
-        class="article-detail-card__description product-detail__description"
-      >
+      <section class="article-detail-card__description product-detail__description">
         <h3>Description</h3>
 
         {% for paragraph in article["description"].split('\n') if
@@ -93,9 +110,7 @@ V2{% endblock %} {% block content %}
         {% endfor %}
       </section>
       {% else %}
-      <section
-        class="article-detail-card__description product-detail__description"
-      >
+      <section class="article-detail-card__description product-detail__description">
         <h3>Description</h3>
         <p>
           Aucune description détaillée n’est encore disponible pour cet article.
@@ -104,6 +119,16 @@ V2{% endblock %} {% block content %}
       {% endif %}
 
       <section class="article-detail-card__actions product-detail__actions">
+        <button
+          class="btn btn-secondary add-to-cart-btn"
+          type="button"
+          data-title="{{ article['name'] }}"
+          data-price="{{ article['price'] }}"
+          data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+        >
+          Ajouter au panier
+        </button>
+
         {% if session.get("user_id") %} {% if article["id"] in favorites_ids %}
         <p>Cet article est déjà dans vos favoris.</p>
 
