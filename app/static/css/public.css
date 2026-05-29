@@ -154,7 +154,9 @@ p {
   color: #fff;
   cursor: pointer;
   font: inherit;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
 .desktop-nav a:hover,
@@ -215,7 +217,9 @@ p {
   height: 4px;
   border-radius: 999px;
   background: #fff;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .burger-icon.open span:nth-child(1) {
@@ -431,7 +435,9 @@ p {
   color: #fff;
   cursor: pointer;
   font-weight: 700;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .add-to-cart-btn:hover,
@@ -549,7 +555,9 @@ p {
   text-align: center;
   font-weight: 500;
   box-shadow: 0 2px 8px #000;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
 }
 
 .flash-global.hide {
@@ -748,6 +756,76 @@ footer {
   }
 
   .article-detail-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Forum public parity */
+
+.forum-list,
+.forum-replies__list {
+  display: grid;
+  gap: 1rem;
+}
+
+.topic-card,
+.reply-card,
+.forum-message-box,
+.forum-detail-meta,
+.reply-form,
+.profile-card {
+  padding: 1rem;
+  border-radius: 14px;
+  background: #fff;
+  color: #000;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 20%);
+}
+
+.topic-message {
+  color: #321044;
+  line-height: 1.6;
+}
+
+.forum-detail-wrapper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.forum-detail-left,
+.forum-detail-right {
+  display: grid;
+  gap: 1rem;
+}
+
+.forum-form,
+.forum-form__group {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.forum-form input,
+.forum-form textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #d4bdf4;
+  border-radius: 12px;
+  font: inherit;
+}
+
+.forum-form textarea {
+  resize: vertical;
+}
+
+.forum-form__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .forum-detail-wrapper {
     grid-template-columns: 1fr;
   }
 }
