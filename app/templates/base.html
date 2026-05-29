@@ -9,6 +9,11 @@
     />
 
     <title>{% block title %}MangaBook V2{% endblock %}</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='image/favicon_one_piece.png') }}"
+    />
 
     <link
       rel="stylesheet"
@@ -38,7 +43,11 @@
     <header class="public-header site-header">
       <div class="header-top">
         <a class="public-header__brand logo-title" href="{{ url_for('public.home') }}">
-          <span class="public-header__logo logo">MB</span>
+          <img
+            class="public-header__logo logo"
+            src="{{ url_for('static', filename='image/favicon_one_piece.png') }}"
+            alt="Logo MangaBook"
+          />
           <span class="public-header__brand-text site-title">MangaBook</span>
         </a>
       </div>
