@@ -50,12 +50,38 @@ def _get_current_user_id() -> int | None:
     return session.get("user_id")
 
 
+def _article_ids(articles) -> set[int]:
+    """Retourner les identifiants d'une liste d'articles sqlite."""
+    return {article["id"] for article in articles}
+
+
+def _split_featured_articles(articles) -> tuple[list, list]:
+    """Séparer les articles mis en avant en sections accueil legacy."""
+    midpoint = max(1, len(articles) // 2)
+    return articles[:midpoint], articles[midpoint:]
+
+
 @bp.route("/")
 def home():
-    featured_articles = get_featured_articles()
+    featured_articles = get_featured_articles(limit=12)
+    classiques, pepites = _split_featured_articles(featured_articles)
+    goodies_articles = get_goodies_articles()
+    user_id = _get_current_user_id()
+    historiques = []
+    favorites_ids: set[int] = set()
+
+    if user_id is not None:
+        historiques = get_user_history(user_id)
+        favorites_ids = _article_ids(get_user_favorites(user_id))
+
     return render_template(
         "public/home.html",
         articles=featured_articles,
+        classiques=classiques,
+        pepites=pepites,
+        goodies=goodies_articles,
+        historiques=historiques,
+        favorites_ids=favorites_ids,
         meta=build_meta(
             title="MangaBook - Catalogue manga et sorties",
             description=(
@@ -142,7 +168,8 @@ def goodies():
         meta=build_meta(
             title="Goodies manga - MangaBook",
             description=(
-                "Retrouvez les goodies manga disponibles dans le catalogue MangaBook."
+                "Retrouvez les goodies manga disponibles dans le catalogue "
+                "MangaBook."
             ),
             canonical=url_for("public.goodies", _external=True),
         ),
