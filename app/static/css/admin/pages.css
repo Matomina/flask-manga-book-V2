@@ -1,0 +1,360 @@
+/* =========================================================
+   Admin pages
+   Structures communes des pages métier du back-office
+========================================================= */
+
+/* =========================
+   Page container
+========================= */
+
+.admin-page {
+  min-height: 70vh;
+  width: 100%;
+  max-width: 1240px;
+  padding: 24px;
+
+  border-radius: var(--admin-radius-lg);
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(37, 99, 235, 0.08),
+      transparent 34%
+    ),
+    var(--admin-bg);
+
+  color: var(--admin-text);
+}
+
+/* =========================
+   Lists
+========================= */
+
+.admin-users-list,
+.admin-orders-list,
+.admin-articles-list,
+.admin-contacts-list,
+.admin-order-items {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-users-list {
+  margin-top: 20px;
+}
+
+/* =========================
+   Page cards
+========================= */
+
+.admin-user-card,
+.admin-user-detail-card,
+.admin-order-card,
+.admin-order-detail-card,
+.admin-article-card,
+.admin-article-detail-card,
+.admin-contact-card,
+.admin-contact-detail-card {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-user-card__header,
+.admin-user-detail-card__header,
+.admin-order-card__header,
+.admin-order-detail-card__header,
+.admin-article-card__header,
+.admin-article-detail-card__header,
+.admin-contact-card__header,
+.admin-contact-detail-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-user-card__title,
+.admin-user-detail-card__title,
+.admin-order-card__title,
+.admin-order-detail-card__title,
+.admin-article-card__title,
+.admin-article-detail-card__title,
+.admin-contact-card__title,
+.admin-contact-detail-card__title {
+  margin: 0 0 8px;
+
+  color: var(--admin-text);
+
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.admin-user-card__meta,
+.admin-user-detail-card__meta,
+.admin-order-card__meta,
+.admin-order-detail-card__meta,
+.admin-article-card__meta,
+.admin-article-detail-card__meta,
+.admin-contact-card__meta {
+  margin: 0;
+
+  color: var(--admin-muted);
+
+  line-height: 1.45;
+}
+
+/* =========================
+   Info grids
+========================= */
+
+.admin-user-card__infos,
+.admin-order-card__infos,
+.admin-article-card__infos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px 16px;
+}
+
+.admin-user-card__infos p,
+.admin-order-card__infos p,
+.admin-article-card__infos p {
+  margin: 0;
+
+  color: var(--admin-muted);
+
+  line-height: 1.5;
+}
+
+.admin-user-card__infos strong,
+.admin-order-card__infos strong,
+.admin-article-card__infos strong {
+  color: var(--admin-text);
+}
+
+/* =========================
+   Actions
+========================= */
+
+.admin-user-card__actions,
+.admin-order-card__actions,
+.admin-article-card__actions,
+.admin-contact-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   Detail cards width
+========================= */
+
+.admin-user-detail-card,
+.admin-contact-detail-card {
+  max-width: 920px;
+}
+
+.admin-order-detail-card,
+.admin-article-detail-card {
+  max-width: 980px;
+}
+
+/* =========================
+   Filters
+========================= */
+
+.admin-orders-filters,
+.admin-contacts-filters {
+  margin: 20px 0 24px;
+  padding: 18px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+
+  background: var(--admin-surface);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-filters-nav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-active-filter {
+  margin: 14px 0 0;
+
+  color: var(--admin-muted);
+}
+
+.admin-active-filter strong {
+  color: var(--admin-text);
+}
+
+/* =========================
+   Orders
+========================= */
+
+.admin-order-total {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 52px;
+  margin: 0;
+  padding: 0 18px;
+
+  border-radius: var(--admin-radius-md);
+
+  background: #eef2ff;
+  color: var(--admin-primary);
+
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.admin-status-form {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-order-item {
+  padding: 14px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+
+  background: var(--admin-surface-muted);
+}
+
+.admin-order-item h4 {
+  margin: 0 0 12px;
+
+  color: var(--admin-text);
+
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.admin-order-item__subtotal {
+  margin: 12px 0 0;
+
+  color: var(--admin-text);
+
+  font-weight: 800;
+}
+
+/* =========================
+   Articles
+========================= */
+
+.admin-article-form {
+  max-width: 860px;
+  display: grid;
+  gap: 18px;
+}
+
+.admin-current-image {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 12px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+
+  background: var(--admin-surface-muted);
+}
+
+.admin-current-image img {
+  width: 90px;
+  height: 90px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+
+  object-fit: cover;
+}
+
+.admin-current-image p {
+  margin: 0;
+
+  color: var(--admin-muted);
+
+  font-size: 0.84rem;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.admin-article-figure {
+  margin: 0;
+}
+
+.admin-article-figure img {
+  display: block;
+
+  width: 100%;
+  max-width: 360px;
+  max-height: 260px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+
+  background: var(--admin-surface-muted);
+
+  object-fit: cover;
+}
+
+.admin-article-figure figcaption {
+  margin-top: 8px;
+
+  color: var(--admin-muted);
+
+  font-size: 0.82rem;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+/* =========================
+   Contacts
+========================= */
+
+.admin-contact-card__body {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-contact-card__date,
+.admin-contact-card__excerpt {
+  margin: 0;
+}
+
+.admin-contact-card__date {
+  color: var(--admin-muted);
+}
+
+.admin-contact-card__excerpt {
+  color: var(--admin-text);
+  line-height: 1.65;
+}
+
+.admin-message-content {
+  padding: 16px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+
+  background: var(--admin-surface-muted);
+  color: var(--admin-text);
+
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
