@@ -4,8 +4,15 @@ set current_genre = filters["genre"] if filters else "" %} {% set
 current_universe = filters["universe"] if filters else "" %} {% set
 current_release_day = filters["release_day"] if filters else "" %}
 
-<section class="catalog-page catalogue-page">
-  <header class="catalog-page__header catalogue-content">
+<section class="banner page-banner">
+  <img
+    src="{{ url_for('static', filename='image/fairy_tail_100_years_quest.jpg') }}"
+    alt="Bannière catalogue MangaBook"
+  />
+</section>
+
+<section class="catalog-page catalogue-page page-stack">
+  <header class="catalog-page__header catalogue-content page-intro">
     <h2>Catalogue des articles</h2>
     <p>Découvrez tous les articles disponibles sur MangaBook.</p>
   </header>
@@ -62,8 +69,8 @@ current_release_day = filters["release_day"] if filters else "" %}
         <select id="release_day" name="release_day">
           <option value="">Tous les jours</option>
 
-          {% for day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi",
-          "Samedi", "Dimanche", "Sans jour fixe"] %} {% if current_release_day
+          {% for day in [ "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi",
+          "Samedi", "Dimanche", "Sans jour fixe" ] %} {% if current_release_day
           == day %}
           <option value="{{ day }}" selected>{{ day }}</option>
           {% else %}
@@ -96,19 +103,27 @@ current_release_day = filters["release_day"] if filters else "" %}
       {% for article in articles %}
       <article class="article-card product-card card">
         {% if session.get("user_id") %} {% if article["id"] in favorites_ids %}
-        <span class="favorite-btn is-favorite" aria-label="Déjà en favori">❤</span>
+        <span class="favorite-btn is-favorite" aria-label="Déjà en favori">
+          Favori
+        </span>
         {% else %}
         <form
           class="article-card__favorite-form"
           method="post"
           action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
         >
-          <button class="favorite-btn" type="submit" aria-label="Ajouter aux favoris">❤</button>
+          <button
+            class="favorite-btn"
+            type="submit"
+            aria-label="Ajouter aux favoris"
+          >
+            Favori
+          </button>
         </form>
-        {% endif %} {% endif %}
-
-        {% if article["image"] %}
-        <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+        {% endif %} {% endif %} {% if article["image"] %}
+        <a
+          href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+        >
           <img
             class="article-card__image product-img"
             src="{{ url_for('static', filename=article['image']) }}"
@@ -119,6 +134,7 @@ current_release_day = filters["release_day"] if filters else "" %}
 
         <div class="card-info">
           <h3 class="text">{{ article["name"] }}</h3>
+
           <p class="price article-card__price">{{ article["price"] }} €</p>
 
           <p class="article-card__meta">
@@ -129,7 +145,9 @@ current_release_day = filters["release_day"] if filters else "" %}
           <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
 
           {% if article["release_day"] %}
-          <p class="article-card__stock">Sortie : {{ article["release_day"] }}</p>
+          <p class="article-card__stock">
+            Sortie : {{ article["release_day"] }}
+          </p>
           {% endif %}
 
           <button
@@ -165,5 +183,4 @@ current_release_day = filters["release_day"] if filters else "" %}
   </div>
   {% endif %}
 </section>
-
 {% endblock %}

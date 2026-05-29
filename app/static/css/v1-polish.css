@@ -1,4 +1,11 @@
-/* V1 final polish layer */
+/* =========================
+   MangaBook V2 - V1 final polish layer
+   Objectif : uniformiser le rendu public V1-like
+   ========================= */
+
+/* =========================
+   Header / logo
+   ========================= */
 
 .public-header__logo.logo {
   width: 48px;
@@ -18,6 +25,10 @@
   letter-spacing: 0.02em;
 }
 
+/* =========================
+   Page layout commun
+   ========================= */
+
 .public-main {
   display: grid;
   gap: 32px;
@@ -27,24 +38,30 @@
 .catalog-page,
 .home-page {
   display: grid;
-  gap: 32px;
   width: 100%;
+  gap: 32px;
 }
 
-.banner.page-banner,
-.banner {
+.banner,
+.banner.page-banner {
   width: 100%;
   max-width: none;
   margin: 0;
+  overflow: hidden;
   border-radius: 8px;
 }
 
 .banner img {
+  display: block;
   width: 100%;
   min-height: 220px;
   max-height: 420px;
   object-fit: cover;
 }
+
+/* =========================
+   Blocs intro / contenu
+   ========================= */
 
 .content,
 .page-intro,
@@ -63,6 +80,7 @@
 .content h3,
 .page-intro h1,
 .page-intro h2,
+.page-intro h3,
 .catalogue-content h2,
 .catalogue-content h3,
 .public-content-page h2,
@@ -78,6 +96,10 @@
   color: var(--mb-white);
   font-weight: 650;
 }
+
+/* =========================
+   Cards / produits
+   ========================= */
 
 .product-detail-link {
   color: var(--mb-primary);
@@ -112,6 +134,10 @@
   color: #e63946;
 }
 
+/* =========================
+   Pages utilisateur / sections publiques
+   ========================= */
+
 .public-content-page,
 .catalogue-content,
 .planning-day,
@@ -144,9 +170,55 @@
   gap: 20px;
 }
 
+/* =========================
+   Filtres catalogue
+   ========================= */
+
 .catalog-search__group label {
   color: var(--mb-primary);
 }
+
+.catalog-search__group input,
+.catalog-search__group select {
+  border: 2px solid rgba(145, 53, 255, 0.45);
+  color: var(--mb-dark);
+  background: var(--mb-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.catalog-search__group input:hover,
+.catalog-search__group select:hover,
+.catalog-search__group input:focus,
+.catalog-search__group select:focus {
+  border-color: var(--mb-secondary);
+  box-shadow: 0 0 0 4px rgba(220, 30, 247, 0.16);
+  transform: translateY(-1px);
+}
+
+.filters-buttons .btn,
+.catalog-search__actions .btn,
+.catalog-search__actions button {
+  border: 2px solid var(--mb-primary);
+  color: var(--mb-white);
+  background: var(--mb-primary);
+  box-shadow: 0 4px 12px rgba(145, 53, 255, 0.28);
+}
+
+.filters-buttons .btn:hover,
+.catalog-search__actions .btn:hover,
+.catalog-search__actions button:hover {
+  border-color: var(--mb-secondary);
+  background: var(--mb-gradient-reverse);
+  box-shadow: 0 6px 18px rgba(220, 30, 247, 0.32);
+}
+
+/* =========================
+   Empty states
+   ========================= */
 
 .empty-state {
   padding: 32px;
@@ -162,6 +234,93 @@
   color: var(--mb-white);
 }
 
+/* =========================
+   Forum premium
+   ========================= */
+
+.forum-page {
+  position: relative;
+  overflow: hidden;
+}
+
+.forum-page::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255, 255, 255, 0.24),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(0, 0, 0, 0.16),
+      transparent 30%
+    );
+}
+
+.forum-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+.forum-header {
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.forum-list {
+  display: grid;
+  gap: 18px;
+}
+
+.forum-item {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.forum-item:hover {
+  border-color: var(--mb-secondary);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+  transform: translateY(-3px);
+}
+
+.forum-item h3 {
+  margin: 0 0 10px;
+  color: var(--mb-white);
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+}
+
+.forum-item h3 a {
+  color: var(--mb-white);
+  text-decoration: none;
+}
+
+.forum-item h3 a:hover {
+  color: var(--mb-secondary);
+}
+
+.forum-item p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
 @media (max-width: 700px) {
   .public-main {
     padding-inline: 16px;
@@ -172,5 +331,14 @@
   .catalogue-content,
   .public-content-page {
     padding: 24px;
+  }
+
+  .banner img {
+    min-height: 180px;
+    max-height: 300px;
+  }
+
+  .forum-item {
+    padding: 18px;
   }
 }
