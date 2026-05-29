@@ -5,8 +5,15 @@
 {% block meta_description %}Découvrez le projet MangaBook V2, son catalogue manga, ses goodies, son planning de sorties et son espace communautaire.{% endblock %}
 
 {% block content %}
-<section class="about-page catalog-page public-content-page">
-  <header class="about-page__header catalog-page__header">
+<section class="banner page-banner">
+  <img
+    src="{{ url_for('static', filename='image/one_piece.jpeg') }}"
+    alt="Bannière à propos MangaBook"
+  />
+</section>
+
+<section class="about-page catalog-page public-content-page content">
+  <header class="about-page__header catalog-page__header page-intro">
     <h2>À propos</h2>
     <p>Découvrez le projet MangaBook V2 et son objectif.</p>
   </header>
