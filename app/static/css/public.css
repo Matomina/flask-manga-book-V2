@@ -214,19 +214,23 @@ body.public-shell {
 .article-card:hover .article-card__title,
 .article-card:hover h3,
 .article-card:hover h4,
-.article-card:hover .article-card__price {
+.article-card:hover .article-card__price,
+.article-card:hover .text,
+.article-card:hover .price {
   color: var(--mb-secondary);
 }
 
 .article-card h3,
-.article-card h4 {
+.article-card h4,
+.card-info .text {
   margin: 0;
   color: var(--mb-primary);
   font-size: 1rem;
   font-weight: 800;
 }
 
-.article-card__image {
+.article-card__image,
+.product-img {
   width: 100%;
   height: auto;
   aspect-ratio: 2 / 3;
@@ -237,12 +241,15 @@ body.public-shell {
 
 .article-card__price,
 .article-card__meta,
-.article-card__stock {
+.article-card__stock,
+.price {
   margin: 0;
 }
 
-.article-card__price {
+.article-card__price,
+.price {
   color: var(--mb-primary);
+  font-weight: 800;
 }
 
 .article-card__meta {
@@ -253,6 +260,51 @@ body.public-shell {
 .article-card__stock,
 .article-card__favorite-status {
   color: var(--mb-dark);
+  font-size: 0.82rem;
+}
+
+.card-info {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  justify-items: center;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 100;
+  display: flex;
+  width: 25px;
+  height: 25px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  color: var(--mb-gray);
+  font-size: 18px;
+  line-height: 1;
+  background: var(--mb-white);
+  box-shadow: 0 12px 30px var(--mb-dark);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.favorite-btn:hover {
+  box-shadow: 0 16px 35px var(--mb-dark);
+  transform: scale(1.08);
+}
+
+.favorite-btn.is-favorite {
+  color: #e63946;
+  background: var(--mb-white);
+  box-shadow: 0 16px 35px rgba(230, 57, 70, 0.35);
+  transform: scale(1.05);
+}
+
+.add-to-cart-btn {
+  padding: 8px 10px;
   font-size: 0.82rem;
 }
 
