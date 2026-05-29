@@ -288,7 +288,10 @@ body.public-shell {
   background: var(--mb-white);
   box-shadow: 0 12px 30px var(--mb-dark);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
 }
 
 .favorite-btn:hover {
@@ -659,5 +662,99 @@ body.public-shell {
 @media (min-width: 2000px) {
   .article-card {
     flex-basis: 260px;
+  }
+}
+
+.product-detail {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px;
+  color: var(--mb-dark);
+  text-align: left;
+}
+
+.product-detail:hover {
+  background: var(--mb-gradient-reverse);
+}
+
+.product-detail__image {
+  display: flex;
+  justify-content: center;
+}
+
+.product-detail__image img {
+  width: min(100%, 360px);
+  aspect-ratio: 2 / 3;
+  border-radius: var(--mb-radius-md);
+  object-fit: cover;
+  background: var(--mb-white);
+  box-shadow: var(--mb-shadow-md);
+}
+
+.product-detail__content {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.product-detail__header {
+  display: grid;
+  gap: 8px;
+  color: var(--mb-primary);
+}
+
+.product-detail__header .text {
+  margin: 0;
+  color: var(--mb-primary);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+}
+
+.product-detail__header .price {
+  margin: 0;
+  color: var(--mb-primary);
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.product-detail__meta,
+.product-detail__description,
+.product-detail__actions {
+  display: grid;
+  gap: 10px;
+}
+
+.product-detail__meta p,
+.product-detail__description p,
+.product-detail__actions p {
+  margin: 0;
+}
+
+.product-detail__description h3 {
+  margin: 0;
+  color: var(--mb-primary);
+}
+
+.favorite-detail-form {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 20;
+  margin: 0;
+}
+
+.product-detail .favorite-btn {
+  top: 0;
+  right: 0;
+}
+
+@media (min-width: 900px) {
+  .product-detail {
+    grid-template-columns: minmax(260px, 380px) 1fr;
+    align-items: start;
   }
 }
