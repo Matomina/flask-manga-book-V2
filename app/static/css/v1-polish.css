@@ -1,5 +1,84 @@
 /* V1 final polish layer */
 
+.public-header__logo.logo {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  padding: 0;
+  margin-right: 10px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: transparent;
+}
+
+.public-header__brand-text.site-title {
+  color: var(--mb-primary);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.public-main {
+  display: grid;
+  gap: 32px;
+}
+
+.page-stack,
+.catalog-page,
+.home-page {
+  display: grid;
+  gap: 32px;
+  width: 100%;
+}
+
+.banner.page-banner,
+.banner {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 8px;
+}
+
+.banner img {
+  width: 100%;
+  min-height: 220px;
+  max-height: 420px;
+  object-fit: cover;
+}
+
+.content,
+.page-intro,
+.catalogue-content,
+.public-content-page {
+  width: 100%;
+  margin: 0;
+  padding: clamp(24px, 4vw, 48px);
+  border-radius: 8px;
+  background: var(--mb-gradient-primary);
+  box-shadow: 0 2px 10px var(--mb-dark);
+}
+
+.content h1,
+.content h2,
+.content h3,
+.page-intro h1,
+.page-intro h2,
+.catalogue-content h2,
+.catalogue-content h3,
+.public-content-page h2,
+.public-content-page h3 {
+  margin-top: 0;
+  color: var(--mb-white);
+}
+
+.content p,
+.page-intro p,
+.catalogue-content p,
+.public-content-page p {
+  color: var(--mb-white);
+  font-weight: 650;
+}
+
 .product-detail-link {
   color: var(--mb-primary);
   font-size: 0.82rem;
@@ -70,7 +149,9 @@
 }
 
 .empty-state {
+  padding: 32px;
   border: 1px solid var(--mb-primary);
+  border-radius: 8px;
   color: var(--mb-white);
   background: var(--mb-gradient-primary);
   box-shadow: 0 2px 10px var(--mb-dark);
@@ -79,4 +160,17 @@
 .empty-state p,
 .empty-state a {
   color: var(--mb-white);
+}
+
+@media (max-width: 700px) {
+  .public-main {
+    padding-inline: 16px;
+  }
+
+  .content,
+  .page-intro,
+  .catalogue-content,
+  .public-content-page {
+    padding: 24px;
+  }
 }
