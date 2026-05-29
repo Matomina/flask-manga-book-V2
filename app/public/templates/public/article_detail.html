@@ -2,17 +2,10 @@
 V2{% endblock %} {% block content %}
 
 <section class="banner page-banner">
-  {% if article["image"] %}
   <img
-    src="{{ url_for('static', filename=article['image']) }}"
-    alt="Bannière {{ article['name'] }}"
-  />
-  {% else %}
-  <img
-    src="{{ url_for('static', filename='image/dragon_ball_z.jpeg') }}"
+    src="{{ url_for('static', filename='image/banner-article-detail.jpeg') }}"
     alt="Bannière article MangaBook"
   />
-  {% endif %}
 </section>
 
 <section class="article-detail-page catalog-page catalogue-page">
