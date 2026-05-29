@@ -76,9 +76,14 @@ function renderCart(containerId) {
     <div class="cart-total"><strong>Total : ${subtotal.toFixed(2)}€</strong></div>`;
 }
 
+function renderAllCarts() {
+  renderCart('cartContent');
+  renderCart('cartPageContent');
+}
+
 function saveCart() {
   localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  renderCart('cartContent');
+  renderAllCarts();
   updateCartCount();
 }
 
@@ -185,7 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
   onEvent(document.getElementById('cartOverlay'), 'click', closeCartPopup);
   onEvent(document.getElementById('cartCloseBtn'), 'click', closeCartPopup);
   onEvent(document.getElementById('quickCheckoutBtn'), 'click', quickCheckout);
+  onEvent(document.getElementById('cartPageCheckoutBtn'), 'click', quickCheckout);
 
-  renderCart('cartContent');
+  renderAllCarts();
   updateCartCount();
 });
