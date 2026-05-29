@@ -1,6 +1,13 @@
 {% extends "base.html" %} {% block title %}Goodies - MangaBook V2{% endblock %}
 {% block content %}
 
+<section class="banner">
+  <img
+    src="{{ url_for('static', filename='image/goodies_manga.png') }}"
+    alt="Bannière goodies MangaBook"
+  />
+</section>
+
 <section class="goodies-page catalog-page catalogue-page">
   <header class="goodies-page__header catalog-page__header catalogue-content">
     <h2>Goodies</h2>
@@ -21,7 +28,7 @@
   </div>
 
   {% if articles %}
-  <section class="goodies-results catalog-results catalogue-content">
+  <section class="content goodies-results catalog-results">
     <header class="goodies-results__header catalog-results__header">
       <h3>Articles goodies disponibles</h3>
       <p>
@@ -30,11 +37,13 @@
       </p>
     </header>
 
-    <div class="article-grid product-grid card-row">
-      {% for article in articles %}
-      <article class="article-card product-card card">
-        {% if session.get("user_id") %}
-          {% if article["id"] in favorites_ids %}
+    <div class="scroll-container">
+      <button class="scroll-btn left" type="button" aria-label="Défiler vers la gauche">Précédent</button>
+
+      <div class="card-list">
+        {% for article in articles %}
+        <article class="article-card product-card card">
+          {% if session.get("user_id") %} {% if article["id"] in favorites_ids %}
           <span class="favorite-btn is-favorite" aria-label="Déjà en favori">Favori</span>
           {% else %}
           <form
@@ -44,53 +53,55 @@
           >
             <button class="favorite-btn" type="submit" aria-label="Ajouter aux favoris">Favori</button>
           </form>
-          {% endif %}
-        {% endif %}
+          {% endif %} {% endif %}
 
-        {% if article["image"] %}
-        <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
-          <img
-            class="article-card__image product-img"
-            src="{{ url_for('static', filename=article['image']) }}"
-            alt="{{ article['name'] }}"
-          />
-        </a>
-        {% endif %}
-
-        <div class="card-info">
-          <h3 class="text">{{ article["name"] }}</h3>
-          <p class="price article-card__price">{{ article["price"] }} €</p>
-
-          <p class="article-card__meta">
-            {{ article["genres"] }} {% if article["universe"] %} • {{
-            article["universe"] }} {% endif %}
-          </p>
-
-          <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
-
-          {% if article["release_day"] %}
-          <p class="article-card__stock">Sortie : {{ article["release_day"] }}</p>
-          {% endif %}
-
-          <button
-            class="btn btn-secondary add-to-cart-btn"
-            type="button"
-            data-title="{{ article['name'] }}"
-            data-price="{{ article['price'] }}"
-            data-img="{{ url_for('static', filename=article['image']) }}"
-          >
-            Ajouter au panier
-          </button>
-
-          <a
-            class="product-detail-link"
-            href="{{ url_for('public.article_detail', article_id=article['id']) }}"
-          >
-            Voir le détail
+          {% if article["image"] %}
+          <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+            <img
+              class="article-card__image product-img"
+              src="{{ url_for('static', filename=article['image']) }}"
+              alt="{{ article['name'] }}"
+            />
           </a>
-        </div>
-      </article>
-      {% endfor %}
+          {% endif %}
+
+          <div class="card-info">
+            <h3 class="text">{{ article["name"] }}</h3>
+            <p class="price article-card__price">{{ article["price"] }} €</p>
+
+            <p class="article-card__meta">
+              {{ article["genres"] }} {% if article["universe"] %} • {{
+              article["universe"] }} {% endif %}
+            </p>
+
+            <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
+
+            {% if article["release_day"] %}
+            <p class="article-card__stock">Sortie : {{ article["release_day"] }}</p>
+            {% endif %}
+
+            <button
+              class="btn btn-secondary add-to-cart-btn"
+              type="button"
+              data-title="{{ article['name'] }}"
+              data-price="{{ article['price'] }}"
+              data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+            >
+              Ajouter au panier
+            </button>
+
+            <a
+              class="product-detail-link"
+              href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+            >
+              Voir le détail
+            </a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+      <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">Suivant</button>
     </div>
   </section>
   {% else %}
