@@ -1,0 +1,121 @@
+body.public-shell {
+  color: var(--mb-gray-900);
+  background: var(--mb-gray-50);
+}
+
+.public-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--mb-gray-200);
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.public-header__inner,
+.public-footer__inner {
+  width: min(100% - 32px, var(--mb-container));
+  margin-inline: auto;
+}
+
+.public-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 80px;
+}
+
+.public-header__brand,
+.public-header__nav,
+.public-header__actions,
+.public-footer__inner nav {
+  display: flex;
+  align-items: center;
+}
+
+.public-header__brand {
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.public-header__logo {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 14px;
+  color: var(--mb-white);
+  font-weight: 800;
+  background: #7c3aed;
+}
+
+.public-header__brand-text {
+  display: grid;
+  gap: 2px;
+}
+
+.public-header__brand-text span {
+  color: var(--mb-gray-500);
+  font-size: 0.85rem;
+}
+
+.public-header__nav,
+.public-header__actions {
+  gap: 14px;
+}
+
+.public-header__nav a,
+.public-header__actions a,
+.public-footer a {
+  color: inherit;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.public-header__nav a:hover,
+.public-header__actions a:hover,
+.public-footer a:hover {
+  color: #7c3aed;
+}
+
+.public-header__logout {
+  margin: 0;
+}
+
+.public-main {
+  min-height: calc(100vh - 160px);
+}
+
+.public-footer {
+  margin-top: 64px;
+  border-top: 1px solid var(--mb-gray-200);
+  background: var(--mb-white);
+}
+
+.public-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px 0;
+  color: var(--mb-gray-500);
+}
+
+.public-footer__inner nav {
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .public-header__inner {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px 0;
+  }
+
+  .public-header__nav,
+  .public-header__actions,
+  .public-footer__inner {
+    flex-wrap: wrap;
+  }
+}

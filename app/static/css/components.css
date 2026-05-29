@@ -1,0 +1,73 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn-primary {
+  color: var(--mb-white);
+  background: #7c3aed;
+}
+
+.btn-secondary {
+  color: #5b21b6;
+  background: rgba(124, 58, 237, 0.09);
+  border-color: rgba(124, 58, 237, 0.18);
+}
+
+.card {
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  border-radius: var(--mb-radius-lg);
+  background: var(--mb-white);
+  box-shadow: var(--mb-shadow-sm);
+}
+
+.flash-messages {
+  width: min(100% - 32px, var(--mb-container));
+  margin: 24px auto 0;
+}
+
+.flash {
+  padding: 14px 16px;
+  border: 1px solid var(--mb-gray-200);
+  border-radius: var(--mb-radius-md);
+  background: var(--mb-white);
+  box-shadow: var(--mb-shadow-sm);
+}
+
+.flash + .flash {
+  margin-top: 10px;
+}
+
+.flash--success,
+.flash.success {
+  color: var(--mb-green-700);
+  border-color: rgba(21, 128, 61, 0.18);
+  background: rgba(21, 128, 61, 0.08);
+}
+
+.flash--error,
+.flash.error {
+  color: var(--mb-red-700);
+  border-color: rgba(220, 38, 38, 0.18);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.flash--warning,
+.flash.warning {
+  color: var(--mb-orange-700);
+  border-color: rgba(180, 83, 9, 0.18);
+  background: rgba(180, 83, 9, 0.08);
+}
