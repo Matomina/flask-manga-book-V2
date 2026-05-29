@@ -1,109 +1,136 @@
-{% extends "base.html" %} {% block title %}Goodies - MangaBook V2{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Goodies - MangaBook{% endblock %}
+
 {% block content %}
-
-<section class="goodies-page">
-  <header class="goodies-page__header">
-    <h2>Goodies</h2>
-    <p>
-      Retrouvez les produits dérivés MangaBook : objets collector, accessoires,
-      décorations et articles liés à vos univers favoris.
-    </p>
-  </header>
-
-  <div class="goodies-page__topbar">
-    <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
-      Voir tout le catalogue
-    </a>
-
-    <a href="{{ url_for('public.planning') }}" class="btn btn-secondary">
-      Voir le planning des sorties
-    </a>
+<section class="banner">
+  <div class="banner-fallback" role="img" aria-label="Bannière goodies MangaBook">
+    <span>Goodies</span>
   </div>
+</section>
 
-  {% if articles %}
-  <section class="goodies-results">
-    <header class="goodies-results__header">
-      <h3>Articles goodies disponibles</h3>
-      <p>
-        {{ articles|length }} article{% if articles|length > 1 %}s{% endif %}
-        trouvé{% if articles|length > 1 %}s{% endif %}.
-      </p>
-    </header>
+<main class="planning-page goodies-page">
+  <section class="content">
+    <h1 class="page-title">🎁 Goodies</h1>
+    <p class="intro-1">
+      Bienvenue sur la page Goodies, l’univers des objets qui prolongent la
+      passion au-delà des œuvres. Figurines, accessoires, objets décoratifs ou
+      pièces exclusives vous attendent dans cette sélection.
+    </p>
 
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 16px;
-      "
-    >
+    <div class="article-actions">
+      <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
+        Voir tout le catalogue
+      </a>
+      <a href="{{ url_for('public.planning') }}" class="btn btn-secondary">
+        Voir le planning des sorties
+      </a>
+    </div>
+  </section>
+
+  <section class="content" id="section-goodies">
+    <h2>🎁 Goodies disponibles</h2>
+
+    {% if articles %}
+    <p class="intro-1">
+      {{ articles|length }} article{% if articles|length > 1 %}s{% endif %}
+      trouvé{% if articles|length > 1 %}s{% endif %}.
+    </p>
+
+    <div class="product-grid" data-product-grid>
       {% for article in articles %}
-      <article
-        style="border: 1px solid #ccc; padding: 12px; border-radius: 8px"
-      >
-        <h3>{{ article["name"] }}</h3>
-
-        {% if article["image"] %}
-        <img
-          src="{{ url_for('static', filename=article['image']) }}"
-          alt="{{ article['name'] }}"
-          style="
-            width: 100%;
-            max-height: 180px;
-            object-fit: cover;
-            border-radius: 6px;
-          "
-        />
-        {% endif %}
-
-        <p>
-          <strong>{{ article["price"] }} €</strong>
-        </p>
-
-        <p style="font-size: 14px">
-          {{ article["genres"] }} {% if article["universe"] %} • {{
-          article["universe"] }} {% endif %}
-        </p>
-
-        <p style="font-size: 13px">Stock : {{ article["stock"] }}</p>
-
-        {% if article["release_day"] %}
-        <p style="font-size: 13px">Sortie : {{ article["release_day"] }}</p>
-        {% endif %}
-
-        <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap">
-          <a
-            href="{{ url_for('public.article_detail', article_id=article['id']) }}"
-          >
-            Voir le détail
-          </a>
-
-          {% if session.get("user_id") %} {% if article["id"] in favorites_ids
-          %}
-          <span>✔ Déjà en favori</span>
-          {% else %}
-          <form
-            method="post"
-            action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
-          >
-            <button type="submit">❤️ Favori</button>
-          </form>
-          {% endif %} {% else %}
-          <a href="{{ url_for('auth.login') }}">
-            Se connecter pour ajouter aux favoris
-          </a>
+      <article class="product-card" data-product-card>
+        <div class="card" data-card>
+          {% if session.get("user_id") %}
+            {% if article["id"] in favorites_ids %}
+            <form
+              action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
+              method="post"
+            >
+              <button
+                class="favorite-btn is-favorite"
+                type="submit"
+                aria-label="Retirer des favoris"
+              >
+                ❤
+              </button>
+            </form>
+            {% else %}
+            <form
+              action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
+              method="post"
+            >
+              <button
+                class="favorite-btn"
+                type="submit"
+                aria-label="Ajouter aux favoris"
+              >
+                ❤
+              </button>
+            </form>
+            {% endif %}
           {% endif %}
+
+          <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+            {% if article["image"] %}
+            <img
+              src="{{ url_for('static', filename=article['image']) }}"
+              alt="{{ article['name'] }}"
+            />
+            {% else %}
+            <div class="card-placeholder" aria-hidden="true">📚</div>
+            {% endif %}
+          </a>
+
+          <div class="card-info" data-card-info>
+            <h3 class="text" data-title-text>{{ article["name"] }}</h3>
+            <p class="price" data-price>{{ "%.2f"|format(article["price"]) }} €</p>
+
+            <p class="subtitle">
+              {{ article["genres"] }}
+              {% if article["universe"] %} • {{ article["universe"] }}{% endif %}
+            </p>
+
+            {% if article["stock"] is not none %}
+            <p class="subtitle">Stock : {{ article["stock"] }}</p>
+            {% endif %}
+
+            {% if article["release_day"] %}
+            <p class="subtitle">Sortie : {{ article["release_day"] }}</p>
+            {% endif %}
+
+            <div class="article-actions">
+              <a
+                href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+                class="btn btn-secondary"
+              >
+                Voir
+              </a>
+
+              <button
+                class="add-to-cart-btn"
+                type="button"
+                data-title="{{ article['name'] }}"
+                data-price="{{ article['price'] }}"
+                data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+                {% if article["stock"] is not none and article["stock"] <= 0 %}disabled{% endif %}
+              >
+                Ajouter au panier
+              </button>
+            </div>
+          </div>
         </div>
       </article>
       {% endfor %}
     </div>
+    {% else %}
+    <div class="empty-state">
+      <p>Aucun goodie disponible pour le moment.</p>
+      <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
+        Retourner au catalogue
+      </a>
+    </div>
+    {% endif %}
   </section>
-  {% else %}
-  <div class="empty-state">
-    <p>Aucun goodie disponible pour le moment.</p>
-    <a href="{{ url_for('public.articles') }}"> Retourner au catalogue </a>
-  </div>
-  {% endif %}
-</section>
-
+</main>
 {% endblock %}
