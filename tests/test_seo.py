@@ -47,8 +47,7 @@ def test_sitemap_xml_contains_static_and_article_urls(client):
     assert response.status_code == 200
     assert response.mimetype == "application/xml"
     assert (
-        b'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-        in response.data
+        b'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' in response.data
     )
     assert b"<loc>http://localhost/</loc>" in response.data
     assert b"<loc>http://localhost/articles</loc>" in response.data
