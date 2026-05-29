@@ -44,48 +44,150 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/admin.css') }}"
     />
+    {% block extra_css %}{% endblock %}
   </head>
   <body>
-    <header>
-      <h1>MangaBook V2</h1>
+    <header class="site-header">
+      <div class="header-top">
+        <a href="{{ url_for('public.home') }}" class="logo-title">
+          <span class="logo" aria-hidden="true">📚</span>
+          <span class="site-title">Manga Book</span>
+        </a>
 
-      <nav>
-        <a href="{{ url_for('public.home') }}">Accueil</a>
-        <a href="{{ url_for('public.articles') }}">Catalogue</a>
-        <a href="{{ url_for('public.goodies') }}">Goodies</a>
-        <a href="{{ url_for('public.planning') }}">Planning</a>
-        <a href="{{ url_for('public.favorites') }}">Favoris</a>
-        <a href="{{ url_for('public.profile') }}">Profil</a>
-        <a href="{{ url_for('public.history') }}">Historique</a>
-        <a href="{{ url_for('public.about') }}">À propos</a>
-        <a href="{{ url_for('public.contact') }}">Contact</a>
-        {% if session.get("user_id") %}
-        <form
-          action="{{ url_for('auth.logout') }}"
-          method="post"
-          style="display: inline"
+        <button
+          class="burger-menu"
+          type="button"
+          aria-label="Ouvrir le menu"
+          aria-controls="mobile-nav"
         >
-          <button type="submit">Déconnexion</button>
-        </form>
-        {% else %}
-        <a href="{{ url_for('auth.login') }}">Connexion</a>
-        {% endif %}
-        <a href="{{ url_for('forum.index') }}">Forum</a>
-        <a href="{{ url_for('admin.dashboard') }}">Admin</a>
-      </nav>
+          <span class="burger-icon" id="burger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+      </div>
 
-      <hr />
+      <div class="search-bar">
+        <form action="{{ url_for('public.articles') }}" method="get">
+          <input
+            type="search"
+            name="q"
+            placeholder="🔍 Rechercher un manga"
+            value="{{ request.args.get('q', '') }}"
+          />
+        </form>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Navigation principale">
+        <ul>
+          <li><a href="{{ url_for('public.home') }}">🏠 Accueil</a></li>
+          <li><a href="{{ url_for('public.articles') }}">📖 Catalogue</a></li>
+          <li><a href="{{ url_for('public.planning') }}">🗓 Planning</a></li>
+          <li><a href="{{ url_for('public.profile') }}">👤 Profil</a></li>
+          <li><a href="{{ url_for('forum.index') }}">💬 Forum</a></li>
+          <li><a href="{{ url_for('public.goodies') }}">🎁 Goodies</a></li>
+          <li><a href="{{ url_for('public.favorites') }}">❤️ Favoris</a></li>
+          <li><a href="{{ url_for('public.about') }}">❓ À propos</a></li>
+
+          {% if session.get("user_id") %}
+          <li class="dropdown">
+            <button class="dropdown-toggle" type="button">👤 Mon compte</button>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('public.profile') }}">Profil</a></li>
+              <li><a href="{{ url_for('public.history') }}">Historique</a></li>
+              <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+              <li><a href="{{ url_for('admin.dashboard') }}">Admin</a></li>
+              <li>
+                <form action="{{ url_for('auth.logout') }}" method="post">
+                  <button type="submit">Déconnexion</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          {% else %}
+          <li><a href="{{ url_for('auth.login') }}">🔐 Connexion</a></li>
+          {% endif %}
+        </ul>
+      </nav>
     </header>
 
+    <div class="mobile-nav" id="mobile-nav">
+      <ul>
+        <li><a href="{{ url_for('public.home') }}">🏠 Accueil</a></li>
+        <li><a href="{{ url_for('public.articles') }}">📖 Catalogue</a></li>
+        <li><a href="{{ url_for('public.planning') }}">🗓 Planning</a></li>
+        <li><a href="{{ url_for('public.profile') }}">👤 Profil</a></li>
+        <li><a href="{{ url_for('forum.index') }}">💬 Forum</a></li>
+        <li><a href="{{ url_for('public.goodies') }}">🎁 Goodies</a></li>
+        <li><a href="{{ url_for('public.favorites') }}">❤️ Favoris</a></li>
+        <li><a href="{{ url_for('public.about') }}">❓ À propos</a></li>
+        <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+        {% if session.get("user_id") %}
+        <li>
+          <form action="{{ url_for('auth.logout') }}" method="post">
+            <button type="submit">Déconnexion</button>
+          </form>
+        </li>
+        {% else %}
+        <li><a href="{{ url_for('auth.login') }}">🔐 Connexion</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
     <main>
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %}
-      <div class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="flash-global" id="flashMessage">
         {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
+        <p class="flash {{ category }}">{{ message }}</p>
         {% endfor %}
       </div>
-      {% endif %} {% endwith %} {% block content %}{% endblock %}
+      {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
     </main>
+
+    <footer>
+      <div class="footer-links">
+        <h3>
+          <a href="{{ url_for('public.home') }}">
+            MANGA BOOK © 2026 - Tous droits réservés
+          </a>
+        </h3>
+        <a href="{{ url_for('public.about') }}">À propos</a> |
+        <a href="{{ url_for('public.contact') }}">Contact</a> |
+        <a href="{{ url_for('public.articles') }}">Catalogue</a>
+      </div>
+    </footer>
+
+    <button class="floating-cart-btn" type="button" aria-label="Ouvrir le panier">
+      🛒
+      <span class="floating-cart-count" id="floatingCartCount">0</span>
+    </button>
+
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <div class="cart-popup" id="cartPopup" aria-live="polite">
+      <div class="cart-header">
+        <h2 class="cart-title">🛒 Aperçu du Panier</h2>
+        <button class="close-btn" type="button" aria-label="Fermer">×</button>
+      </div>
+
+      <div class="cart-content" id="cartContent"></div>
+
+      <div class="cart-footer">
+        <a href="{{ url_for('public.articles') }}" class="btn-view-cart">
+          Continuer mes achats
+        </a>
+        <button class="btn-checkout" type="button">Commander</button>
+      </div>
+    </div>
+
+    <button id="scrollTopBtn" type="button" title="Remonter en haut">⬆</button>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    {% block extra_js %}{% endblock %}
   </body>
 </html>
