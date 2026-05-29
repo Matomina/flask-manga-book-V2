@@ -1,22 +1,14 @@
 {% extends "base.html" %} {% block title %}{{ article["name"] }} - MangaBook
 V2{% endblock %} {% block content %}
 
-<section class="article-detail-page">
-  <div class="article-detail-page__topbar">
+<section class="article-detail-page catalog-page">
+  <div class="article-detail-page__topbar catalog-search__actions">
     <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
       ← Retour au catalogue
     </a>
   </div>
 
-  <article
-    class="article-detail-card"
-    style="
-      border: 1px solid #ccc;
-      padding: 16px;
-      border-radius: 10px;
-      max-width: 720px;
-    "
-  >
+  <article class="article-detail-card card">
     <header class="article-detail-card__header">
       <h2>{{ article["name"] }}</h2>
 
@@ -30,12 +22,6 @@ V2{% endblock %} {% block content %}
       <img
         src="{{ url_for('static', filename=article['image']) }}"
         alt="{{ article['name'] }}"
-        style="
-          width: 100%;
-          max-height: 320px;
-          object-fit: cover;
-          border-radius: 8px;
-        "
       />
     </div>
     {% endif %}
@@ -90,9 +76,10 @@ V2{% endblock %} {% block content %}
       <h3>Favoris</h3>
 
       {% if session.get("user_id") %} {% if article["id"] in favorites_ids %}
-      <p>✔ Cet article est déjà dans vos favoris.</p>
+      <p>Cet article est déjà dans vos favoris.</p>
 
       <form
+        class="article-detail-card__form"
         action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
         method="post"
       >
@@ -102,6 +89,7 @@ V2{% endblock %} {% block content %}
       </form>
       {% else %}
       <form
+        class="article-detail-card__form"
         action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
         method="post"
       >
