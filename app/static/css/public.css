@@ -204,6 +204,49 @@ body.public-shell {
   margin: 0;
 }
 
+.article-detail-card {
+  display: grid;
+  gap: 20px;
+  max-width: 720px;
+  padding: 20px;
+}
+
+.article-detail-card__header h2,
+.article-detail-card__header p,
+.article-detail-card__meta p,
+.article-detail-card__description h3,
+.article-detail-card__description p,
+.article-detail-card__actions h3,
+.article-detail-card__actions p {
+  margin: 0;
+}
+
+.article-detail-card__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.article-detail-card__image img {
+  width: 100%;
+  max-height: 320px;
+  border-radius: var(--mb-radius-md);
+  object-fit: contain;
+  background: var(--mb-gray-50);
+}
+
+.article-detail-card__meta,
+.article-detail-card__description,
+.article-detail-card__actions {
+  display: grid;
+  gap: 10px;
+}
+
+.article-detail-card__form {
+  margin: 0;
+}
+
 .planning-list {
   display: grid;
   gap: 16px;
@@ -260,7 +303,8 @@ body.public-shell {
   .public-header__actions,
   .public-footer__inner,
   .catalog-search__actions,
-  .planning-day__header {
+  .planning-day__header,
+  .article-detail-card__header {
     flex-wrap: wrap;
   }
 
