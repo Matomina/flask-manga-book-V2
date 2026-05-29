@@ -1,14 +1,14 @@
 {% extends "base.html" %} {% block title %}Contact support - MangaBook V2{%
 endblock %} {% block content %}
 
-<section class="contact-support">
-  <div class="contact-support__topbar">
+<section class="contact-support catalog-page public-content-page">
+  <div class="contact-support__topbar catalog-search__actions">
     <a href="{{ url_for('public.home') }}" class="btn btn-secondary">
       ← Retour à l’accueil
     </a>
   </div>
 
-  <header class="contact-support__header">
+  <header class="contact-support__header catalog-page__header">
     <h2>Contacter le support</h2>
     <p>
       Envoyez un message à l’administration de MangaBook. Votre demande sera
@@ -16,13 +16,13 @@ endblock %} {% block content %}
     </p>
   </header>
 
-  <section class="contact-support__card">
+  <section class="contact-support__card public-info-card card">
     <form
       action="{{ url_for('public.contact') }}"
       method="post"
-      class="contact-form"
+      class="public-form contact-form"
     >
-      <div class="contact-form__group">
+      <div class="public-form__group contact-form__group">
         <label for="sujet">Sujet</label>
         <input
           type="text"
@@ -34,7 +34,7 @@ endblock %} {% block content %}
         />
       </div>
 
-      <div class="contact-form__group">
+      <div class="public-form__group contact-form__group">
         <label for="message">Message</label>
         <textarea
           id="message"
@@ -45,7 +45,7 @@ endblock %} {% block content %}
         ></textarea>
       </div>
 
-      <div class="contact-form__actions">
+      <div class="public-form__actions contact-form__actions">
         <button type="submit" class="btn btn-primary">
           Envoyer le message
         </button>

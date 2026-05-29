@@ -2,8 +2,14 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="{% block meta_description %}MangaBook V2, catalogue manga, figurines, goodies, planning de sorties et forum communautaire.{% endblock %}"
+    />
+
     <title>{% block title %}MangaBook V2{% endblock %}</title>
+
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/base.css') }}"
@@ -16,60 +22,75 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/public.css') }}"
     />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/forum.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/auth.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/admin.css') }}"
-    />
+
+    {% block extra_css %}{% endblock %}
   </head>
-  <body>
-    <header>
-      <h1>MangaBook V2</h1>
 
-      <nav>
-        <a href="{{ url_for('public.home') }}">Accueil</a>
-        <a href="{{ url_for('public.articles') }}">Catalogue</a>
-        <a href="{{ url_for('public.goodies') }}">Goodies</a>
-        <a href="{{ url_for('public.planning') }}">Planning</a>
-        <a href="{{ url_for('public.favorites') }}">Favoris</a>
-        <a href="{{ url_for('public.profile') }}">Profil</a>
-        <a href="{{ url_for('public.history') }}">Historique</a>
-        <a href="{{ url_for('public.about') }}">À propos</a>
-        <a href="{{ url_for('public.contact') }}">Contact</a>
-        {% if session.get("user_id") %}
-        <form
-          action="{{ url_for('auth.logout') }}"
-          method="post"
-          style="display: inline"
-        >
-          <button type="submit">Déconnexion</button>
-        </form>
-        {% else %}
-        <a href="{{ url_for('auth.login') }}">Connexion</a>
-        {% endif %}
-        <a href="{{ url_for('forum.index') }}">Forum</a>
-        <a href="{{ url_for('admin.dashboard') }}">Admin</a>
-      </nav>
+  <body class="public-shell">
+    <header class="public-header">
+      <div class="public-header__inner">
+        <a class="public-header__brand" href="{{ url_for('public.home') }}">
+          <span class="public-header__logo">MB</span>
+          <span class="public-header__brand-text">
+            <strong>MangaBook</strong>
+            <span>Catalogue manga & goodies</span>
+          </span>
+        </a>
 
-      <hr />
+        <nav class="public-header__nav" aria-label="Navigation principale">
+          <a href="{{ url_for('public.home') }}">Accueil</a>
+          <a href="{{ url_for('public.articles') }}">Catalogue</a>
+          <a href="{{ url_for('public.goodies') }}">Goodies</a>
+          <a href="{{ url_for('public.planning') }}">Planning</a>
+          <a href="{{ url_for('forum.index') }}">Forum</a>
+          <a href="{{ url_for('public.about') }}">À propos</a>
+          <a href="{{ url_for('public.contact') }}">Contact</a>
+        </nav>
+
+        <div class="public-header__actions">
+          {% if session.get("user_id") %}
+          <a href="{{ url_for('public.favorites') }}">Favoris</a>
+          <a href="{{ url_for('public.profile') }}">Profil</a>
+
+          <form
+            class="public-header__logout"
+            action="{{ url_for('auth.logout') }}"
+            method="post"
+          >
+            <button class="btn btn-secondary" type="submit">Déconnexion</button>
+          </form>
+          {% else %}
+          <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
+            Connexion
+          </a>
+          {% endif %}
+        </div>
+      </div>
     </header>
 
-    <main>
+    <main class="public-main">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %}
-      <div class="flash-messages">
+      <div class="flash-messages" role="status" aria-live="polite">
         {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
+        <div class="flash flash--{{ category }}">{{ message }}</div>
         {% endfor %}
       </div>
       {% endif %} {% endwith %} {% block content %}{% endblock %}
     </main>
+
+    <footer class="public-footer">
+      <div class="public-footer__inner">
+        <p>&copy; MangaBook V2</p>
+
+        <nav aria-label="Navigation secondaire">
+          <a href="{{ url_for('public.about') }}">À propos</a>
+          <a href="{{ url_for('public.contact') }}">Contact</a>
+          <a href="{{ url_for('forum.index') }}">Forum</a>
+        </nav>
+      </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

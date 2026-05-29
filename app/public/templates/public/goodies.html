@@ -1,8 +1,8 @@
 {% extends "base.html" %} {% block title %}Goodies - MangaBook V2{% endblock %}
 {% block content %}
 
-<section class="goodies-page">
-  <header class="goodies-page__header">
+<section class="goodies-page catalog-page">
+  <header class="goodies-page__header catalog-page__header">
     <h2>Goodies</h2>
     <p>
       Retrouvez les produits dérivés MangaBook : objets collector, accessoires,
@@ -10,7 +10,7 @@
     </p>
   </header>
 
-  <div class="goodies-page__topbar">
+  <div class="goodies-page__topbar catalog-search__actions">
     <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
       Voir tout le catalogue
     </a>
@@ -21,8 +21,8 @@
   </div>
 
   {% if articles %}
-  <section class="goodies-results">
-    <header class="goodies-results__header">
+  <section class="goodies-results catalog-results">
+    <header class="goodies-results__header catalog-results__header">
       <h3>Articles goodies disponibles</h3>
       <p>
         {{ articles|length }} article{% if articles|length > 1 %}s{% endif %}
@@ -30,49 +30,37 @@
       </p>
     </header>
 
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 16px;
-      "
-    >
+    <div class="article-grid">
       {% for article in articles %}
-      <article
-        style="border: 1px solid #ccc; padding: 12px; border-radius: 8px"
-      >
+      <article class="article-card card">
         <h3>{{ article["name"] }}</h3>
 
         {% if article["image"] %}
         <img
+          class="article-card__image"
           src="{{ url_for('static', filename=article['image']) }}"
           alt="{{ article['name'] }}"
-          style="
-            width: 100%;
-            max-height: 180px;
-            object-fit: cover;
-            border-radius: 6px;
-          "
         />
         {% endif %}
 
-        <p>
+        <p class="article-card__price">
           <strong>{{ article["price"] }} €</strong>
         </p>
 
-        <p style="font-size: 14px">
+        <p class="article-card__meta">
           {{ article["genres"] }} {% if article["universe"] %} • {{
           article["universe"] }} {% endif %}
         </p>
 
-        <p style="font-size: 13px">Stock : {{ article["stock"] }}</p>
+        <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
 
         {% if article["release_day"] %}
-        <p style="font-size: 13px">Sortie : {{ article["release_day"] }}</p>
+        <p class="article-card__stock">Sortie : {{ article["release_day"] }}</p>
         {% endif %}
 
-        <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap">
+        <div class="article-card__actions">
           <a
+            class="btn btn-secondary"
             href="{{ url_for('public.article_detail', article_id=article['id']) }}"
           >
             Voir le détail
@@ -80,13 +68,14 @@
 
           {% if session.get("user_id") %} {% if article["id"] in favorites_ids
           %}
-          <span>✔ Déjà en favori</span>
+          <span class="article-card__favorite-status">Déjà en favori</span>
           {% else %}
           <form
+            class="article-card__favorite-form"
             method="post"
             action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
           >
-            <button type="submit">❤️ Favori</button>
+            <button class="btn btn-primary" type="submit">Favori</button>
           </form>
           {% endif %} {% else %}
           <a href="{{ url_for('auth.login') }}">

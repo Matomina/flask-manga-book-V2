@@ -1,16 +1,16 @@
 {% extends "base.html" %} {% block title %}Mes favoris - MangaBook V2{% endblock
 %} {% block content %}
 
-<section class="favorites-page">
-  <header class="favorites-page__header">
+<section class="favorites-page catalog-page public-content-page">
+  <header class="favorites-page__header catalog-page__header">
     <h2>Mes favoris</h2>
     <p>Retrouvez les articles que vous avez sauvegardés.</p>
   </header>
 
   {% if articles %}
-  <div class="favorites-list">
+  <div class="public-card-list">
     {% for article in articles %}
-    <article class="favorite-card">
+    <article class="public-info-card card">
       <h3>{{ article["name"] }}</h3>
 
       <p>
@@ -40,18 +40,24 @@
         {{ article["favorited_at"] }}
       </p>
 
-      <a
-        href="{{ url_for('public.article_detail', article_id=article['id']) }}"
-      >
-        Voir le détail
-      </a>
+      <div class="public-info-card__actions">
+        <a
+          class="btn btn-secondary"
+          href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+        >
+          Voir le détail
+        </a>
 
-      <form
-        action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
-        method="post"
-      >
-        <button type="submit">Retirer des favoris</button>
-      </form>
+        <form
+          class="public-inline-form"
+          action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
+          method="post"
+        >
+          <button class="btn btn-secondary" type="submit">
+            Retirer des favoris
+          </button>
+        </form>
+      </div>
     </article>
     {% endfor %}
   </div>
