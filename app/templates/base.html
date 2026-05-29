@@ -52,6 +52,7 @@
           <li><a href="{{ url_for('forum.index') }}">Forum</a></li>
           <li><a href="{{ url_for('public.about') }}">À propos</a></li>
           <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+          <li><a href="{{ url_for('public.cart') }}">Panier</a></li>
 
           {% if session.get("user_id") %}
           <li><a href="{{ url_for('public.favorites') }}">Favoris</a></li>
@@ -105,6 +106,9 @@
       <div class="cart-content" id="cartContent"></div>
 
       <footer class="cart-popup__footer">
+        <a class="btn btn-secondary" href="{{ url_for('public.cart') }}">
+          Voir le panier
+        </a>
         <button class="btn btn-primary" id="quickCheckoutBtn" type="button">
           Valider la commande
         </button>
