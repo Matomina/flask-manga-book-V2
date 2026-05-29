@@ -2,9 +2,24 @@ PRAGMA foreign_keys = ON;
 
 -- Seed catalogue public migre depuis V1.
 -- Donnees exclues volontairement : users, favoris, historique, commandes, contact, forum.
+-- Les donnees liees aux anciens articles de demo sont supprimees avant remplacement du catalogue.
 
+DELETE FROM orders_articles;
+DELETE FROM orders;
+DELETE FROM favorites;
+DELETE FROM history;
 DELETE FROM detail_articles_public;
 DELETE FROM articles;
+
+DELETE FROM sqlite_sequence
+WHERE name IN (
+    'orders_articles',
+    'orders',
+    'favorites',
+    'history',
+    'detail_articles_public',
+    'articles'
+);
 
 INSERT INTO articles (name, genres, universe, image, price, release_day) VALUES
 ('Lunette Gojo', 'goodies', 'jujutsu_kaisen', 'image/lunette_gojo.jpg', 57.90, NULL),
