@@ -162,7 +162,8 @@ body.public-shell {
   padding: 12px;
 }
 
-.article-card h3 {
+.article-card h3,
+.article-card h4 {
   margin: 0;
 }
 
@@ -203,6 +204,32 @@ body.public-shell {
   margin: 0;
 }
 
+.planning-list {
+  display: grid;
+  gap: 16px;
+}
+
+.planning-day {
+  padding: 16px;
+}
+
+.planning-day__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.planning-day__header h3,
+.planning-day__header p {
+  margin: 0;
+}
+
+.planning-day__header p {
+  color: var(--mb-gray-500);
+}
+
 .public-footer {
   margin-top: 64px;
   border-top: 1px solid var(--mb-gray-200);
@@ -232,7 +259,8 @@ body.public-shell {
   .public-header__nav,
   .public-header__actions,
   .public-footer__inner,
-  .catalog-search__actions {
+  .catalog-search__actions,
+  .planning-day__header {
     flex-wrap: wrap;
   }
 
