@@ -22,6 +22,10 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/public.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/v1-ui.css') }}"
+    />
 
     {% block extra_css %}{% endblock %}
   </head>
@@ -79,6 +83,30 @@
       {% endif %} {% endwith %} {% block content %}{% endblock %}
     </main>
 
+    <button class="floating-cart-btn" id="floatingCartBtn" type="button" aria-label="Ouvrir le panier">
+      🛒
+      <span class="floating-cart-count" id="floatingCartCount">0</span>
+    </button>
+
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <aside class="cart-popup" id="cartPopup" aria-label="Panier">
+      <header class="cart-popup__header">
+        <h2>Panier</h2>
+        <button class="cart-close-btn" id="cartCloseBtn" type="button" aria-label="Fermer le panier">
+          ×
+        </button>
+      </header>
+
+      <div class="cart-content" id="cartContent"></div>
+
+      <footer class="cart-popup__footer">
+        <button class="btn btn-primary" id="quickCheckoutBtn" type="button">
+          Valider la commande
+        </button>
+      </footer>
+    </aside>
+
     <footer class="public-footer">
       <div class="public-footer__inner">
         <p>&copy; MangaBook V2</p>
@@ -91,6 +119,7 @@
       </div>
     </footer>
 
+    <script src="{{ url_for('static', filename='js/public-ui.js') }}" defer></script>
     {% block extra_js %}{% endblock %}
   </body>
 </html>
