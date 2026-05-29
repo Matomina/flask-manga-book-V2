@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Panier - MangaBook V2{% endblock %}
+
+{% block content %}
+<section class="banner">
+  <img
+    src="{{ url_for('static', filename='image/goodies_manga.png') }}"
+    alt="Bannière panier MangaBook"
+  />
+</section>
+
+<section class="content cart-page">
+  <header class="cart-page__header">
+    <h1 class="page-title">Votre panier</h1>
+    <p>Retrouvez les articles ajoutés depuis le catalogue MangaBook.</p>
+  </header>
+
+  <div id="cartPageContent" class="cart-page-content"></div>
+
+  <div class="cart-page__actions">
+    <a class="btn btn-secondary" href="{{ url_for('public.articles') }}">
+      Continuer mes achats
+    </a>
+    <button class="btn btn-primary" id="cartPageCheckoutBtn" type="button">
+      Valider la commande
+    </button>
+  </div>
+</section>
+{% endblock %}
