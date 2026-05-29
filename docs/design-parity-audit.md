@@ -9,11 +9,7 @@ Préparer la parité visuelle entre `flask-manga-book` et `flask-manga-book-V2` 
 
 ## État de branche
 
-Branche locale créée :
-
-```bash
-git checkout -b feature/design-parity-v1
-```
+Branche locale créée : `feature/design-parity-v1`.
 
 État local communiqué :
 
@@ -28,117 +24,99 @@ Diff actuel de la branche par rapport à `origin/main` avant changements design 
 8 files changed, 737 insertions(+), 17 deletions(-)
 ```
 
-Fichiers déjà inclus depuis l'étape audit/SEO :
+## Audit local V1 confirmé
 
-- `.env.example`
-- `app/config.py`
-- `app/core/seo.py`
-- `app/public/routes.py`
-- `app/templates/base.html`
-- `docs/parity-checklist.md`
-- `docs/roadmap-status.md`
-- `tests/test_seo.py`
+Le repo V1 est maintenant disponible localement à côté de la V2.
 
-## Audit local V1
-
-Les chemins locaux testés n'existent pas sur le poste :
-
-```powershell
-..\flask-manga-book\manga\public\templates
-..\flask-manga-book\manga\static\public
-```
-
-Erreur observée :
+Templates publics V1 présents :
 
 ```text
-Impossible de trouver le chemin d'accès C:\Users\moi\Documents\Code\flask-manga-book\manga\public\
-Impossible de trouver le chemin d'accès C:\Users\moi\Documents\Code\flask-manga-book\manga\static\
+aide.html
+article_detail.html
+base.html
+catalogue.html
+forum.html
+forum_detail.html
+goodies.html
+index.html
+panier.html
+planning.html
+pop-up-panier.html
+profil.html
 ```
 
-Conclusion : l'inventaire local V1 ne peut pas être terminé tant que le bon chemin local du repo V1 n'est pas identifié ou tant que le repo V1 n'est pas cloné à côté de la V2.
+Assets publics V1 présents :
+
+```text
+css/main.css
+css/main.css.map
+js/script.js
+scss/main.scss
+scss/REFACTOR_PLAN.md
+scss/abstracts/_mixins.scss
+scss/abstracts/_variables.scss
+scss/base/_base.scss
+scss/base/_index.scss
+scss/base/_reset.scss
+scss/base/_typography.scss
+scss/components/_burger.scss
+scss/components/_buttons.scss
+scss/components/_cards.scss
+scss/components/_dropdown.scss
+scss/components/_empty-cart.scss
+scss/components/_faq.scss
+scss/components/_floating-cart.scss
+scss/components/_forms.scss
+scss/components/_logo.scss
+scss/components/_mobile-nav.scss
+scss/components/_scroll-top.scss
+scss/components/_scroll.scss
+scss/components/_search-bar.scss
+scss/layout/_banner.scss
+scss/layout/_footer.scss
+scss/layout/_header.scss
+scss/pages/_aide.scss
+scss/pages/_article-detail.scss
+scss/pages/_catalogue.scss
+scss/pages/_forum.scss
+scss/pages/_home.scss
+scss/pages/_panier.scss
+scss/pages/_planning.scss
+scss/pages/_profil.scss
+scss/utils/_animations.scss
+scss/utils/_breakpoints.scss
+```
 
 ## Inventaire V2 local confirmé
 
 Templates publics V2 présents :
 
 ```text
-app/public/templates/public/about.html
-app/public/templates/public/articles.html
-app/public/templates/public/article_detail.html
-app/public/templates/public/contact.html
-app/public/templates/public/favorites.html
-app/public/templates/public/goodies.html
-app/public/templates/public/history.html
-app/public/templates/public/home.html
-app/public/templates/public/planning.html
-app/public/templates/public/profile.html
+about.html
+articles.html
+article_detail.html
+contact.html
+favorites.html
+goodies.html
+history.html
+home.html
+planning.html
+profile.html
 ```
 
 Assets V2 présents :
 
 ```text
-app/static/css/admin.css
-app/static/css/auth.css
-app/static/css/base.css
-app/static/css/components.css
-app/static/css/forum.css
-app/static/css/public.css
-app/static/js/admin.js
-app/static/js/flash.js
-app/static/js/main.js
+css/admin.css
+css/auth.css
+css/base.css
+css/components.css
+css/forum.css
+css/public.css
+js/admin.js
+js/flash.js
+js/main.js
 ```
-
-## Audit distant V1 via GitHub
-
-Le repo legacy contient des templates publics historiques :
-
-- `manga/public/templates/base.html`
-- `manga/public/templates/index.html`
-- `manga/public/templates/catalogue.html`
-- `manga/public/templates/article_detail.html`
-- `manga/public/templates/goodies.html`
-- `manga/public/templates/planning.html`
-- `manga/public/templates/profil.html`
-- `manga/public/templates/panier.html`
-- `manga/public/templates/forum.html`
-- `manga/public/templates/forum_detail.html`
-- `manga/public/templates/aide.html`
-
-Le repo legacy contient aussi un système SCSS public structuré :
-
-- `manga/static/public/scss/main.scss`
-- `manga/static/public/scss/abstracts/_variables.scss`
-- `manga/static/public/scss/abstracts/_mixins.scss`
-- `manga/static/public/scss/base/_reset.scss`
-- `manga/static/public/scss/base/_base.scss`
-- `manga/static/public/scss/base/_typography.scss`
-- `manga/static/public/scss/components/_cards.scss`
-- `manga/static/public/scss/components/_buttons.scss`
-- `manga/static/public/scss/components/_forms.scss`
-- `manga/static/public/scss/components/_burger.scss`
-- `manga/static/public/scss/components/_mobile-nav.scss`
-- `manga/static/public/scss/components/_search-bar.scss`
-- `manga/static/public/scss/components/_floating-cart.scss`
-- `manga/static/public/scss/layout/_header.scss`
-- `manga/static/public/scss/layout/_footer.scss`
-- `manga/static/public/scss/layout/_banner.scss`
-- `manga/static/public/scss/pages/_home.scss`
-- `manga/static/public/scss/pages/_catalogue.scss`
-- `manga/static/public/scss/pages/_article-detail.scss`
-- `manga/static/public/scss/pages/_planning.scss`
-- `manga/static/public/scss/pages/_profil.scss`
-- `manga/static/public/scss/pages/_panier.scss`
-- `manga/static/public/scss/pages/_forum.scss`
-- `manga/static/public/scss/pages/_aide.scss`
-- `manga/static/public/scss/utils/_animations.scss`
-
-JS/CSS legacy notables :
-
-- `manga/static/public/js/script.js`
-- `manga/static/admin/admin.js`
-- `manga/static/admin/admin.css`
-- `package.json`
-- `package-lock.json`
 
 ## Diagnostic
 
@@ -146,15 +124,17 @@ La V2 a une base Flask et des templates mieux organisés, mais la parité visuel
 
 Risque principal : les classes et structures HTML V2 ont été refactorées. Copier directement le SCSS/CSS V1 peut provoquer des styles morts ou des régressions.
 
+Le repo V1 est maintenant disponible localement, donc la suite doit se faire par comparaison de fichiers concrets, pas par supposition.
+
 ## Stratégie recommandée
 
-### Option recommandée : hybride
+Option hybride :
 
-- Garder l'architecture Flask V2.
-- Garder la base admin V2 sauf écart visuel confirmé.
-- Restaurer progressivement le design public V1.
-- Réintroduire un pipeline SCSS uniquement si nécessaire.
-- Mapper les templates avant modification.
+- garder l'architecture Flask V2 ;
+- garder la base admin V2 sauf écart visuel confirmé ;
+- restaurer progressivement le design public V1 ;
+- réintroduire un pipeline SCSS uniquement si nécessaire ;
+- mapper les templates avant modification.
 
 ## Mapping initial V1 → V2
 
@@ -173,28 +153,10 @@ Risque principal : les classes et structures HTML V2 ont été refactorées. Cop
 
 ## Prochaine action exacte
 
-Trouver le bon emplacement local du repo V1 ou le cloner à côté de la V2.
+Comparer les templates publics prioritaires V1/V2 et commencer par la page d'accueil :
 
-Commandes de recherche recommandées :
+1. `index.html` vers `home.html` ;
+2. `catalogue.html` vers `articles.html` ;
+3. `article_detail.html` vers `article_detail.html`.
 
-```powershell
-Get-ChildItem C:\Users\moi\Documents\Code -Directory -Recurse -Filter flask-manga-book -ErrorAction SilentlyContinue | Select-Object FullName
-Get-ChildItem C:\Users\moi\Documents -Directory -Recurse -Filter flask-manga-book -ErrorAction SilentlyContinue | Select-Object FullName
-```
-
-Si le repo V1 n'existe pas localement :
-
-```powershell
-cd C:\Users\moi\Documents\Code
-git clone https://github.com/Matomina/flask-manga-book.git
-cd flask-manga-book-V2
-```
-
-Puis relancer :
-
-```powershell
-Get-ChildItem ..\flask-manga-book\manga\public\templates -Recurse -File | Select-Object FullName
-Get-ChildItem ..\flask-manga-book\manga\static\public -Recurse -File | Select-Object FullName
-Get-ChildItem .\app\public\templates -Recurse -File | Select-Object FullName
-Get-ChildItem .\app\static -Recurse -File | Select-Object FullName
-```
+Après chaque correction : lancer `python -m compileall app tests`, `python -m pytest`, `ruff check .`, `ruff format --check .`, puis vérifier `git status`.
