@@ -149,6 +149,7 @@ def article_detail(article_id: int):
     return render_template(
         "public/article_detail.html",
         article=article,
+        favorites_ids=_get_current_user_favorites_ids(),
         meta=build_meta(
             title=f"{article['name']} - MangaBook",
             description=build_article_description(article),
