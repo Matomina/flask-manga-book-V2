@@ -34,22 +34,29 @@ endblock %} {% block content %} {% set days = [ "Lundi", "Mardi", "Mercredi",
       <div class="article-grid product-grid card-row">
         {% for article in articles %}
         <article class="article-card product-card card">
-          {% if session.get("user_id") %}
-            {% if article["id"] in favorites_ids %}
-            <span class="favorite-btn is-favorite" aria-label="Déjà en favori">❤</span>
-            {% else %}
-            <form
-              class="article-card__favorite-form"
-              method="post"
-              action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
+          {% if session.get("user_id") %} {% if article["id"] in favorites_ids
+          %}
+          <span class="favorite-btn is-favorite" aria-label="Déjà en favori"
+            >Favori</span
+          >
+          {% else %}
+          <form
+            class="article-card__favorite-form"
+            method="post"
+            action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
+          >
+            <button
+              class="favorite-btn"
+              type="submit"
+              aria-label="Ajouter aux favoris"
             >
-              <button class="favorite-btn" type="submit" aria-label="Ajouter aux favoris">❤</button>
-            </form>
-            {% endif %}
-          {% endif %}
-
-          {% if article["image"] %}
-          <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+              Favori
+            </button>
+          </form>
+          {% endif %} {% endif %} {% if article["image"] %}
+          <a
+            href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+          >
             <img
               class="article-card__image product-img"
               src="{{ url_for('static', filename=article['image']) }}"
@@ -69,8 +76,18 @@ endblock %} {% block content %} {% set days = [ "Lundi", "Mardi", "Mercredi",
 
             <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
 
-            <a
+            <button
               class="btn btn-secondary add-to-cart-btn"
+              type="button"
+              data-title="{{ article['name'] }}"
+              data-price="{{ article['price'] }}"
+              data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+            >
+              Ajouter au panier
+            </button>
+
+            <a
+              class="product-detail-link"
               href="{{ url_for('public.article_detail', article_id=article['id']) }}"
             >
               Voir le détail
