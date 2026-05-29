@@ -247,6 +247,88 @@ body.public-shell {
   margin: 0;
 }
 
+.public-card-list {
+  display: grid;
+  gap: 16px;
+}
+
+.public-info-card {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+}
+
+.public-info-card h3,
+.public-info-card h4,
+.public-info-card p {
+  margin: 0;
+}
+
+.public-info-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.public-inline-form {
+  margin: 0;
+}
+
+.public-form {
+  display: grid;
+  gap: 16px;
+}
+
+.public-form__group {
+  display: grid;
+  gap: 8px;
+}
+
+.public-form__group label {
+  font-weight: 700;
+}
+
+.public-form__group input,
+.public-form__group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--mb-gray-300);
+  border-radius: var(--mb-radius-md);
+  background: var(--mb-white);
+}
+
+.public-form__group textarea {
+  resize: vertical;
+}
+
+.public-form__actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.profile-actions {
+  margin-top: 32px;
+}
+
+.profile-actions__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.profile-action-card {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.profile-action-card:hover {
+  border-color: rgba(124, 58, 237, 0.28);
+}
+
 .planning-list {
   display: grid;
   gap: 16px;
@@ -304,7 +386,8 @@ body.public-shell {
   .public-footer__inner,
   .catalog-search__actions,
   .planning-day__header,
-  .article-detail-card__header {
+  .article-detail-card__header,
+  .public-info-card__actions {
     flex-wrap: wrap;
   }
 
