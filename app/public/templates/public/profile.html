@@ -1,58 +1,90 @@
-{% extends "base.html" %} {% block title %}Mon profil - MangaBook V2{% endblock
-%} {% block content %}
+{% extends "base.html" %} {% block title %}Mon profil - MangaBook{% endblock %}
+{% block content %}
+<section class="banner">
+  <div
+    class="banner-fallback"
+    role="img"
+    aria-label="Bannière profil MangaBook"
+  >
+    <span>Profil</span>
+  </div>
+</section>
 
-<section class="profile-page">
-  <header class="profile-page__header">
-    <h2>Mon profil</h2>
-    <p>
-      Retrouvez les informations de votre compte et vos raccourcis utilisateur.
-    </p>
-  </header>
-
-  <section class="profile-card">
-    <h3>Informations du compte</h3>
-
-    <p>
-      <strong>Prénom :</strong>
-      {{ user.first_name }}
-    </p>
-
-    <p>
-      <strong>Nom :</strong>
-      {{ user.last_name }}
-    </p>
-
-    <p>
-      <strong>Email :</strong>
-      {{ user.email }}
-    </p>
-
-    <p>
-      <strong>Rôle :</strong>
-      {{ user.role }}
+<main class="profil-page">
+  <section class="content">
+    <h1 class="page-title">👤 Votre Profil</h1>
+    <p class="intro-1">
+      Bienvenue sur votre espace personnel. Retrouvez ici vos informations, vos
+      favoris, votre historique et vos raccourcis utilisateur.
     </p>
   </section>
 
-  <section class="profile-actions">
-    <h3>Mes espaces</h3>
+  <section class="content">
+    <h2>Informations du compte</h2>
 
-    <div class="profile-actions__grid">
-      <a href="{{ url_for('public.favorites') }}" class="profile-action-card">
-        <h4>Mes favoris</h4>
-        <p>Consulter les articles que vous avez ajoutés à vos favoris.</p>
+    <div class="profile-card">
+      <p>
+        <strong>Prénom :</strong>
+        {{ user.first_name }}
+      </p>
+
+      <p>
+        <strong>Nom :</strong>
+        {{ user.last_name }}
+      </p>
+
+      <p>
+        <strong>Email :</strong>
+        {{ user.email }}
+      </p>
+
+      <p>
+        <strong>Rôle :</strong>
+        {{ user.role }}
+      </p>
+    </div>
+  </section>
+
+  <section class="content">
+    <h2>Mes espaces</h2>
+
+    <div class="product-grid profile-actions__grid">
+      <a
+        href="{{ url_for('public.favorites') }}"
+        class="card profile-action-card"
+      >
+        <div class="card-info">
+          <h3 class="text">❤️ Mes favoris</h3>
+          <p class="subtitle">
+            Consulter les articles que vous avez ajoutés à vos favoris.
+          </p>
+        </div>
       </a>
 
-      <a href="{{ url_for('public.history') }}" class="profile-action-card">
-        <h4>Mon historique</h4>
-        <p>Retrouver les articles que vous avez consultés récemment.</p>
+      <a
+        href="{{ url_for('public.history') }}"
+        class="card profile-action-card"
+      >
+        <div class="card-info">
+          <h3 class="text">📜 Mon historique</h3>
+          <p class="subtitle">
+            Retrouver les articles que vous avez consultés récemment.
+          </p>
+        </div>
       </a>
 
-      <a href="{{ url_for('public.contact') }}" class="profile-action-card">
-        <h4>Contacter le support</h4>
-        <p>Envoyer une demande à l’administration MangaBook.</p>
+      <a
+        href="{{ url_for('public.contact') }}"
+        class="card profile-action-card"
+      >
+        <div class="card-info">
+          <h3 class="text">📩 Contacter le support</h3>
+          <p class="subtitle">
+            Envoyer une demande à l’administration MangaBook.
+          </p>
+        </div>
       </a>
     </div>
   </section>
-</section>
-
+</main>
 {% endblock %}
