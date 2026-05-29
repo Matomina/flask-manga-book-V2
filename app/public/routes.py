@@ -55,6 +55,14 @@ def _article_ids(articles) -> set[int]:
     return {article["id"] for article in articles}
 
 
+def _get_current_user_favorites_ids() -> set[int]:
+    """Retourner les favoris de l'utilisateur courant si connecté."""
+    user_id = _get_current_user_id()
+    if user_id is None:
+        return set()
+    return _article_ids(get_user_favorites(user_id))
+
+
 def _split_featured_articles(articles) -> tuple[list, list]:
     """Séparer les articles mis en avant en sections accueil legacy."""
     midpoint = max(1, len(articles) // 2)
@@ -114,6 +122,7 @@ def articles():
         "public/articles.html",
         articles=articles_list,
         filters=filters,
+        favorites_ids=_get_current_user_favorites_ids(),
         meta=build_meta(
             title="Catalogue manga - MangaBook",
             description=(
