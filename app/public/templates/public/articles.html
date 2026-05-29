@@ -1,16 +1,38 @@
-{% extends "base.html" %} {% block title %}Catalogue - MangaBook V2{% endblock
-%} {% block content %} {% set current_q = filters["q"] if filters else "" %} {%
-set current_genre = filters["genre"] if filters else "" %} {% set
-current_universe = filters["universe"] if filters else "" %} {% set
-current_release_day = filters["release_day"] if filters else "" %}
+{% extends "base.html" %} {% block title %}Catalogue - MangaBook{% endblock %}
+{% block content %} {% set current_q = filters["q"] if filters else "" %} {% set
+current_genre = filters["genre"] if filters else "" %} {% set current_universe =
+filters["universe"] if filters else "" %} {% set current_release_day =
+filters["release_day"] if filters else "" %} {% set has_filters = current_q or
+current_genre or current_universe or current_release_day %}
 
-<section class="catalog-page">
-  <header class="catalog-page__header">
-    <h2>Catalogue des articles</h2>
-    <p>Découvrez tous les articles disponibles sur MangaBook.</p>
-  </header>
+<section class="banner">
+  <div
+    class="banner-fallback"
+    role="img"
+    aria-label="Bannière catalogue MangaBook"
+  >
+    <span>Catalogue</span>
+  </div>
+</section>
 
-  <section class="catalog-search">
+<main class="catalogue-page">
+  <section class="content">
+    <h1 class="page-title">📖 Catalogue</h1>
+    <p class="intro-1">
+      Bienvenue dans notre catalogue. Découvrez nos mangas disponibles, des
+      classiques incontournables aux nouveautés les plus récentes. Votre
+      prochain coup de cœur vous attend.
+    </p>
+  </section>
+
+  <section class="filters" aria-labelledby="catalogue-filters-title">
+    <div class="filters-header">
+      <h2 id="catalogue-filters-title">Filtres</h2>
+      <p>
+        Affinez le catalogue par recherche, genre, univers ou jour de sortie.
+      </p>
+    </div>
+
     <form
       action="{{ url_for('public.articles') }}"
       method="get"
@@ -73,8 +95,7 @@ current_release_day = filters["release_day"] if filters else "" %}
       </div>
 
       <div class="catalog-search__actions">
-        <button type="submit" class="btn btn-primary">Rechercher</button>
-
+        <button type="submit" class="btn">Rechercher</button>
         <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
           Réinitialiser
         </a>
@@ -82,95 +103,104 @@ current_release_day = filters["release_day"] if filters else "" %}
     </form>
   </section>
 
-  {% if articles %}
-  <section class="catalog-results">
+  <section class="catalog-results" aria-labelledby="catalogue-results-title">
     <header class="catalog-results__header">
-      <h3>Résultats</h3>
+      <h2 id="catalogue-results-title">Résultats</h2>
+
+      {% if articles %}
       <p>
         {{ articles|length }} article{% if articles|length > 1 %}s{% endif %}
         trouvé{% if articles|length > 1 %}s{% endif %}.
       </p>
+      {% endif %}
     </header>
 
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 16px;
-      "
-    >
+    {% if articles %}
+    <div class="product-grid" data-product-grid>
       {% for article in articles %}
-      <article
-        style="border: 1px solid #ccc; padding: 12px; border-radius: 8px"
-      >
-        <h3>{{ article["name"] }}</h3>
+      <article class="product-card" data-product-card>
+        <div class="card" data-card>
+          {% if session.get("user_id") %}
+          <form
+            action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
+            method="post"
+          >
+            <button
+              class="favorite-btn {% if article['id'] in favorites_ids %}is-favorite{% endif %}"
+              type="submit"
+              aria-label="Ajouter aux favoris"
+            >
+              ❤
+            </button>
+          </form>
+          {% endif %}
 
-        {% if article["image"] %}
-        <img
-          src="{{ url_for('static', filename=article['image']) }}"
-          alt="{{ article['name'] }}"
-          style="
-            width: 100%;
-            max-height: 180px;
-            object-fit: cover;
-            border-radius: 6px;
-          "
-        />
-        {% endif %}
-
-        <p>
-          <strong>{{ article["price"] }} €</strong>
-        </p>
-
-        <p style="font-size: 14px">
-          {{ article["genres"] }} {% if article["universe"] %} • {{
-          article["universe"] }} {% endif %}
-        </p>
-
-        <p style="font-size: 13px">Stock : {{ article["stock"] }}</p>
-
-        {% if article["release_day"] %}
-        <p style="font-size: 13px">Sortie : {{ article["release_day"] }}</p>
-        {% endif %}
-
-        <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap">
           <a
             href="{{ url_for('public.article_detail', article_id=article['id']) }}"
           >
-            Voir
+            {% if article["image"] %}
+            <img
+              src="{{ url_for('static', filename=article['image']) }}"
+              alt="{{ article['name'] }}"
+            />
+            {% else %}
+            <div class="card-placeholder" aria-hidden="true">📚</div>
+            {% endif %}
           </a>
 
-          {% if session.get("user_id") %} {% if article["id"] in favorites_ids
-          %}
-          <span>✔ Déjà en favori</span>
-          {% else %}
-          <form
-            method="post"
-            action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
-          >
-            <button type="submit">❤️ Favori</button>
-          </form>
-          {% endif %} {% else %}
-          <a href="{{ url_for('auth.login') }}">
-            Se connecter pour ajouter aux favoris
-          </a>
-          {% endif %}
+          <div class="card-info" data-card-info>
+            <h3 class="text" data-title-text>{{ article["name"] }}</h3>
+
+            <p class="subtitle">
+              {{ article["genres"] }} {% if article["universe"] %} • {{
+              article["universe"] }}{% endif %}
+            </p>
+
+            {% if article["release_day"] %}
+            <p class="subtitle">Sortie : {{ article["release_day"] }}</p>
+            {% endif %} {% if article["stock"] is defined %}
+            <p class="subtitle">Stock : {{ article["stock"] }}</p>
+            {% endif %}
+
+            <p class="price" data-price>
+              {{ "%.2f"|format(article["price"]) }} €
+            </p>
+
+            <div class="article-actions">
+              <a
+                href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+                class="btn btn-secondary"
+              >
+                Voir
+              </a>
+
+              <button
+                class="add-to-cart-btn"
+                type="button"
+                data-title="{{ article['name'] }}"
+                data-price="{{ article['price'] }}"
+                data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+              >
+                🛒 Ajouter au panier
+              </button>
+            </div>
+          </div>
         </div>
       </article>
       {% endfor %}
     </div>
-  </section>
-  {% else %}
-  <div class="empty-state">
-    {% if current_q or current_genre or current_universe or current_release_day
-    %}
-    <p>Aucun article ne correspond à votre recherche.</p>
-    <a href="{{ url_for('public.articles') }}">Réinitialiser la recherche</a>
     {% else %}
-    <p>Aucun article disponible pour le moment.</p>
+    <div class="empty-state">
+      {% if has_filters %}
+      <p>Aucun article ne correspond à votre recherche.</p>
+      <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
+        Réinitialiser la recherche
+      </a>
+      {% else %}
+      <p>Aucun article disponible pour le moment.</p>
+      {% endif %}
+    </div>
     {% endif %}
-  </div>
-  {% endif %}
-</section>
-
+  </section>
+</main>
 {% endblock %}
