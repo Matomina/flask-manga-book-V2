@@ -1,7 +1,7 @@
 # Roadmap et état d'avancement — MangaBook V2
 
 Dernière mise à jour : 2026-05-29
-Branche de travail : `audit/parity-legacy-v1`
+Branche de travail actuelle : `feature/design-parity-v1`
 Objectif global : refondre `flask-manga-book` en V2 propre, mieux organisée, plus maintenable, tout en conservant le design, le contenu et les fonctionnalités d'origine.
 
 ## Méthode de travail
@@ -15,6 +15,14 @@ Objectif global : refondre `flask-manga-book` en V2 propre, mieux organisée, pl
 - les commandes de validation ;
 - la preuve visible ;
 - la prochaine action exacte.
+
+Avant chaque mise à jour de roadmap, faire un mini-audit repo :
+
+- branche active ;
+- diff de branche ;
+- fichiers impactés ;
+- validation locale disponible ;
+- état `git status`.
 
 Commandes de validation de référence :
 
@@ -67,15 +75,16 @@ Ne pas toucher directement à `main`.
 
 Terminé.
 
-### Branche
+### Branches
 
-```bash
+```text
 audit/parity-legacy-v1
+feature/design-parity-v1
 ```
 
 ### Preuve
 
-La branche distante existe et suit `origin/audit/parity-legacy-v1`.
+Les branches distantes existent. `feature/design-parity-v1` est utilisée pour la parité design.
 
 ## Étape 2 — SEO public et indexation
 
@@ -193,45 +202,152 @@ Your branch is up to date with 'origin/audit/parity-legacy-v1'.
 nothing to commit, working tree clean
 ```
 
-## Étape 6 — Prochaine grosse étape : parité design V1/V2
+## Étape 6 — Parité design V1/V2
 
 ### Objectif
 
 Conserver exactement le design d'origine tout en gardant l'architecture propre de la V2.
 
-### Actions prévues
+### État
 
-1. Identifier les assets V1 : CSS, SCSS, JS, images, fonts éventuelles.
-2. Comparer les templates V1/V2 page par page.
-3. Migrer ou adapter les styles dans `app/static/...`.
-4. Vérifier les pages : accueil, catalogue, détail article, goodies, planning, profil, favoris, historique, forum, admin.
-5. Faire une comparaison desktop/mobile.
+En cours.
 
-### Risques
+### Mini-audit repo avant mise à jour
 
-- Chemins statiques cassés.
-- Différences de classes CSS.
-- Design admin perturbé.
-- Fichiers images manquants.
-- Pipeline front incohérent si `package.json` local vient d'un autre projet.
+Comparaison GitHub :
 
-### Validation attendue
+```text
+base: audit/parity-legacy-v1
+head: feature/design-parity-v1
+status: ahead
+ahead_by: 6
+behind_by: 0
+total_commits: 6
+```
+
+Fichiers impactés depuis `audit/parity-legacy-v1` :
+
+```text
+app/static/css/public.css          +730
+app/static/js/main.js              +276
+app/templates/base.html            +132 -30
+docs/design-parity-audit.md        +162
+docs/design-parity-direct-audit.md +227
+```
+
+### Audit design direct
+
+Fichiers documentaires ajoutés :
+
+- `docs/design-parity-audit.md`
+- `docs/design-parity-direct-audit.md`
+
+Constats :
+
+- la V2 avait des CSS publics vides ;
+- la V2 avait un JS public vide ;
+- le layout global V2 était trop simplifié ;
+- la V1 contient le header, la recherche, le burger, la nav mobile, le footer, le panier flottant, le popup panier et le scroll-top ;
+- la stratégie retenue est de garder routes/services/tests/SEO V2 et de restaurer progressivement les classes/structures visuelles V1.
+
+### Bloc 6A — Shell global public
+
+Objectif : restaurer le socle visuel public commun avant de modifier les pages.
+
+Fichiers impactés :
+
+- `app/templates/base.html`
+- `app/static/css/public.css`
+- `app/static/js/main.js`
+
+Commits :
+
+```text
+216d2ed feat(design): restore public legacy layout shell
+214609a feat(design): add public legacy parity styles
+91269ba feat(design): restore public legacy interactions
+```
+
+Ce qui a été fait :
+
+- header public type V1 ;
+- logo/titre Manga Book ;
+- recherche globale vers `/articles?q=...` ;
+- navigation desktop ;
+- navigation mobile ;
+- burger menu ;
+- dropdown compte ;
+- footer ;
+- panier flottant ;
+- popup panier ;
+- bouton scroll-top ;
+- CSS public non vide avec classes legacy principales ;
+- JS public pour scroll horizontal, burger, dropdown, panier localStorage, popup, scroll-top et flash auto-hide.
+
+Ce qui a été conservé :
+
+- SEO V2 ;
+- routes V2 ;
+- services V2 ;
+- tests V2 ;
+- logout en POST ;
+- favoris sous forme progressive côté serveur, sans réactiver l'AJAX V1 incompatible.
+
+### Validation locale du bloc 6A
+
+Preuve communiquée :
+
+```text
+Fast-forward 1d5448c..91269ba
+3 files changed, 1138 insertions(+), 30 deletions(-)
+python -m compileall app tests -> OK
+python -m pytest -> 168 passed in 123.97s
+TOTAL 878 statements, 94% coverage
+ruff check . -> All checks passed
+ruff format --check . -> 34 files already formatted
+git status -> nothing to commit, working tree clean
+```
+
+### Risques restants
+
+- Validation visuelle navigateur non encore fournie.
+- Les pages `home.html`, `articles.html` et `article_detail.html` restent encore trop éloignées de la V1.
+- Certains assets images legacy peuvent manquer côté V2.
+- Le panier est localStorage/progressif, pas encore relié à un vrai checkout serveur.
+
+### Prochaine action exacte
+
+Démarrer le bloc 6B : accueil public.
+
+Objectif : adapter `app/public/templates/public/home.html` pour retrouver la structure V1 :
+
+- bannière ;
+- intro ;
+- sections horizontales ;
+- cards legacy ;
+- boutons panier ;
+- favoris si connecté ;
+- compatibilité routes/services V2.
+
+Validation après bloc 6B :
 
 ```bash
 python -m compileall app tests
 python -m pytest
 ruff check .
 ruff format --check .
-git diff --stat origin/main...HEAD
+git status
 ```
 
-Validation visuelle attendue : rendu V2 conforme à la V1 sur les pages principales.
-
-## Étape 7 — Prochaine grosse étape : parité contenu V1/V2
+## Étape 7 — Parité contenu V1/V2
 
 ### Objectif
 
 Migrer le contenu utile sans secrets ni données personnelles.
+
+### État
+
+À faire après stabilisation design public prioritaire.
 
 ### Actions prévues
 
@@ -260,23 +376,17 @@ Ne jamais migrer les anciens utilisateurs, emails, téléphones, adresses ou mot
 | Ruff format | OK |
 | Documentation parité | OK |
 | Formatage local | OK : commit `5dfec2e` poussé |
-| Parité design | À faire |
+| Audit design direct | OK |
+| Shell global public | OK |
+| CSS public legacy minimal | OK |
+| JS public legacy minimal | OK |
+| Validation bloc design 6A | OK : 168 tests, Ruff OK, git clean |
+| Parité accueil | Prochaine étape |
+| Parité catalogue | À faire |
+| Parité détail article | À faire |
 | Parité contenu | À faire |
 | PR finale | À faire |
 
 ## Prochaine action exacte
 
-Démarrer la parité design V1/V2 :
-
-1. synchroniser la branche localement ;
-2. inventorier les assets et templates V1 ;
-3. comparer les pages principales ;
-4. appliquer les corrections design sur une sous-branche ou sur `audit/parity-legacy-v1` selon le choix de workflow.
-
-Commandes de départ recommandées :
-
-```bash
-git pull origin audit/parity-legacy-v1
-git status
-git diff --stat origin/main...HEAD
-```
+Attaquer `home.html` sur la branche `feature/design-parity-v1`.
