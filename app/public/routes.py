@@ -168,8 +168,7 @@ def goodies():
         meta=build_meta(
             title="Goodies manga - MangaBook",
             description=(
-                "Retrouvez les goodies manga disponibles dans le catalogue "
-                "MangaBook."
+                "Retrouvez les goodies manga disponibles dans le catalogue MangaBook."
             ),
             canonical=url_for("public.goodies", _external=True),
         ),
