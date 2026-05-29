@@ -3,18 +3,22 @@
 {% block title %}Accueil - MangaBook V2{% endblock %}
 
 {% block content %}
-<h2>Accueil</h2>
-<p>Bienvenue sur MangaBook V2.</p>
+<section class="content home-intro">
+    <h2>Accueil</h2>
+    <p>Bienvenue sur MangaBook V2.</p>
 
-<p>
-    <a href="{{ url_for('public.articles') }}">Voir tout le catalogue</a>
-</p>
+    <p>
+        <a class="btn btn-secondary" href="{{ url_for('public.articles') }}">
+            Voir tout le catalogue
+        </a>
+    </p>
+</section>
 
 {% if articles %}
-<section>
-    <h3>Articles mis en avant</h3>
+<section class="content home-featured">
+    <h2>Articles mis en avant</h2>
 
-    <div class="article-grid">
+    <div class="card-list article-grid">
         {% for article in articles %}
             <article class="article-card card">
 
@@ -60,28 +64,28 @@
     </div>
 </section>
 {% else %}
+<section class="content">
     <p>Aucun article disponible pour le moment.</p>
+</section>
 {% endif %}
 
-<hr>
-
-<section>
-    <h3>Contact</h3>
+<section class="content home-contact">
+    <h2>Contact</h2>
 
     {% if session.get("user_id") %}
-        <form action="{{ url_for('public.contact') }}" method="post">
+        <form class="public-form" action="{{ url_for('public.contact') }}" method="post">
 
-            <div>
-                <label for="sujet">Sujet</label><br>
+            <div class="public-form__group">
+                <label for="sujet">Sujet</label>
                 <input type="text" id="sujet" name="sujet" required>
             </div>
 
-            <div>
-                <label for="message">Message</label><br>
+            <div class="public-form__group">
+                <label for="message">Message</label>
                 <textarea id="message" name="message" required></textarea>
             </div>
 
-            <button type="submit">Envoyer</button>
+            <button class="btn btn-primary" type="submit">Envoyer</button>
         </form>
     {% else %}
         <p>
