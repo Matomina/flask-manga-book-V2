@@ -5,6 +5,7 @@ V2{% endblock %} {% block content %}
   <img
     src="{{ url_for('static', filename='image/banner-article-detail.jpeg') }}"
     alt="Bannière article MangaBook"
+    onerror="this.onerror=null;this.src='{{ url_for('static', filename='image/dragon_ball_z.jpeg') }}';"
   />
 </section>
 
