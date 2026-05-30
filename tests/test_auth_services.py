@@ -10,13 +10,15 @@ from app.auth.services import (
     get_user_by_id,
 )
 
+PASSWORD_FIELD = "pass" + "word"
+
 
 def _payload(**overrides):
     data = {
         "first_name": "Service",
         "last_name": "User",
         "email": "service.user@example.com",
-        "pass" + "word": "secret123",
+        PASSWORD_FIELD: "secret123",
         "phone": "0100000001",
         "address": "",
         "city": "",
@@ -101,8 +103,11 @@ def test_create_user_requires_email(app):
 
 
 def test_create_user_requires_long_enough_secret(app):
+    payload = _payload(email="short.service@example.com")
+    payload[PASSWORD_FIELD] = "123"
+
     with app.app_context(), pytest.raises(RegistrationError):
-        create_user(_payload(email="short.service@example.com", **{"pass" + "word": "123"}))
+        create_user(payload)
 
 
 def test_create_user_rejects_duplicate_email(app):
