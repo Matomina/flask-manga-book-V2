@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 
-PUBLIC_STATIC_PATHS = (
-    "/cart",
-    "/panier",
-    "/help",
-    "/aide",
-)
+def test_cart(client):
+    assert client.get("/cart").status_code == 200
 
 
-def test_public_static_paths_are_available(client):
-    for path in PUBLIC_STATIC_PATHS:
-        response = client.get(path)
+def test_panier(client):
+    assert client.get("/panier").status_code == 200
 
-        assert response.status_code == 200
+
+def test_help(client):
+    assert client.get("/help").status_code == 200
+
+
+def test_aide(client):
+    assert client.get("/aide").status_code == 200
