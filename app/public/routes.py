@@ -175,6 +175,25 @@ def history():
 
 
 # =========================
+# PANIER / AIDE
+# =========================
+
+
+@bp.route("/cart")
+@bp.route("/panier")
+def cart():
+    """Afficher la page panier et conserver la route historique V1."""
+    return render_template("public/cart.html")
+
+
+@bp.route("/help")
+@bp.route("/aide")
+def help_page():
+    """Afficher la page d'aide et conserver la route historique V1."""
+    return render_template("public/help.html")
+
+
+# =========================
 # SUPPORT / CONTACT
 # =========================
 
