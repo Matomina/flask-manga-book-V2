@@ -1,0 +1,88 @@
+/* Premium cart hover polish */
+
+.floating-cart-btn {
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.floating-cart-btn:hover,
+.floating-cart-btn:focus-visible {
+  border-color: var(--mb-white);
+  background: var(--mb-gradient-reverse);
+  box-shadow: 0 12px 34px rgba(220, 30, 247, 0.42);
+  transform: translateY(-3px) scale(1.04);
+}
+
+.floating-cart-count {
+  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.35);
+}
+
+.cart-close-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cart-close-btn:hover,
+.cart-close-btn:focus-visible {
+  border-color: var(--mb-white);
+  background: var(--mb-gradient-reverse);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  transform: rotate(90deg) scale(1.05);
+}
+
+.cart-item {
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cart-item:hover {
+  border-color: var(--mb-secondary);
+  transform: translateX(-2px);
+}
+
+.cart-qty button {
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cart-qty button:hover,
+.cart-qty button:focus-visible {
+  border-color: var(--mb-secondary);
+  background: var(--mb-gradient-reverse);
+  box-shadow: 0 6px 16px rgba(220, 30, 247, 0.32);
+  transform: translateY(-1px) scale(1.08);
+}
+
+.cart-popup__footer .btn {
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cart-popup__footer .btn:hover,
+.cart-popup__footer .btn:focus-visible {
+  border-color: var(--mb-white);
+  background: var(--mb-gradient-reverse);
+  box-shadow: 0 8px 22px rgba(220, 30, 247, 0.32);
+  transform: translateY(-2px);
+}

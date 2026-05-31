@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}À propos, aide et contact - MangaBook V2{% endblock %}
+{% block title %}À propos, accompagnement et contact - MangaBook V2{% endblock %}
 
-{% block meta_description %}Présentation de MangaBook V2, aide utilisateur et formulaire de contact.{% endblock %}
+{% block meta_description %}Découvrez MangaBook V2, une expérience manga soignée qui réunit catalogue, planning, favoris, panier, communauté et support utilisateur.{% endblock %}
 
 {% block content %}
 <section class="banner page-banner">
@@ -14,73 +14,77 @@
 
 <section class="about-page catalog-page public-content-page content">
   <header id="a-propos" class="about-page__header catalog-page__header page-intro">
-    <h2>À propos</h2>
+    <h2>À propos de MangaBook</h2>
     <p>
-      MangaBook V2 regroupe la présentation du projet, l’aide utilisateur et le
-      contact sur une seule page plus simple à parcourir.
+      MangaBook V2 propose une expérience claire, élégante et structurée pour
+      découvrir l’univers manga, suivre les sorties, organiser ses favoris et
+      préparer ses achats depuis une interface pensée pour rester simple,
+      rapide et agréable à utiliser.
     </p>
   </header>
 
   <nav class="public-card-list" aria-label="Navigation de la page à propos">
     <a class="public-info-card card" href="#a-propos">
-      <h3>Le projet</h3>
-      <p>Comprendre l’objectif de MangaBook V2.</p>
+      <h3>Une expérience soignée</h3>
+      <p>Un espace centralisé pour explorer les articles, goodies et nouveautés.</p>
     </a>
 
     <a class="public-info-card card" href="#aide">
-      <h3>Aide</h3>
-      <p>Retrouver les informations utiles pour utiliser le site.</p>
+      <h3>Accompagnement</h3>
+      <p>Des repères simples pour utiliser chaque fonctionnalité du site.</p>
     </a>
 
     <a class="public-info-card card" href="#contact">
-      <h3>Contact</h3>
-      <p>Envoyer une demande à MangaBook.</p>
+      <h3>Support dédié</h3>
+      <p>Un point de contact direct pour transmettre une demande à l’équipe.</p>
     </a>
   </nav>
 
   <section class="public-info-card card">
-    <h3>Le projet MangaBook</h3>
+    <h3>Un projet pensé pour les passionnés</h3>
     <p>
-      MangaBook V2 centralise un catalogue d’articles manga, de figurines et de
-      goodies, avec un planning de sorties, des favoris, un panier et un espace
-      communautaire.
+      MangaBook V2 rassemble les éléments essentiels d’une boutique manga
+      moderne : catalogue, figurines, goodies, planning de sorties, favoris,
+      panier et espace communautaire.
     </p>
     <p>
-      Cette refonte vise une base plus propre, plus maintenable et plus proche
-      du design d’origine.
+      La refonte met l’accent sur une base plus fiable, une navigation plus
+      fluide et une présentation plus cohérente, tout en conservant l’identité
+      visuelle de la première version.
     </p>
   </section>
 
   <section id="aide" class="public-info-card card">
-    <h3>Aide et utilisation</h3>
+    <h3>Un parcours utilisateur plus clair</h3>
     <p>
-      Depuis MangaBook V2, vous pouvez consulter le catalogue, filtrer les
-      articles, sauvegarder vos favoris, suivre votre historique, préparer un
-      panier et participer au forum.
+      Chaque section est organisée pour permettre une consultation rapide :
+      parcourir le catalogue, filtrer les articles, suivre les sorties,
+      sauvegarder ses favoris, préparer son panier et participer aux échanges
+      du forum.
     </p>
 
     <div class="public-card-list">
       <article class="public-info-card card">
         <h4>Compte utilisateur</h4>
         <p>
-          Connectez-vous pour accéder à vos favoris, votre profil, votre
-          historique, votre panier et au formulaire de contact.
+          La connexion donne accès à un espace personnel regroupant les favoris,
+          l’historique, le profil, le panier et le formulaire de contact.
         </p>
       </article>
 
       <article class="public-info-card card">
-        <h4>Catalogue et goodies</h4>
+        <h4>Catalogue et nouveautés</h4>
         <p>
-          Les pages Catalogue, Goodies et Planning permettent de parcourir les
-          articles par univers, catégorie et jour de sortie.
+          Les pages Catalogue, Goodies et Planning facilitent la découverte des
+          articles par univers, catégorie et date de sortie.
         </p>
       </article>
 
       <article class="public-info-card card">
-        <h4>Commande et panier</h4>
+        <h4>Panier et préparation de commande</h4>
         <p>
-          Le panier centralise les articles sélectionnés avant la création de la
-          commande.
+          Le panier permet de regrouper les articles sélectionnés et de préparer
+          une commande de manière plus lisible avant validation.
         </p>
         <div class="public-info-card__actions">
           <a href="{{ url_for('public.cart') }}" class="btn btn-primary">
@@ -93,10 +97,11 @@
 
   <section id="contact" class="contact-support__card public-info-card card">
     <header class="contact-support__header">
-      <h3>Contact</h3>
+      <h3>Contacter l’équipe MangaBook</h3>
       <p>
-        Envoyez un message à l’équipe MangaBook. Votre demande sera consultable
-        depuis le back-office.
+        Une question, une remarque ou un problème d’utilisation ? Envoyez votre
+        message depuis cet espace. La demande sera transmise au back-office afin
+        de pouvoir être consultée et suivie proprement.
       </p>
     </header>
 
@@ -114,7 +119,7 @@
           name="sujet"
           required
           maxlength="150"
-          placeholder="Exemple : Problème avec mon compte"
+          placeholder="Exemple : Question sur mon compte"
         />
       </div>
 
@@ -125,7 +130,7 @@
           name="message"
           rows="8"
           required
-          placeholder="Décrivez votre demande..."
+          placeholder="Expliquez votre demande avec le plus de détails possible..."
         ></textarea>
       </div>
 
