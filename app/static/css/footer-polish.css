@@ -1,0 +1,76 @@
+/* Footer V1-like brand polish */
+
+.public-footer__brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 10px auto 0;
+  color: var(--mb-primary);
+  font-size: clamp(0.78rem, 1.5vw, 0.95rem);
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.72;
+  text-decoration: none;
+  transition:
+    color 0.3s ease,
+    opacity 0.3s ease,
+    transform 0.2s ease;
+}
+
+.public-footer__brand:hover,
+.public-footer__brand:focus-visible {
+  color: var(--mb-secondary);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.public-footer__logo {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+/* Header desktop alignment polish */
+
+@media (min-width: 971px) {
+  .public-header.site-header {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .public-header .header-top {
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+  }
+
+  .public-header__brand.logo-title {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .public-header__nav {
+    width: auto;
+    margin-left: auto;
+    flex: 0 1 auto;
+  }
+
+  .public-header__nav ul {
+    justify-content: flex-end;
+    gap: 20px;
+  }
+
+  .public-header__nav li {
+    flex: 0 0 auto;
+  }
+
+  .public-header__nav a,
+  .public-header__logout .btn {
+    white-space: nowrap;
+  }
+}

@@ -1,49 +1,193 @@
-{% extends "base.html" %} {% block title %}Connexion - MangaBook V2{% endblock
-%} {% block content %}
+{% extends "base.html" %}
 
-<section class="auth-login">
-  <header class="auth-login__header">
-    <h2>Connexion</h2>
-    <p>
-      Connectez-vous à votre compte MangaBook pour accéder aux fonctionnalités
-      réservées.
-    </p>
-  </header>
+{% block title %}Connexion ou inscription - MangaBook V2{% endblock %}
 
-  <form action="{{ url_for('auth.login') }}" method="post" class="auth-form">
-    <div class="auth-form__group">
-      <label for="email">Adresse email</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        required
-        autocomplete="email"
-        placeholder="exemple@email.com"
-      />
-    </div>
+{% block meta_description %}Connectez-vous ou créez votre compte MangaBook pour retrouver vos favoris, votre historique, votre panier et votre profil personnel.{% endblock %}
 
-    <div class="auth-form__group">
-      <label for="password">Mot de passe</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        required
-        autocomplete="current-password"
-        placeholder="Votre mot de passe"
-      />
-    </div>
+{% block content %}
+{% set active_panel = active_panel|default("login") %}
+{% set login_data = login_data|default({}) %}
+{% set register_data = register_data|default({}) %}
 
-    <div class="auth-form__actions">
-      <button type="submit" class="btn btn-primary">Se connecter</button>
-    </div>
-  </form>
+<section class="auth-page auth-choice-page">
+  <div class="auth-shell card">
+    <aside class="auth-hero">
+      <p class="auth-hero__eyebrow">Espace membre</p>
+      <h2>Bienvenue sur MangaBook</h2>
+      <p>
+        Connectez-vous pour retrouver vos favoris, votre historique, votre
+        panier et vos informations de profil. Créez un compte pour personnaliser
+        votre expérience et conserver vos données dans le temps.
+      </p>
 
-  <p class="auth-login__hint">
-    Pas encore de compte ?
-    <a href="{{ url_for('auth.register') }}">Créer un compte</a>
-  </p>
+      <ul class="auth-benefits" aria-label="Avantages du compte MangaBook">
+        <li>Favoris sauvegardés</li>
+        <li>Historique personnalisé</li>
+        <li>Panier lié au compte</li>
+        <li>Profil et support centralisés</li>
+      </ul>
+    </aside>
+
+    <section class="auth-panel" aria-labelledby="auth-panel-title">
+      <header class="auth-panel__header">
+        <h2 id="auth-panel-title">Votre compte MangaBook</h2>
+        <p>Choisissez une action, puis remplissez le formulaire adapté.</p>
+      </header>
+
+      <div class="auth-switch" role="tablist" aria-label="Choisir une action">
+        <a
+          class="auth-switch__tab {% if active_panel == 'login' %}is-active{% endif %}"
+          href="{{ url_for('auth.login') }}"
+          role="tab"
+          aria-selected="{{ 'true' if active_panel == 'login' else 'false' }}"
+        >
+          Connexion
+        </a>
+        <a
+          class="auth-switch__tab {% if active_panel == 'register' %}is-active{% endif %}"
+          href="{{ url_for('auth.register') }}"
+          role="tab"
+          aria-selected="{{ 'true' if active_panel == 'register' else 'false' }}"
+        >
+          Inscription
+        </a>
+      </div>
+
+      {% if active_panel == "register" %}
+      <form
+        action="{{ url_for('auth.register') }}"
+        method="post"
+        class="auth-form auth-form--register"
+      >
+        <div class="auth-form__grid">
+          <div class="auth-form__group">
+            <label for="first_name">Prénom</label>
+            <input
+              id="first_name"
+              name="first_name"
+              type="text"
+              value="{{ register_data.first_name|default('', true) }}"
+              autocomplete="given-name"
+              required
+            />
+          </div>
+
+          <div class="auth-form__group">
+            <label for="last_name">Nom</label>
+            <input
+              id="last_name"
+              name="last_name"
+              type="text"
+              value="{{ register_data.last_name|default('', true) }}"
+              autocomplete="family-name"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="auth-form__group">
+          <label for="register_email">Adresse email</label>
+          <input
+            id="register_email"
+            name="email"
+            type="email"
+            value="{{ register_data.email|default('', true) }}"
+            autocomplete="email"
+            placeholder="exemple@email.com"
+            required
+          />
+        </div>
+
+        <div class="auth-form__group">
+          <label for="register_password">Mot de passe</label>
+          <input
+            id="register_password"
+            name="password"
+            type="password"
+            minlength="6"
+            autocomplete="new-password"
+            placeholder="Minimum 6 caractères"
+            required
+          />
+        </div>
+
+        <div class="auth-form__grid">
+          <div class="auth-form__group">
+            <label for="phone">Téléphone</label>
+            <input
+              id="phone"
+              name="phone"
+              type="text"
+              value="{{ register_data.phone|default('', true) }}"
+              autocomplete="tel"
+              placeholder="Optionnel"
+            />
+          </div>
+
+          <div class="auth-form__group">
+            <label for="city">Ville</label>
+            <input
+              id="city"
+              name="city"
+              type="text"
+              value="{{ register_data.city|default('', true) }}"
+              autocomplete="address-level2"
+              placeholder="Optionnel"
+            />
+          </div>
+        </div>
+
+        <div class="auth-form__group">
+          <label for="address">Adresse</label>
+          <input
+            id="address"
+            name="address"
+            type="text"
+            value="{{ register_data.address|default('', true) }}"
+            autocomplete="street-address"
+            placeholder="Optionnel"
+          />
+        </div>
+
+        <div class="auth-form__actions">
+          <button type="submit" class="btn btn-primary">Créer mon compte</button>
+          <a class="btn btn-secondary" href="{{ url_for('auth.login') }}">J’ai déjà un compte</a>
+        </div>
+      </form>
+      {% else %}
+      <form action="{{ url_for('auth.login') }}" method="post" class="auth-form">
+        <div class="auth-form__group">
+          <label for="login_email">Adresse email</label>
+          <input
+            type="email"
+            id="login_email"
+            name="email"
+            value="{{ login_data.email|default('', true) }}"
+            required
+            autocomplete="email"
+            placeholder="exemple@email.com"
+          />
+        </div>
+
+        <div class="auth-form__group">
+          <label for="login_password">Mot de passe</label>
+          <input
+            type="password"
+            id="login_password"
+            name="password"
+            required
+            autocomplete="current-password"
+            placeholder="Votre mot de passe"
+          />
+        </div>
+
+        <div class="auth-form__actions">
+          <button type="submit" class="btn btn-primary">Se connecter</button>
+          <a class="btn btn-secondary" href="{{ url_for('auth.register') }}">Créer un compte</a>
+        </div>
+      </form>
+      {% endif %}
+    </section>
+  </div>
 </section>
-
 {% endblock %}
