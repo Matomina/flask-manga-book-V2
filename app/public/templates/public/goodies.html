@@ -1,8 +1,15 @@
 {% extends "base.html" %} {% block title %}Goodies - MangaBook V2{% endblock %}
 {% block content %}
 
-<section class="goodies-page catalog-page">
-  <header class="goodies-page__header catalog-page__header">
+<section class="banner">
+  <img
+    src="{{ url_for('static', filename='image/banner-goodies.jpeg') }}"
+    alt="Bannière goodies MangaBook"
+  />
+</section>
+
+<section class="goodies-page catalog-page catalogue-page">
+  <header class="goodies-page__header catalog-page__header catalogue-content">
     <h2>Goodies</h2>
     <p>
       Retrouvez les produits dérivés MangaBook : objets collector, accessoires,
@@ -10,7 +17,7 @@
     </p>
   </header>
 
-  <div class="goodies-page__topbar catalog-search__actions">
+  <div class="goodies-page__topbar catalog-search__actions filters-buttons">
     <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
       Voir tout le catalogue
     </a>
@@ -21,7 +28,7 @@
   </div>
 
   {% if articles %}
-  <section class="goodies-results catalog-results">
+  <section class="content goodies-results catalog-results">
     <header class="goodies-results__header catalog-results__header">
       <h3>Articles goodies disponibles</h3>
       <p>
@@ -30,61 +37,71 @@
       </p>
     </header>
 
-    <div class="article-grid">
-      {% for article in articles %}
-      <article class="article-card card">
-        <h3>{{ article["name"] }}</h3>
+    <div class="scroll-container">
+      <button class="scroll-btn left" type="button" aria-label="Défiler vers la gauche">Précédent</button>
 
-        {% if article["image"] %}
-        <img
-          class="article-card__image"
-          src="{{ url_for('static', filename=article['image']) }}"
-          alt="{{ article['name'] }}"
-        />
-        {% endif %}
-
-        <p class="article-card__price">
-          <strong>{{ article["price"] }} €</strong>
-        </p>
-
-        <p class="article-card__meta">
-          {{ article["genres"] }} {% if article["universe"] %} • {{
-          article["universe"] }} {% endif %}
-        </p>
-
-        <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
-
-        {% if article["release_day"] %}
-        <p class="article-card__stock">Sortie : {{ article["release_day"] }}</p>
-        {% endif %}
-
-        <div class="article-card__actions">
-          <a
-            class="btn btn-secondary"
-            href="{{ url_for('public.article_detail', article_id=article['id']) }}"
-          >
-            Voir le détail
-          </a>
-
-          {% if session.get("user_id") %} {% if article["id"] in favorites_ids
-          %}
-          <span class="article-card__favorite-status">Déjà en favori</span>
+      <div class="card-list">
+        {% for article in articles %}
+        <article class="article-card product-card card">
+          {% if session.get("user_id") %} {% if article["id"] in favorites_ids %}
+          <span class="favorite-btn is-favorite" aria-label="Déjà en favori">Favori</span>
           {% else %}
           <form
             class="article-card__favorite-form"
             method="post"
             action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
           >
-            <button class="btn btn-primary" type="submit">Favori</button>
+            <button class="favorite-btn" type="submit" aria-label="Ajouter aux favoris">Favori</button>
           </form>
-          {% endif %} {% else %}
-          <a href="{{ url_for('auth.login') }}">
-            Se connecter pour ajouter aux favoris
+          {% endif %} {% endif %}
+
+          {% if article["image"] %}
+          <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+            <img
+              class="article-card__image product-img"
+              src="{{ url_for('static', filename=article['image']) }}"
+              alt="{{ article['name'] }}"
+            />
           </a>
           {% endif %}
-        </div>
-      </article>
-      {% endfor %}
+
+          <div class="card-info">
+            <h3 class="text">{{ article["name"] }}</h3>
+            <p class="price article-card__price">{{ article["price"] }} €</p>
+
+            <p class="article-card__meta">
+              {{ article["genres"] }} {% if article["universe"] %} • {{
+              article["universe"] }} {% endif %}
+            </p>
+
+            <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
+
+            {% if article["release_day"] %}
+            <p class="article-card__stock">Sortie : {{ article["release_day"] }}</p>
+            {% endif %}
+
+            <button
+              class="btn btn-secondary add-to-cart-btn"
+              type="button"
+              data-title="{{ article['name'] }}"
+              data-price="{{ article['price'] }}"
+              data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+            >
+              Ajouter au panier
+            </button>
+
+            <a
+              class="product-detail-link"
+              href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+            >
+              Voir le détail
+            </a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+      <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">Suivant</button>
     </div>
   </section>
   {% else %}

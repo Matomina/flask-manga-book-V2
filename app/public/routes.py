@@ -89,6 +89,11 @@ def article_detail(article_id: int):
     return render_template("public/article_detail.html", article=article)
 
 
+@bp.route("/cart")
+def cart():
+    return render_template("public/cart.html")
+
+
 # =========================
 # GOODIES / PLANNING
 # =========================

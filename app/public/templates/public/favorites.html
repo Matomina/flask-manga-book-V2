@@ -1,65 +1,80 @@
 {% extends "base.html" %} {% block title %}Mes favoris - MangaBook V2{% endblock
 %} {% block content %}
 
-<section class="favorites-page catalog-page public-content-page">
+<section class="banner">
+  <img
+    src="{{ url_for('static', filename='image/banner-favorites.webp') }}"
+    alt="Bannière favoris MangaBook"
+  />
+</section>
+
+<section class="favorites-page catalog-page public-content-page content">
   <header class="favorites-page__header catalog-page__header">
     <h2>Mes favoris</h2>
     <p>Retrouvez les articles que vous avez sauvegardés.</p>
   </header>
 
   {% if articles %}
-  <div class="public-card-list">
-    {% for article in articles %}
-    <article class="public-info-card card">
-      <h3>{{ article["name"] }}</h3>
+  <div class="scroll-container">
+    <button class="scroll-btn left" type="button" aria-label="Défiler vers la gauche">Précédent</button>
 
-      <p>
-        <strong>Genre :</strong>
-        {{ article["genres"] }}
-      </p>
-
-      {% if article["universe"] %}
-      <p>
-        <strong>Univers :</strong>
-        {{ article["universe"] }}
-      </p>
-      {% endif %}
-
-      <p>
-        <strong>Prix :</strong>
-        {{ article["price"] }} €
-      </p>
-
-      <p>
-        <strong>Stock :</strong>
-        {{ article["stock"] }}
-      </p>
-
-      <p>
-        <strong>Ajouté le :</strong>
-        {{ article["favorited_at"] }}
-      </p>
-
-      <div class="public-info-card__actions">
-        <a
-          class="btn btn-secondary"
-          href="{{ url_for('public.article_detail', article_id=article['id']) }}"
-        >
-          Voir le détail
+    <div class="card-list">
+      {% for article in articles %}
+      <article class="article-card product-card card">
+        {% if article["image"] %}
+        <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+          <img
+            class="article-card__image product-img"
+            src="{{ url_for('static', filename=article['image']) }}"
+            alt="{{ article['name'] }}"
+          />
         </a>
+        {% endif %}
 
-        <form
-          class="public-inline-form"
-          action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
-          method="post"
-        >
-          <button class="btn btn-secondary" type="submit">
-            Retirer des favoris
+        <div class="card-info">
+          <h3 class="text">{{ article["name"] }}</h3>
+          <p class="price article-card__price">{{ article["price"] }} €</p>
+
+          <p class="article-card__meta">
+            {{ article["genres"] }} {% if article["universe"] %} • {{
+            article["universe"] }} {% endif %}
+          </p>
+
+          <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
+          <p class="article-card__stock">Ajouté le : {{ article["favorited_at"] }}</p>
+
+          <button
+            class="btn btn-secondary add-to-cart-btn"
+            type="button"
+            data-title="{{ article['name'] }}"
+            data-price="{{ article['price'] }}"
+            data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+          >
+            Ajouter au panier
           </button>
-        </form>
-      </div>
-    </article>
-    {% endfor %}
+
+          <a
+            class="product-detail-link"
+            href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+          >
+            Voir le détail
+          </a>
+
+          <form
+            class="public-inline-form"
+            action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
+            method="post"
+          >
+            <button class="btn btn-secondary add-to-cart-btn" type="submit">
+              Retirer
+            </button>
+          </form>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">Suivant</button>
   </div>
   {% else %}
   <div class="empty-state">

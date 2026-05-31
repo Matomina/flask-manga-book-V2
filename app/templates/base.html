@@ -9,6 +9,11 @@
     />
 
     <title>{% block title %}MangaBook V2{% endblock %}</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='image/favicon_one_piece.png') }}"
+    />
 
     <link
       rel="stylesheet"
@@ -22,50 +27,63 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/public.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/v1-ui.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/v1-polish.css') }}"
+    />
 
     {% block extra_css %}{% endblock %}
   </head>
 
   <body class="public-shell">
-    <header class="public-header">
-      <div class="public-header__inner">
-        <a class="public-header__brand" href="{{ url_for('public.home') }}">
-          <span class="public-header__logo">MB</span>
-          <span class="public-header__brand-text">
-            <strong>MangaBook</strong>
-            <span>Catalogue manga & goodies</span>
-          </span>
+    <header class="public-header site-header">
+      <div class="header-top">
+        <a class="public-header__brand logo-title" href="{{ url_for('public.home') }}">
+          <img
+            class="public-header__logo logo"
+            src="{{ url_for('static', filename='image/favicon_one_piece.png') }}"
+            alt="Logo MangaBook"
+          />
+          <span class="public-header__brand-text site-title">MangaBook</span>
         </a>
-
-        <nav class="public-header__nav" aria-label="Navigation principale">
-          <a href="{{ url_for('public.home') }}">Accueil</a>
-          <a href="{{ url_for('public.articles') }}">Catalogue</a>
-          <a href="{{ url_for('public.goodies') }}">Goodies</a>
-          <a href="{{ url_for('public.planning') }}">Planning</a>
-          <a href="{{ url_for('forum.index') }}">Forum</a>
-          <a href="{{ url_for('public.about') }}">À propos</a>
-          <a href="{{ url_for('public.contact') }}">Contact</a>
-        </nav>
-
-        <div class="public-header__actions">
-          {% if session.get("user_id") %}
-          <a href="{{ url_for('public.favorites') }}">Favoris</a>
-          <a href="{{ url_for('public.profile') }}">Profil</a>
-
-          <form
-            class="public-header__logout"
-            action="{{ url_for('auth.logout') }}"
-            method="post"
-          >
-            <button class="btn btn-secondary" type="submit">Déconnexion</button>
-          </form>
-          {% else %}
-          <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
-            Connexion
-          </a>
-          {% endif %}
-        </div>
       </div>
+
+      <nav class="public-header__nav" aria-label="Navigation principale">
+        <ul>
+          <li><a href="{{ url_for('public.home') }}">Accueil</a></li>
+          <li><a href="{{ url_for('public.articles') }}">Catalogue</a></li>
+          <li><a href="{{ url_for('public.goodies') }}">Goodies</a></li>
+          <li><a href="{{ url_for('public.planning') }}">Planning</a></li>
+          <li><a href="{{ url_for('forum.index') }}">Forum</a></li>
+          <li><a href="{{ url_for('public.about') }}">À propos</a></li>
+          <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+          <li><a href="{{ url_for('public.cart') }}">Panier</a></li>
+
+          {% if session.get("user_id") %}
+          <li><a href="{{ url_for('public.favorites') }}">Favoris</a></li>
+          <li><a href="{{ url_for('public.profile') }}">Profil</a></li>
+          <li>
+            <form
+              class="public-header__logout"
+              action="{{ url_for('auth.logout') }}"
+              method="post"
+            >
+              <button class="btn btn-secondary" type="submit">Déconnexion</button>
+            </form>
+          </li>
+          {% else %}
+          <li>
+            <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
+              Connexion
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
     </header>
 
     <main class="public-main">
@@ -79,6 +97,33 @@
       {% endif %} {% endwith %} {% block content %}{% endblock %}
     </main>
 
+    <button class="floating-cart-btn" id="floatingCartBtn" type="button" aria-label="Ouvrir le panier">
+      🛒
+      <span class="floating-cart-count" id="floatingCartCount">0</span>
+    </button>
+
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <aside class="cart-popup" id="cartPopup" aria-label="Panier">
+      <header class="cart-popup__header">
+        <h2>Panier</h2>
+        <button class="cart-close-btn" id="cartCloseBtn" type="button" aria-label="Fermer le panier">
+          ×
+        </button>
+      </header>
+
+      <div class="cart-content" id="cartContent"></div>
+
+      <footer class="cart-popup__footer">
+        <a class="btn btn-secondary" href="{{ url_for('public.cart') }}">
+          Voir le panier
+        </a>
+        <button class="btn btn-primary" id="quickCheckoutBtn" type="button">
+          Valider la commande
+        </button>
+      </footer>
+    </aside>
+
     <footer class="public-footer">
       <div class="public-footer__inner">
         <p>&copy; MangaBook V2</p>
@@ -91,6 +136,7 @@
       </div>
     </footer>
 
+    <script src="{{ url_for('static', filename='js/public-ui.js') }}" defer></script>
     {% block extra_js %}{% endblock %}
   </body>
 </html>
