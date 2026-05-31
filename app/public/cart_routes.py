@@ -8,6 +8,7 @@ from .cart_services import (
     add_cart_item,
     get_cart_items,
     get_cart_total,
+    remove_cart_item,
     update_cart_item,
 )
 
@@ -37,4 +38,11 @@ def add(article_id: int):
 @login_required
 def update(article_id: int):
     update_cart_item(session["user_id"], article_id, request.form.get("quantity", "1"))
+    return redirect(url_for("public_cart.cart"))
+
+
+@bp.post("/cart/remove/<int:article_id>")
+@login_required
+def remove(article_id: int):
+    remove_cart_item(session["user_id"], article_id)
     return redirect(url_for("public_cart.cart"))
