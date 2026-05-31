@@ -11,6 +11,7 @@ from .cart_services import (
     remove_cart_item,
     update_cart_item,
 )
+from .order_services import create_order_from_cart
 
 bp = Blueprint("public_cart", __name__, template_folder="templates")
 
@@ -46,3 +47,10 @@ def update(article_id: int):
 def remove(article_id: int):
     remove_cart_item(session["user_id"], article_id)
     return redirect(url_for("public_cart.cart"))
+
+
+@bp.post("/cart/checkout")
+@login_required
+def checkout():
+    order_id = create_order_from_cart(session["user_id"])
+    return redirect(url_for("admin.order_detail", order_id=order_id))
