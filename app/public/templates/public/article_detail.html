@@ -35,7 +35,7 @@ V2{% endblock %} {% block content %}
         type="submit"
         aria-label="Retirer des favoris"
       >
-        Favori
+        ♥
       </button>
     </form>
     {% else %}
@@ -49,7 +49,7 @@ V2{% endblock %} {% block content %}
         type="submit"
         aria-label="Ajouter aux favoris"
       >
-        Favori
+        ♥
       </button>
     </form>
     {% endif %} {% endif %} {% if article["image"] %}
@@ -116,9 +116,7 @@ V2{% endblock %} {% block content %}
         <button
           class="btn btn-secondary add-to-cart-btn"
           type="button"
-          data-title="{{ article['name'] }}"
-          data-price="{{ article['price'] }}"
-          data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+          data-article-id="{{ article['id'] }}"
         >
           Ajouter au panier
         </button>
