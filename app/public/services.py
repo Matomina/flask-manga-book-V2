@@ -33,6 +33,28 @@ RELEASE_DAY_ORDER = [
     "Sans jour fixe",
 ]
 
+GOODIES_UNIVERSES = [
+    ("naruto", "Naruto"),
+    ("jujutsu_kaisen", "Jujutsu Kaisen"),
+    ("one_piece", "One Piece"),
+    ("demon_slayer", "Demon Slayer"),
+    ("dragon_ball", "Dragon Ball"),
+]
+
+GOODIES_CATEGORIES = [
+    ("figurine", "Figurines"),
+    ("textile", "Textile"),
+    ("vaisselle", "Vaisselle"),
+]
+
+CATALOG_SORT_COLUMNS = {
+    "date": "a.created_at",
+    "name": "a.name",
+    "price": "a.price",
+}
+
+CATALOG_SORT_ORDERS = {"asc", "desc"}
+
 
 def _execute_write(query: str, params: tuple = ()) -> None:
     """Exécuter une requête d'écriture et valider la transaction."""
@@ -44,6 +66,17 @@ def _execute_write(query: str, params: tuple = ()) -> None:
 def _normalize_text(value: str | None) -> str:
     """Nettoyer une chaîne utilisateur."""
     return (value or "").strip()
+
+
+def _catalog_order_by(sort: str | None = None, order: str | None = None) -> str:
+    """Construire un ORDER BY catalogue depuis une allowlist stricte."""
+    normalized_sort = _normalize_text(sort).lower() or "date"
+    normalized_order = _normalize_text(order).lower() or "desc"
+
+    sort_column = CATALOG_SORT_COLUMNS.get(normalized_sort, "a.created_at")
+    sort_order = normalized_order if normalized_order in CATALOG_SORT_ORDERS else "desc"
+
+    return f"ORDER BY {sort_column} {sort_order.upper()}, a.id DESC"
 
 
 def _article_exists(article_id: int) -> bool:
@@ -76,8 +109,10 @@ def search_articles(
     genre: str | None = None,
     universe: str | None = None,
     release_day: str | None = None,
+    sort: str | None = None,
+    order: str | None = None,
 ) -> list[sqlite3.Row]:
-    """Rechercher et filtrer les articles du catalogue."""
+    """Rechercher, filtrer et trier les articles du catalogue."""
     normalized_query = _normalize_text(query).lower()
     normalized_genre = _normalize_text(genre)
     normalized_universe = _normalize_text(universe).lower()
@@ -120,7 +155,7 @@ def search_articles(
         f"""
         {ARTICLE_SELECT}
         {where_sql}
-        ORDER BY a.created_at DESC, a.id DESC
+        {_catalog_order_by(sort, order)}
         """,
         tuple(params),
     ).fetchall()
@@ -129,6 +164,34 @@ def search_articles(
 def get_goodies_articles() -> list[sqlite3.Row]:
     """Récupérer les articles de type goodies."""
     return search_articles(genre="goodies")
+
+
+def get_goodies_sections() -> dict[str, list[dict[str, Any]]]:
+    """Récupérer les goodies groupés comme dans la V1."""
+    universe_sections = []
+    for universe_key, universe_label in GOODIES_UNIVERSES:
+        universe_sections.append(
+            {
+                "key": universe_key,
+                "label": universe_label,
+                "articles": search_articles(genre="goodies", universe=universe_key),
+            }
+        )
+
+    category_sections = []
+    for category_key, category_label in GOODIES_CATEGORIES:
+        category_sections.append(
+            {
+                "key": category_key,
+                "label": category_label,
+                "articles": search_articles(genre=category_key),
+            }
+        )
+
+    return {
+        "universes": universe_sections,
+        "categories": category_sections,
+    }
 
 
 def get_articles_grouped_by_release_day() -> dict[str, list[sqlite3.Row]]:

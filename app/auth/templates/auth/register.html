@@ -1,8 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}Inscription - MangaBook V2{% endblock %}
 
 {% block content %}
-<h2>Inscription</h2>
-<p>Formulaire d'inscription à venir.</p>
+<section class="auth-page public-content-page">
+  <header class="catalog-page__header">
+    <h2>Inscription</h2>
+    <p>Créez votre compte MangaBook pour gérer vos favoris, votre historique et vos messages support.</p>
+  </header>
+
+  <section class="public-info-card card">
+    <form class="public-form" action="{{ url_for('auth.register') }}" method="post">
+      <div class="public-form__group">
+        <label for="first_name">Prénom</label>
+        <input id="first_name" name="first_name" type="text" value="{{ data.first_name if data else '' }}" required />
+      </div>
+
+      <div class="public-form__group">
+        <label for="last_name">Nom</label>
+        <input id="last_name" name="last_name" type="text" value="{{ data.last_name if data else '' }}" required />
+      </div>
+
+      <div class="public-form__group">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="{{ data.email if data else '' }}" required />
+      </div>
+
+      <div class="public-form__group">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" minlength="6" required />
+      </div>
+
+      <div class="public-form__group">
+        <label for="phone">Téléphone</label>
+        <input id="phone" name="phone" type="text" value="{{ data.phone if data else '' }}" />
+      </div>
+
+      <div class="public-form__group">
+        <label for="address">Adresse</label>
+        <input id="address" name="address" type="text" value="{{ data.address if data else '' }}" />
+      </div>
+
+      <div class="public-form__group">
+        <label for="city">Ville</label>
+        <input id="city" name="city" type="text" value="{{ data.city if data else '' }}" />
+      </div>
+
+      <div class="public-form__actions">
+        <button class="btn btn-primary" type="submit">Créer mon compte</button>
+        <a class="btn btn-secondary" href="{{ url_for('auth.login') }}">Déjà inscrit ?</a>
+      </div>
+    </form>
+  </section>
+</section>
 {% endblock %}

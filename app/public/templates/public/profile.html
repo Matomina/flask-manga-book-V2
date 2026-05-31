@@ -1,8 +1,15 @@
 {% extends "base.html" %} {% block title %}Mon profil - MangaBook V2{% endblock
 %} {% block content %}
 
-<section class="profile-page catalog-page public-content-page">
-  <header class="profile-page__header catalog-page__header">
+<section class="banner page-banner">
+  <img
+    src="{{ url_for('static', filename='image/banner-profile.jpeg') }}"
+    alt="Bannière profil MangaBook"
+  />
+</section>
+
+<section class="profile-page catalog-page public-content-page content">
+  <header class="profile-page__header catalog-page__header page-intro">
     <h2>Mon profil</h2>
     <p>
       Retrouvez les informations de votre compte et vos raccourcis utilisateur.

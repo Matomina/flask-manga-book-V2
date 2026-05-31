@@ -1,16 +1,8 @@
 from __future__ import annotations
 
-from flask import (
-    Blueprint,
-    flash,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 
-from .services import authenticate_user
+from .services import RegistrationError, authenticate_user, create_user
 
 bp = Blueprint(
     "auth",
@@ -18,6 +10,13 @@ bp = Blueprint(
     url_prefix="/auth",
     template_folder="templates",
 )
+
+
+def _set_user_session(user) -> None:
+    session.clear()
+    session["user_id"] = user["id"]
+    session["user_first_name"] = user["first_name"]
+    session["user_role"] = user["role"]
 
 
 @bp.route("/login", methods=["GET", "POST"])
@@ -43,11 +42,7 @@ def login():
             flash("Email ou mot de passe incorrect.", "danger")
             return render_template("auth/login.html"), 401
 
-        session.clear()
-        session["user_id"] = user["id"]
-        session["user_first_name"] = user["first_name"]
-        session["user_role"] = user["role"]
-
+        _set_user_session(user)
         flash("Connexion réussie.", "success")
 
         if user["role"] == "admin":
@@ -58,9 +53,25 @@ def login():
     return render_template("auth/login.html")
 
 
-@bp.route("/register", methods=["GET"])
+@bp.route("/register", methods=["GET", "POST"])
 def register():
-    """Afficher la page d'inscription."""
+    """Afficher et traiter l'inscription utilisateur."""
+    if session.get("user_id") is not None:
+        return redirect(url_for("public.home"))
+
+    if request.method == "POST":
+        data = request.form.to_dict()
+
+        try:
+            user = create_user(data)
+        except RegistrationError as exc:
+            flash(str(exc), "danger")
+            return render_template("auth/register.html", data=data), 400
+
+        _set_user_session(user)
+        flash("Compte créé avec succès.", "success")
+        return redirect(url_for("public.profile"))
+
     return render_template("auth/register.html")
 
 

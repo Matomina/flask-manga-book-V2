@@ -13,6 +13,13 @@ from app.db import get_db
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 VALID_ARTICLE_GENRES = {"manga", "figurine", "textile", "vaisselle", "goodies"}
+VALID_ARTICLE_UNIVERSES = {
+    "naruto",
+    "jujutsu_kaisen",
+    "one_piece",
+    "demon_slayer",
+    "dragon_ball",
+}
 VALID_RELEASE_DAYS = {
     "Lundi",
     "Mardi",
@@ -23,50 +30,22 @@ VALID_RELEASE_DAYS = {
     "Dimanche",
     "Sans jour fixe",
 }
-VALID_ORDER_STATUSES = {
-    "pending",
-    "paid",
-    "shipped",
-    "delivered",
-    "cancelled",
-}
-VALID_ARTICLE_UNIVERSES = {
-    "naruto",
-    "jujutsu_kaisen",
-    "one_piece",
-    "demon_slayer",
-    "dragon_ball",
-}
+VALID_ORDER_STATUSES = {"pending", "paid", "shipped", "delivered", "cancelled"}
 UPLOAD_FOLDER = "uploads"
 
 
-# =========================
-# HELPERS
-# =========================
-
-
 def _normalize_str(value: Any) -> str:
-    """Nettoyer une valeur texte et garantir une chaîne."""
     return str(value or "").strip()
 
 
 def _normalize_optional_str(value: Any) -> str | None:
-    """Nettoyer une valeur texte optionnelle."""
     cleaned = _normalize_str(value)
     return cleaned or None
 
 
-# =========================
-# CONTACTS
-# =========================
-
-
 def get_all_contacts(status_filter: str = "all") -> list[sqlite3.Row]:
-    """Récupérer les messages de contact avec filtre optionnel."""
     db = get_db()
-
     where_sql = ""
-    params: tuple = ()
 
     if status_filter == "unread":
         where_sql = "WHERE c.status != 'read'"
@@ -80,15 +59,12 @@ def get_all_contacts(status_filter: str = "all") -> list[sqlite3.Row]:
         LEFT JOIN user AS u ON u.id = c.user_id
         {where_sql}
         ORDER BY c.created_at DESC, c.id DESC
-        """,
-        params,
+        """
     ).fetchall()
 
 
 def get_contact_by_id(contact_id: int) -> sqlite3.Row | None:
-    """Récupérer un message de contact par son identifiant."""
     db = get_db()
-
     return db.execute(
         """
         SELECT c.id, c.sujet, c.message, c.status, c.created_at, u.email
@@ -101,29 +77,26 @@ def get_contact_by_id(contact_id: int) -> sqlite3.Row | None:
 
 
 def mark_contact_as_read(contact_id: int) -> None:
-    """Marquer un message de contact comme lu."""
     db = get_db()
-
     db.execute(
-        """
-        UPDATE contact
-        SET status = 'read'
-        WHERE id = ?
-        """,
+        "UPDATE contact SET status = 'read' WHERE id = ?",
         (contact_id,),
     )
     db.commit()
 
 
-# =========================
-# DASHBOARD
-# =========================
+def delete_contact(contact_id: int) -> bool:
+    db = get_db()
+    cursor = db.execute(
+        "DELETE FROM contact WHERE id = ?",
+        (contact_id,),
+    )
+    db.commit()
+    return cursor.rowcount > 0
 
 
 def get_dashboard_stats() -> dict[str, int]:
-    """Récupérer les statistiques globales du dashboard admin."""
     db = get_db()
-
     row = db.execute(
         """
         SELECT
@@ -134,41 +107,16 @@ def get_dashboard_stats() -> dict[str, int]:
             (SELECT COUNT(*) FROM contact WHERE status != 'read') AS unread_contacts,
             (SELECT COUNT(*) FROM topics) AS forum_topics,
             (SELECT COUNT(*) FROM replies) AS forum_replies,
-            (
-                SELECT COUNT(*)
-                FROM articles
-                WHERE stock > 0 AND stock <= 5
-            ) AS low_stock_articles,
-            (
-                SELECT COUNT(*)
-                FROM articles
-                WHERE stock <= 0
-            ) AS out_of_stock_articles
+            (SELECT COUNT(*) FROM articles WHERE stock > 0 AND stock <= 5)
+                AS low_stock_articles,
+            (SELECT COUNT(*) FROM articles WHERE stock <= 0) AS out_of_stock_articles
         """
     ).fetchone()
-
-    return {
-        "users": row["users"],
-        "articles": row["articles"],
-        "orders": row["orders"],
-        "contacts": row["contacts"],
-        "unread_contacts": row["unread_contacts"],
-        "forum_topics": row["forum_topics"],
-        "forum_replies": row["forum_replies"],
-        "low_stock_articles": row["low_stock_articles"],
-        "out_of_stock_articles": row["out_of_stock_articles"],
-    }
-
-
-# =========================
-# USERS ADMIN
-# =========================
+    return dict(row)
 
 
 def get_all_users_admin() -> list[sqlite3.Row]:
-    """Récupérer tous les utilisateurs pour l'administration."""
     db = get_db()
-
     return db.execute(
         """
         SELECT
@@ -188,9 +136,7 @@ def get_all_users_admin() -> list[sqlite3.Row]:
 
 
 def get_user_by_id_admin(user_id: int) -> sqlite3.Row | None:
-    """Récupérer un utilisateur admin par son identifiant."""
     db = get_db()
-
     return db.execute(
         """
         SELECT
@@ -210,25 +156,12 @@ def get_user_by_id_admin(user_id: int) -> sqlite3.Row | None:
     ).fetchone()
 
 
-# =========================
-# ORDERS ADMIN
-# =========================
-
-
 def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
-    """Récupérer toutes les commandes pour l'administration."""
     db = get_db()
-
     where_sql = ""
     params: tuple[str, ...] = ()
 
-    if status_filter in {
-        "pending",
-        "paid",
-        "shipped",
-        "delivered",
-        "cancelled",
-    }:
+    if status_filter in VALID_ORDER_STATUSES:
         where_sql = "WHERE o.status = ?"
         params = (status_filter,)
 
@@ -242,10 +175,13 @@ def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
             o.created_at,
             u.first_name,
             u.last_name,
-            u.email
+            u.email,
+            COUNT(oa.id) AS items_count
         FROM orders AS o
-        JOIN user AS u ON u.id = o.user_id
+        LEFT JOIN user AS u ON u.id = o.user_id
+        LEFT JOIN orders_articles AS oa ON oa.order_id = o.id
         {where_sql}
+        GROUP BY o.id
         ORDER BY o.created_at DESC, o.id DESC
         """,
         params,
@@ -253,9 +189,7 @@ def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
 
 
 def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
-    """Récupérer une commande admin par son identifiant."""
     db = get_db()
-
     return db.execute(
         """
         SELECT
@@ -264,14 +198,14 @@ def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
             o.total_amount,
             o.status,
             o.created_at,
+            u.email,
             u.first_name,
             u.last_name,
-            u.email,
             u.phone,
             u.address,
             u.city
         FROM orders AS o
-        JOIN user AS u ON u.id = o.user_id
+        LEFT JOIN user AS u ON u.id = o.user_id
         WHERE o.id = ?
         """,
         (order_id,),
@@ -279,9 +213,7 @@ def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
 
 
 def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
-    """Récupérer les lignes d'articles d'une commande."""
     db = get_db()
-
     return db.execute(
         """
         SELECT
@@ -304,36 +236,22 @@ def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
 
 
 def update_order_status_admin(order_id: int, status: str) -> bool:
-    """Mettre à jour le statut d'une commande admin."""
     normalized_status = _normalize_str(status)
 
     if normalized_status not in VALID_ORDER_STATUSES:
         raise ValueError("Statut de commande invalide.")
 
     db = get_db()
-
     cursor = db.execute(
-        """
-        UPDATE orders
-        SET status = ?
-        WHERE id = ?
-        """,
+        "UPDATE orders SET status = ? WHERE id = ?",
         (normalized_status, order_id),
     )
     db.commit()
-
     return cursor.rowcount > 0
 
 
-# =========================
-# ARTICLES ADMIN
-# =========================
-
-
 def get_all_articles_admin() -> list[sqlite3.Row]:
-    """Récupérer tous les articles pour l'administration."""
     db = get_db()
-
     return db.execute(
         """
         SELECT id, name, genres, universe, image, price, stock, release_day, created_at
@@ -344,9 +262,7 @@ def get_all_articles_admin() -> list[sqlite3.Row]:
 
 
 def get_article_by_id_admin(article_id: int) -> sqlite3.Row | None:
-    """Récupérer un article admin par son identifiant."""
     db = get_db()
-
     return db.execute(
         """
         SELECT id, name, genres, universe, image, price, stock, release_day, created_at
@@ -358,12 +274,18 @@ def get_article_by_id_admin(article_id: int) -> sqlite3.Row | None:
 
 
 def create_article(data: dict[str, Any]) -> None:
-    """Créer un article."""
     db = get_db()
-
     db.execute(
         """
-        INSERT INTO articles (name, genres, universe, image, price, stock, release_day)
+        INSERT INTO articles (
+            name,
+            genres,
+            universe,
+            image,
+            price,
+            stock,
+            release_day
+        )
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -379,11 +301,9 @@ def create_article(data: dict[str, Any]) -> None:
     db.commit()
 
 
-def update_article(article_id: int, data: dict[str, Any]) -> None:
-    """Mettre à jour un article existant."""
+def update_article(article_id: int, data: dict[str, Any]) -> bool:
     db = get_db()
-
-    db.execute(
+    cursor = db.execute(
         """
         UPDATE articles
         SET
@@ -408,22 +328,17 @@ def update_article(article_id: int, data: dict[str, Any]) -> None:
         ),
     )
     db.commit()
+    return cursor.rowcount > 0
 
 
-def delete_article(article_id: int) -> None:
-    """Supprimer un article."""
+def delete_article(article_id: int) -> bool:
     db = get_db()
-
-    db.execute(
+    cursor = db.execute(
         "DELETE FROM articles WHERE id = ?",
         (article_id,),
     )
     db.commit()
-
-
-# =========================
-# VALIDATION ARTICLES
-# =========================
+    return cursor.rowcount > 0
 
 
 def validate_article_data(
@@ -431,9 +346,7 @@ def validate_article_data(
     *,
     require_image: bool = True,
 ) -> tuple[dict[str, Any], list[str]]:
-    """Valider et nettoyer les données d’un article."""
     errors: list[str] = []
-
     name = _normalize_str(data.get("name"))
     genres = _normalize_str(data.get("genres"))
     universe = _normalize_optional_str(data.get("universe"))
@@ -480,39 +393,24 @@ def validate_article_data(
         "stock": stock,
         "release_day": release_day,
     }
-
     return clean_data, errors
 
 
-# =========================
-# UPLOAD IMAGE
-# =========================
-
-
 def allowed_file(filename: str) -> bool:
-    """Vérifier si l'extension du fichier est autorisée."""
     if not filename or "." not in filename:
         return False
-
-    extension = Path(filename).suffix.lower().lstrip(".")
-    return extension in ALLOWED_EXTENSIONS
+    return Path(filename).suffix.lower().lstrip(".") in ALLOWED_EXTENSIONS
 
 
 def save_image(file: FileStorage | None) -> str | None:
-    """Sauvegarder une image et retourner son chemin relatif dans static."""
     if file is None or not file.filename:
         return None
 
     if not allowed_file(file.filename):
         return None
 
-    original_name = secure_filename(file.filename)
-    filename = f"{uuid4().hex}_{original_name}"
-
+    filename = f"{uuid4().hex}_{secure_filename(file.filename)}"
     upload_dir = Path(current_app.root_path) / "static" / UPLOAD_FOLDER
     upload_dir.mkdir(parents=True, exist_ok=True)
-
-    upload_path = upload_dir / filename
-    file.save(upload_path)
-
+    file.save(upload_dir / filename)
     return f"{UPLOAD_FOLDER}/{filename}"

@@ -1,14 +1,21 @@
 {% extends "base.html" %} {% block title %}Contact support - MangaBook V2{%
 endblock %} {% block content %}
 
-<section class="contact-support catalog-page public-content-page">
+<section class="banner page-banner">
+  <img
+    src="{{ url_for('static', filename='image/banner-contact.jpg') }}"
+    alt="Bannière contact MangaBook"
+  />
+</section>
+
+<section class="contact-support catalog-page public-content-page content">
   <div class="contact-support__topbar catalog-search__actions">
     <a href="{{ url_for('public.home') }}" class="btn btn-secondary">
       ← Retour à l’accueil
     </a>
   </div>
 
-  <header class="contact-support__header catalog-page__header">
+  <header class="contact-support__header catalog-page__header page-intro">
     <h2>Contacter le support</h2>
     <p>
       Envoyez un message à l’administration de MangaBook. Votre demande sera

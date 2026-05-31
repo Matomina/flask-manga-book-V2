@@ -1,0 +1,78 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Panier - MangaBook V2{% endblock %}
+
+{% block content %}
+<section class="catalog-page public-content-page">
+  <header class="catalog-page__header">
+    <h2>Panier</h2>
+    <p>Espace de synthèse des articles sélectionnés avant commande.</p>
+  </header>
+
+  <section class="public-info-card card">
+    {% if cart_items %}
+      <h3>Articles du panier</h3>
+
+      <div class="catalog-grid">
+        {% for item in cart_items %}
+          <article class="article-card">
+            {% if item["image"] %}
+              <img
+                src="{{ url_for('static', filename='image/' ~ item['image']) }}"
+                alt="{{ item['name'] }}"
+                class="article-card__image"
+              />
+            {% endif %}
+
+            <div class="article-card__body">
+              <h4>{{ item["name"] }}</h4>
+              <p>Quantité : {{ item["quantity"] }}</p>
+              <p>Prix unitaire : {{ item["price"] }} €</p>
+
+              <form
+                action="{{ url_for('public_cart.update', article_id=item['article_id']) }}"
+                method="post"
+                class="public-form"
+              >
+                <label for="quantity-{{ item['article_id'] }}">Modifier la quantité</label>
+                <input
+                  id="quantity-{{ item['article_id'] }}"
+                  name="quantity"
+                  type="number"
+                  min="1"
+                  max="{{ item['stock'] }}"
+                  value="{{ item['quantity'] }}"
+                />
+                <button class="btn btn-secondary" type="submit">Mettre à jour</button>
+              </form>
+
+              <form
+                action="{{ url_for('public_cart.remove', article_id=item['article_id']) }}"
+                method="post"
+              >
+                <button class="btn btn-secondary" type="submit">Retirer</button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <div class="public-info-card__actions">
+        <p><strong>Total : {{ cart_total }} €</strong></p>
+
+        <form action="{{ url_for('public_cart.checkout') }}" method="post">
+          <button class="btn btn-primary" type="submit">Créer la commande</button>
+        </form>
+      </div>
+    {% else %}
+      <h3>Votre panier est vide</h3>
+      <p>Ajoutez des articles depuis le catalogue.</p>
+    {% endif %}
+
+    <div class="public-info-card__actions">
+      <a href="{{ url_for('public.articles') }}" class="btn btn-primary">Catalogue</a>
+      <a href="{{ url_for('public.help_page') }}" class="btn btn-secondary">Aide</a>
+    </div>
+  </section>
+</section>
+{% endblock %}
