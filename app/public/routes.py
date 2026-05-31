@@ -4,6 +4,7 @@ from flask import (
     Blueprint,
     abort,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -14,6 +15,7 @@ from flask import (
 from app.auth.services import get_user_by_id
 from app.core.security import login_required
 
+from .favorite_services import toggle_favorite
 from .services import (
     add_favorite,
     add_to_history,
@@ -139,6 +141,14 @@ def remove_from_favorites(article_id: int):
     remove_favorite(session["user_id"], article_id)
     flash("Article retiré des favoris.", "info")
     return redirect(url_for("public.favorites"))
+
+
+@bp.route("/favorites/toggle/<int:article_id>", methods=["POST"])
+@login_required
+def toggle_favorite_json(article_id: int):
+    _get_article_or_404(article_id)
+    status = toggle_favorite(session["user_id"], article_id)
+    return jsonify({"status": status})
 
 
 @bp.route("/history")
