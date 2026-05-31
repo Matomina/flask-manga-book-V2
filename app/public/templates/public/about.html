@@ -2,32 +2,21 @@
 
 {% block title %}À propos - MangaBook V2{% endblock %}
 
-{% block meta_description %}Découvrez le projet MangaBook V2, son catalogue manga, ses goodies, son planning de sorties et son espace communautaire.{% endblock %}
-
 {% block content %}
-<section class="banner page-banner">
-  <img
-    src="{{ url_for('static', filename='image/banner-about.png') }}"
-    alt="Bannière à propos MangaBook"
-  />
-</section>
-
 <section class="about-page catalog-page public-content-page content">
-  <header class="about-page__header catalog-page__header page-intro">
+  <header id="a-propos" class="about-page__header catalog-page__header page-intro">
     <h2>À propos</h2>
-    <p>Découvrez le projet MangaBook V2 et son objectif.</p>
+    <p>Page consolidée À propos, aide et contact.</p>
   </header>
 
-  <div class="public-info-card card">
-    <h3>Le projet</h3>
-    <p>
-      MangaBook V2 centralise un catalogue d’articles manga, de figurines et de
-      goodies, avec un planning de sorties et un espace communautaire.
-    </p>
-    <p>
-      Cette refonte vise une base plus propre, plus maintenable et plus proche
-      du design d’origine.
-    </p>
-  </div>
+  <section id="aide" class="public-info-card card">
+    <h3>Aide</h3>
+    <p>Informations utiles pour utiliser MangaBook V2.</p>
+  </section>
+
+  <section id="contact" class="public-info-card card">
+    <h3>Contact</h3>
+    <p>Le formulaire de contact est accessible aux utilisateurs connectés.</p>
+  </section>
 </section>
 {% endblock %}
