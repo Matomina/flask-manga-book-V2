@@ -33,6 +33,20 @@ RELEASE_DAY_ORDER = [
     "Sans jour fixe",
 ]
 
+GOODIES_UNIVERSES = [
+    ("naruto", "Naruto"),
+    ("jujutsu_kaisen", "Jujutsu Kaisen"),
+    ("one_piece", "One Piece"),
+    ("demon_slayer", "Demon Slayer"),
+    ("dragon_ball", "Dragon Ball"),
+]
+
+GOODIES_CATEGORIES = [
+    ("figurine", "Figurines"),
+    ("textile", "Textile"),
+    ("vaisselle", "Vaisselle"),
+]
+
 CATALOG_SORT_COLUMNS = {
     "date": "a.created_at",
     "name": "a.name",
@@ -150,6 +164,34 @@ def search_articles(
 def get_goodies_articles() -> list[sqlite3.Row]:
     """Récupérer les articles de type goodies."""
     return search_articles(genre="goodies")
+
+
+def get_goodies_sections() -> dict[str, list[dict[str, Any]]]:
+    """Récupérer les goodies groupés comme dans la V1."""
+    universe_sections = []
+    for universe_key, universe_label in GOODIES_UNIVERSES:
+        universe_sections.append(
+            {
+                "key": universe_key,
+                "label": universe_label,
+                "articles": search_articles(genre="goodies", universe=universe_key),
+            }
+        )
+
+    category_sections = []
+    for category_key, category_label in GOODIES_CATEGORIES:
+        category_sections.append(
+            {
+                "key": category_key,
+                "label": category_label,
+                "articles": search_articles(genre=category_key),
+            }
+        )
+
+    return {
+        "universes": universe_sections,
+        "categories": category_sections,
+    }
 
 
 def get_articles_grouped_by_release_day() -> dict[str, list[sqlite3.Row]]:
