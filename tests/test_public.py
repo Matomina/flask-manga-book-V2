@@ -49,11 +49,15 @@ def test_articles_page_passes_filters_to_search_service(client, monkeypatch):
         genre=None,
         universe=None,
         release_day=None,
+        sort=None,
+        order=None,
     ):
         captured["query"] = query
         captured["genre"] = genre
         captured["universe"] = universe
         captured["release_day"] = release_day
+        captured["sort"] = sort
+        captured["order"] = order
         return []
 
     monkeypatch.setattr("app.public.routes.search_articles", fake_search_articles)
@@ -68,6 +72,8 @@ def test_articles_page_passes_filters_to_search_service(client, monkeypatch):
         "genre": "manga",
         "universe": "konoha",
         "release_day": "Lundi",
+        "sort": "date",
+        "order": "desc",
     }
 
 
