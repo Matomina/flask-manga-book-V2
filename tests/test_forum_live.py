@@ -1,11 +1,7 @@
 from __future__ import annotations
 
 
-def _create_topic(
-    db,
-    title: str = "Sujet live",
-    message: str = "Contenu live",
-) -> int:
+def _create_topic(db, title: str = "Sujet live", message: str = "Contenu live") -> int:
     cursor = db.execute(
         "INSERT INTO topics (user_id, title, message) VALUES (?, ?, ?)",
         (1, title, message),
