@@ -54,3 +54,9 @@ def remove(article_id: int):
 def checkout():
     order_id = create_order_from_cart(session["user_id"])
     return redirect(url_for("admin.order_detail", order_id=order_id))
+
+
+@bp.route("/orders/<int:order_id>/confirmation")
+@login_required
+def confirmation(order_id: int):
+    return render_template("public/order_confirmation.html", order_id=order_id)
