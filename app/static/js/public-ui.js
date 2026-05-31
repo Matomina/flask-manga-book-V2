@@ -227,9 +227,43 @@ function initCartButtons() {
   });
 }
 
+function closePublicMenu() {
+  const header = document.querySelector('.public-header');
+  const toggle = document.getElementById('publicMenuToggle');
+
+  header?.classList.remove('is-menu-open');
+  toggle?.setAttribute('aria-expanded', 'false');
+}
+
+function initPublicMenu() {
+  const header = document.querySelector('.public-header');
+  const toggle = document.getElementById('publicMenuToggle');
+  const nav = document.getElementById('publicMainNav');
+
+  if (!header || !toggle || !nav) {
+    return;
+  }
+
+  toggle.addEventListener('click', () => {
+    const isOpen = header.classList.toggle('is-menu-open');
+    toggle.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  nav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closePublicMenu);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closePublicMenu();
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initScroll('.scroll-container', '.card-list');
   initCartButtons();
+  initPublicMenu();
 
   onEvent(document.getElementById('floatingCartBtn'), 'click', openCartPopup);
   onEvent(document.getElementById('cartOverlay'), 'click', closeCartPopup);
