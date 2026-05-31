@@ -60,8 +60,8 @@ def register_blueprints(app: Flask) -> None:
     from .public.cart_routes import bp as public_cart_bp
     from .public.routes import bp as public_bp
 
-    app.register_blueprint(public_bp)
     app.register_blueprint(public_cart_bp)
+    app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(forum_bp)
     app.register_blueprint(admin_bp)
