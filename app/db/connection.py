@@ -11,6 +11,7 @@ SCHEMA_PATH = BASE_DIR / "schema.sql"
 SEED_PATH = BASE_DIR / "seed.sql"
 MIGRATIONS_DIR = BASE_DIR / "migrations"
 MIGRATIONS_TABLE = "schema_migrations"
+BASE_SCHEMA_TABLES = {"user", "articles", "orders"}
 
 
 def get_db() -> sqlite3.Connection:
@@ -45,6 +46,10 @@ def _table_exists(table_name: str) -> bool:
         (table_name,),
     ).fetchone()
     return row is not None
+
+
+def _base_schema_exists() -> bool:
+    return all(_table_exists(table_name) for table_name in BASE_SCHEMA_TABLES)
 
 
 def _column_exists(table_name: str, column_name: str) -> bool:
@@ -83,11 +88,11 @@ def _mark_migration_applied(name: str) -> None:
     )
 
 
-def _apply_payment_tracking_migration() -> None:
+def _apply_payment_tracking_migration() -> bool:
     db = get_db()
 
     if not _table_exists("orders"):
-        return
+        return False
 
     if not _column_exists("orders", "payment_status"):
         db.execute(
@@ -106,21 +111,22 @@ def _apply_payment_tracking_migration() -> None:
         ON orders(payment_status)
         """
     )
+    return True
 
 
-def _apply_migration_file(migration_path: Path) -> None:
+def _apply_migration_file(migration_path: Path) -> bool:
     db = get_db()
 
     if migration_path.name == "002_payment_tracking.sql":
-        _apply_payment_tracking_migration()
-        return
+        return _apply_payment_tracking_migration()
 
     db.executescript(migration_path.read_text(encoding="utf-8"))
+    return True
 
 
 def run_migrations() -> None:
     """Exécuter les migrations SQL additionnelles dans l'ordre."""
-    if not MIGRATIONS_DIR.exists():
+    if not MIGRATIONS_DIR.exists() or not _base_schema_exists():
         return
 
     _ensure_migration_table()
@@ -131,8 +137,9 @@ def run_migrations() -> None:
         if _migration_applied(migration_name):
             continue
 
-        _apply_migration_file(migration_path)
-        _mark_migration_applied(migration_name)
+        applied = _apply_migration_file(migration_path)
+        if applied:
+            _mark_migration_applied(migration_name)
 
     db.commit()
 
