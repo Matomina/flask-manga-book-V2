@@ -145,15 +145,12 @@
     </aside>
 
     <footer class="public-footer">
-      <div class="public-footer__inner">
-        <p>&copy; MangaBook V2</p>
-
+      <div class="public-footer__inner footer-links">
         <nav aria-label="Navigation secondaire">
           <a href="{{ url_for('public.about') }}">À propos</a>
           <a href="{{ url_for('public.about', _anchor='aide') }}">Aide</a>
           <a href="{{ url_for('public.about', _anchor='contact') }}">Contact</a>
           <a href="{{ url_for('public.legal') }}">Mentions légales</a>
-          <a href="{{ url_for('forum.index') }}">Forum</a>
         </nav>
       </div>
     </footer>
