@@ -50,9 +50,26 @@
           />
           <span class="public-header__brand-text site-title">MangaBook</span>
         </a>
+
+        <button
+          class="public-header__burger"
+          id="publicMenuToggle"
+          type="button"
+          aria-label="Ouvrir le menu"
+          aria-controls="publicMainNav"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
 
-      <nav class="public-header__nav" aria-label="Navigation principale">
+      <nav
+        class="public-header__nav"
+        id="publicMainNav"
+        aria-label="Navigation principale"
+      >
         <ul>
           <li><a href="{{ url_for('public.home') }}">Accueil</a></li>
           <li><a href="{{ url_for('public.articles') }}">Catalogue</a></li>

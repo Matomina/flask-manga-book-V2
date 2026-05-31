@@ -39,14 +39,14 @@
         {% for article in articles %}
         <article class="article-card product-card card">
           {% if session.get("user_id") %} {% if article["id"] in favorites_ids %}
-          <span class="favorite-btn is-favorite" aria-label="Déjà en favori">Favori</span>
+          <span class="favorite-btn is-favorite" aria-label="Déjà en favori">♥</span>
           {% else %}
           <form
             class="article-card__favorite-form"
             method="post"
             action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
           >
-            <button class="favorite-btn" type="submit" aria-label="Ajouter aux favoris">Favori</button>
+            <button class="favorite-btn" type="submit" aria-label="Ajouter aux favoris">♥</button>
           </form>
           {% endif %} {% endif %}
 
@@ -67,9 +67,7 @@
             <button
               class="btn btn-secondary add-to-cart-btn"
               type="button"
-              data-title="{{ article['name'] }}"
-              data-price="{{ article['price'] }}"
-              data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+              data-article-id="{{ article['id'] }}"
             >
               Ajouter au panier
             </button>
