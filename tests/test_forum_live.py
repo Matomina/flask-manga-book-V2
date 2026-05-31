@@ -27,7 +27,7 @@ def test_forum_index_has_modern_live_markers(client, db):
 
     assert response.status_code == 200
     assert "MangaBook Community" in html
-    assert "data-forum-live=\"index\"" in html
+    assert 'data-forum-live="index"' in html
     assert "data-forum-topic-list" in html
     assert "forum-live.js" in html
     assert "forum.css" in html
@@ -41,8 +41,8 @@ def test_forum_detail_has_modern_live_markers(client, db):
     html = response.get_data(as_text=True)
 
     assert response.status_code == 200
-    assert "data-forum-live=\"detail\"" in html
-    assert f"data-topic-id=\"{topic_id}\"" in html
+    assert 'data-forum-live="detail"' in html
+    assert f'data-topic-id="{topic_id}"' in html
     assert "data-forum-replies-list" in html
     assert "data-forum-reply-form" in html
     assert "forum-live.js" in html
