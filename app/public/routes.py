@@ -22,6 +22,7 @@ from .services import (
     get_articles_grouped_by_release_day,
     get_featured_articles,
     get_goodies_articles,
+    get_goodies_sections,
     get_user_favorites,
     get_user_history,
     remove_favorite,
@@ -89,7 +90,12 @@ def article_detail(article_id: int):
 @bp.route("/goodies")
 def goodies():
     goodies_articles = get_goodies_articles()
-    return render_template("public/goodies.html", articles=goodies_articles)
+    goodies_sections = get_goodies_sections()
+    return render_template(
+        "public/goodies.html",
+        articles=goodies_articles,
+        goodies_sections=goodies_sections,
+    )
 
 
 @bp.route("/planning")
