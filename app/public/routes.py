@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, session, url_for
+from flask import (
+    Blueprint,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 
 from app.auth.services import get_user_by_id
 from app.core.security import login_required
@@ -70,8 +79,10 @@ def articles():
 def article_detail(article_id: int):
     article = _get_article_or_404(article_id)
     user_id = _get_current_user_id()
+
     if user_id is not None:
         add_to_history(user_id, article_id)
+
     return render_template("public/article_detail.html", article=article)
 
 
@@ -91,10 +102,12 @@ def planning():
 @login_required
 def profile():
     user = get_user_by_id(session["user_id"])
+
     if user is None:
         session.clear()
         flash("Session invalide. Veuillez vous reconnecter.", "warning")
         return redirect(url_for("auth.login"))
+
     return render_template("public/profile.html", user=user)
 
 
@@ -129,6 +142,13 @@ def history():
     return render_template("public/history.html", articles=history_articles)
 
 
+@bp.route("/cart")
+@bp.route("/panier")
+@login_required
+def cart():
+    return redirect(url_for("public_cart.cart"))
+
+
 @bp.route("/help")
 @bp.route("/aide")
 def help_page():
@@ -141,12 +161,15 @@ def contact():
     if request.method == "POST":
         sujet = request.form.get("sujet", "").strip()
         message = request.form.get("message", "").strip()
+
         if not sujet or not message:
             flash("Veuillez remplir le sujet et le message.", "warning")
             return redirect(url_for("public.contact"))
+
         create_contact_message(session["user_id"], sujet, message)
         flash("Votre message a bien été envoyé au support.", "success")
         return redirect(url_for("public.contact"))
+
     return render_template("public/contact.html")
 
 
