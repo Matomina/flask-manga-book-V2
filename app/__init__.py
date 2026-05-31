@@ -26,6 +26,7 @@ from .core import (
     register_template_filters,
 )
 from .db import init_app as init_db_app
+from .db.connection import run_migrations
 
 
 def create_app(test_config: dict[str, Any] | None = None) -> Flask:
@@ -43,6 +44,9 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     register_template_filters(app)
     register_blueprints(app)
     register_error_handlers(app)
+
+    with app.app_context():
+        run_migrations()
 
     return app
 
