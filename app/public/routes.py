@@ -191,8 +191,8 @@ def contact():
     return redirect(url_for("public.about", _anchor="contact"))
 
 
-@bp.route("/a-propos")
 @bp.route("/about")
+@bp.route("/a-propos")
 def about():
     return render_template("public/about.html")
 
