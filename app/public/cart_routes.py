@@ -1,6 +1,14 @@
 from __future__ import annotations
 
-from flask import Blueprint, jsonify, redirect, render_template, request, session, url_for
+from flask import (
+    Blueprint,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 
 from app.core.security import login_required
 
@@ -35,7 +43,9 @@ def _cart_payload(user_id: int) -> dict:
                 "price": float(item["price"]),
                 "quantity": item["quantity"],
                 "stock": item["stock"],
-                "image": url_for("static", filename=item["image"]) if item["image"] else "",
+                "image": url_for("static", filename=item["image"])
+                if item["image"]
+                else "",
             }
             for item in items
         ],
