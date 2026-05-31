@@ -43,6 +43,10 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/footer-polish.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/auth-polish.css') }}"
+    />
 
     {% block extra_css %}{% endblock %}
   </head>
@@ -84,10 +88,9 @@
           <li><a href="{{ url_for('public.goodies') }}">Goodies</a></li>
           <li><a href="{{ url_for('public.planning') }}">Planning</a></li>
           <li><a href="{{ url_for('forum.index') }}">Forum</a></li>
-          <li><a href="{{ url_for('public.about') }}">À propos</a></li>
-          <li><a href="{{ url_for('public.cart') }}">Panier</a></li>
 
           {% if session.get("user_id") %}
+          <li><a href="{{ url_for('public.cart') }}">Panier</a></li>
           <li><a href="{{ url_for('public.favorites') }}">Favoris</a></li>
           <li><a href="{{ url_for('public.profile') }}">Profil</a></li>
           <li>
