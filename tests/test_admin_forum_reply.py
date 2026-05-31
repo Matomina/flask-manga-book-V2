@@ -68,7 +68,11 @@ def test_admin_forum_create_reply_success(client, auth, db):
     assert reply["message"] == "Réponse officielle de l’équipe admin."
 
 
-def test_admin_forum_create_reply_empty_message_returns_400(client, auth, db):
+def test_admin_forum_create_reply_empty_message_returns_400(
+    client,
+    auth,
+    db,
+):
     topic_id = _insert_topic(db)
 
     auth.login_as_admin()
