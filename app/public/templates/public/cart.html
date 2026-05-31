@@ -1,38 +1,69 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Panier - MangaBook V2{% endblock %}
 
 {% block content %}
-<section class="catalog-page public-content-page">
-  <header class="catalog-page__header">
+<section class="banner">
+  <img
+    src="{{ url_for('static', filename='image/banner-catalogue.jpeg') }}"
+    alt="Bannière panier MangaBook"
+  />
+</section>
+
+<section class="cart-page catalog-page catalogue-page">
+  <header class="cart-page__header catalog-page__header catalogue-content">
     <h2>Panier</h2>
     <p>Espace de synthèse des articles sélectionnés avant commande.</p>
   </header>
 
-  <section class="public-info-card card">
-    {% if cart_items %}
-      <h3>Articles du panier</h3>
+  <div class="cart-page__topbar catalog-search__actions filters-buttons">
+    <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">
+      Continuer mes achats
+    </a>
+    <a href="{{ url_for('public.goodies') }}" class="btn btn-secondary">
+      Voir les goodies
+    </a>
+    <a href="{{ url_for('public.help_page') }}" class="btn btn-secondary">
+      Aide
+    </a>
+  </div>
 
-      <div class="catalog-grid">
-        {% for item in cart_items %}
-          <article class="article-card">
+  <section class="planning-list cart-section-list">
+    <article class="planning-day content cart-section">
+      <header class="planning-day__header">
+        <h3>Articles du panier</h3>
+        <p>
+          {{ cart_items|length }} article{% if cart_items|length > 1 %}s{% endif %}
+        </p>
+      </header>
+
+      {% if cart_items %}
+      <div class="scroll-container">
+        <button class="scroll-btn left" type="button" aria-label="Défiler vers la gauche">Précédent</button>
+
+        <div class="card-list">
+          {% for item in cart_items %}
+          <article class="article-card product-card card">
             {% if item["image"] %}
+            <a href="{{ url_for('public.article_detail', article_id=item['article_id']) }}">
               <img
-                src="{{ url_for('static', filename='image/' ~ item['image']) }}"
+                class="article-card__image product-img"
+                src="{{ url_for('static', filename=item['image']) }}"
                 alt="{{ item['name'] }}"
-                class="article-card__image"
               />
+            </a>
             {% endif %}
 
-            <div class="article-card__body">
-              <h4>{{ item["name"] }}</h4>
-              <p>Quantité : {{ item["quantity"] }}</p>
-              <p>Prix unitaire : {{ item["price"] }} €</p>
+            <div class="card-info">
+              <h4 class="text">{{ item["name"] }}</h4>
+              <p class="price article-card__price">{{ item["price"] }} €</p>
+              <p class="article-card__meta">Quantité : {{ item["quantity"] }}</p>
+              <p class="article-card__stock">Stock : {{ item["stock"] }}</p>
 
               <form
                 action="{{ url_for('public_cart.update', article_id=item['article_id']) }}"
                 method="post"
-                class="public-form"
+                class="article-card__cart-form"
               >
                 <label for="quantity-{{ item['article_id'] }}">Modifier la quantité</label>
                 <input
@@ -49,30 +80,42 @@
               <form
                 action="{{ url_for('public_cart.remove', article_id=item['article_id']) }}"
                 method="post"
+                class="article-card__cart-form"
               >
                 <button class="btn btn-secondary" type="submit">Retirer</button>
               </form>
+
+              <a
+                class="product-detail-link"
+                href="{{ url_for('public.article_detail', article_id=item['article_id']) }}"
+              >
+                Voir le détail
+              </a>
             </div>
           </article>
-        {% endfor %}
+          {% endfor %}
+        </div>
+
+        <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">Suivant</button>
       </div>
 
-      <div class="public-info-card__actions">
-        <p><strong>Total : {{ cart_total }} €</strong></p>
-
+      <footer class="public-info-card card cart-summary-card">
+        <h3>Total panier</h3>
+        <p><strong>{{ cart_total }} €</strong></p>
         <form action="{{ url_for('public_cart.checkout') }}" method="post">
           <button class="btn btn-primary" type="submit">Créer la commande</button>
         </form>
+      </footer>
+      {% else %}
+      <div class="empty-state">
+        <h3>Votre panier est vide</h3>
+        <p>Ajoutez des mangas ou goodies depuis le catalogue.</p>
+        <a href="{{ url_for('public.articles') }}" class="btn btn-primary">
+          Retour au catalogue
+        </a>
       </div>
-    {% else %}
-      <h3>Votre panier est vide</h3>
-      <p>Ajoutez des articles depuis le catalogue.</p>
-    {% endif %}
-
-    <div class="public-info-card__actions">
-      <a href="{{ url_for('public.articles') }}" class="btn btn-primary">Catalogue</a>
-      <a href="{{ url_for('public.help_page') }}" class="btn btn-secondary">Aide</a>
-    </div>
+      {% endif %}
+    </article>
   </section>
 </section>
 {% endblock %}
