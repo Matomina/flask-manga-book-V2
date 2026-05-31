@@ -4,7 +4,12 @@ from flask import Blueprint, redirect, render_template, request, session, url_fo
 
 from app.core.security import login_required
 
-from .cart_services import add_cart_item, get_cart_items, get_cart_total
+from .cart_services import (
+    add_cart_item,
+    get_cart_items,
+    get_cart_total,
+    update_cart_item,
+)
 
 bp = Blueprint("public_cart", __name__, template_folder="templates")
 
@@ -25,4 +30,11 @@ def cart():
 @login_required
 def add(article_id: int):
     add_cart_item(session["user_id"], article_id, request.form.get("quantity", "1"))
+    return redirect(url_for("public_cart.cart"))
+
+
+@bp.post("/cart/update/<int:article_id>")
+@login_required
+def update(article_id: int):
+    update_cart_item(session["user_id"], article_id, request.form.get("quantity", "1"))
     return redirect(url_for("public_cart.cart"))
