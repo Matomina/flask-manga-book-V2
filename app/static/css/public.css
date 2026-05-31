@@ -520,24 +520,40 @@ body.public-shell {
 }
 
 .public-footer {
-  margin-top: 64px;
+  position: relative;
+  margin-top: 30px;
+  padding: 15px;
   border-top: 0;
-  color: var(--mb-primary);
+  color: var(--mb-secondary);
+  text-align: center;
   background: var(--mb-white);
 }
 
 .public-footer__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 28px 20px;
-  color: var(--mb-primary);
+  display: block;
+  padding: 0;
+  color: var(--mb-secondary);
 }
 
-.public-footer__inner nav {
+.public-footer__inner nav,
+.public-footer .footer-links nav {
   display: flex;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 28px);
+  flex-wrap: wrap;
+}
+
+.public-footer a {
+  color: var(--mb-primary);
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-weight: 800;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.public-footer a:hover {
+  color: var(--mb-secondary);
 }
 
 @media (min-width: 768px) {
