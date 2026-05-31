@@ -33,9 +33,10 @@ def test_forum_index_has_modern_live_markers(client, db):
     assert "forum.css" in html
 
 
-def test_forum_detail_has_modern_live_markers(client, db):
+def test_forum_detail_has_modern_live_markers(client, auth, db):
     topic_id = _create_topic(db)
     _create_reply(db, topic_id)
+    auth.login_as_user()
 
     response = client.get(f"/forum/{topic_id}")
     html = response.get_data(as_text=True)
