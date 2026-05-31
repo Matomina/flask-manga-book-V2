@@ -32,3 +32,45 @@
   border-radius: 4px;
   object-fit: contain;
 }
+
+/* Header desktop alignment polish */
+
+@media (min-width: 971px) {
+  .public-header.site-header {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .public-header .header-top {
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+  }
+
+  .public-header__brand.logo-title {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .public-header__nav {
+    width: auto;
+    margin-left: auto;
+    flex: 0 1 auto;
+  }
+
+  .public-header__nav ul {
+    justify-content: flex-end;
+    gap: 20px;
+  }
+
+  .public-header__nav li {
+    flex: 0 0 auto;
+  }
+
+  .public-header__nav a,
+  .public-header__logout .btn {
+    white-space: nowrap;
+  }
+}
