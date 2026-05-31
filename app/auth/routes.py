@@ -19,6 +19,24 @@ def _set_user_session(user) -> None:
     session["user_role"] = user["role"]
 
 
+def _render_auth_page(
+    *,
+    active_panel: str = "login",
+    login_data: dict | None = None,
+    register_data: dict | None = None,
+    status_code: int = 200,
+):
+    return (
+        render_template(
+            "auth/login.html",
+            active_panel=active_panel,
+            login_data=login_data or {},
+            register_data=register_data or {},
+        ),
+        status_code,
+    )
+
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     """Connecter un utilisateur ou un administrateur."""
@@ -31,16 +49,25 @@ def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
+        login_data = {"email": email}
 
         if not email or not password:
             flash("Veuillez remplir tous les champs.", "warning")
-            return render_template("auth/login.html"), 400
+            return _render_auth_page(
+                active_panel="login",
+                login_data=login_data,
+                status_code=400,
+            )
 
         user = authenticate_user(email, password)
 
         if user is None:
             flash("Email ou mot de passe incorrect.", "danger")
-            return render_template("auth/login.html"), 401
+            return _render_auth_page(
+                active_panel="login",
+                login_data=login_data,
+                status_code=401,
+            )
 
         _set_user_session(user)
         flash("Connexion réussie.", "success")
@@ -50,7 +77,7 @@ def login():
 
         return redirect(url_for("public.home"))
 
-    return render_template("auth/login.html")
+    return _render_auth_page(active_panel="login")[0]
 
 
 @bp.route("/register", methods=["GET", "POST"])
@@ -66,13 +93,17 @@ def register():
             user = create_user(data)
         except RegistrationError as exc:
             flash(str(exc), "danger")
-            return render_template("auth/register.html", data=data), 400
+            return _render_auth_page(
+                active_panel="register",
+                register_data=data,
+                status_code=400,
+            )
 
         _set_user_session(user)
         flash("Compte créé avec succès.", "success")
         return redirect(url_for("public.profile"))
 
-    return render_template("auth/register.html")
+    return _render_auth_page(active_panel="register")[0]
 
 
 @bp.route("/logout", methods=["POST"])
