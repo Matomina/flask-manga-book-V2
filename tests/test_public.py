@@ -302,13 +302,66 @@ def test_profile_invalid_session_redirects_to_login(client, auth, monkeypatch):
 
 
 # =========================
-# AUTRES PAGES
+# À PROPOS / AIDE / CONTACT / LEGAL
 # =========================
 
 
 def test_about_page(client):
+    response = client.get("/a-propos")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "À propos" in html
+    assert 'id="aide"' in html
+    assert 'id="contact"' in html
+    assert "Contact" in html
+
+
+def test_about_legacy_url_still_works(client):
     response = client.get("/about")
     assert response.status_code == 200
+
+
+def test_help_redirects_to_about_help_anchor(client):
+    response = client.get("/aide", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/a-propos#aide")
+
+
+def test_contact_get_redirects_to_about_contact_anchor(client):
+    response = client.get("/contact", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/a-propos#contact")
+
+
+def test_legal_page(client):
+    response = client.get("/mentions-legales")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Mentions légales" in html
+    assert 'id="conditions-utilisation"' in html
+    assert 'id="politique-confidentialite"' in html
+
+
+def test_terms_redirects_to_legal_anchor(client):
+    response = client.get("/conditions-utilisation", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith(
+        "/mentions-legales#conditions-utilisation"
+    )
+
+
+def test_privacy_redirects_to_legal_anchor(client):
+    response = client.get("/politique-confidentialite", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith(
+        "/mentions-legales#politique-confidentialite"
+    )
 
 
 # =========================
@@ -316,18 +369,16 @@ def test_about_page(client):
 # =========================
 
 
-def test_contact_page_requires_login(client):
-    response = client.get("/contact", follow_redirects=False)
-
-    assert_redirects_to_login(response)
-
-
-def test_contact_page_authenticated(client, auth):
+def test_about_contact_form_authenticated(client, auth):
     auth.login_as_user()
 
-    response = client.get("/contact")
+    response = client.get("/a-propos")
+    html = response.get_data(as_text=True)
 
     assert response.status_code == 200
+    assert 'action="/contact"' in html
+    assert 'name="sujet"' in html
+    assert 'name="message"' in html
 
 
 def test_contact_post_requires_login(client):
@@ -355,7 +406,7 @@ def test_contact_authenticated(client, auth, db):
     )
 
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/contact")
+    assert response.headers["Location"].endswith("/a-propos#contact")
 
     after = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
     assert after == before + 1
@@ -374,7 +425,7 @@ def test_contact_authenticated(client, auth, db):
     assert created["message"] == "Bonjour, ceci est un message de test."
 
 
-def test_contact_invalid_redirects_contact_without_insert(client, auth, db):
+def test_contact_invalid_redirects_contact_anchor_without_insert(client, auth, db):
     auth.login_as_user()
 
     before = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
@@ -389,13 +440,13 @@ def test_contact_invalid_redirects_contact_without_insert(client, auth, db):
     )
 
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/contact")
+    assert response.headers["Location"].endswith("/a-propos#contact")
 
     after = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
     assert after == before
 
 
-def test_contact_blank_values_after_strip_redirects_contact_without_insert(
+def test_contact_blank_values_after_strip_redirects_contact_anchor_without_insert(
     client,
     auth,
     db,
@@ -414,7 +465,7 @@ def test_contact_blank_values_after_strip_redirects_contact_without_insert(
     )
 
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/contact")
+    assert response.headers["Location"].endswith("/a-propos#contact")
 
     after = db.execute("SELECT COUNT(*) AS count FROM contact").fetchone()["count"]
     assert after == before

@@ -168,27 +168,45 @@ def cart():
 @bp.route("/help")
 @bp.route("/aide")
 def help_page():
-    return render_template("public/help.html")
+    return redirect(url_for("public.about", _anchor="aide"))
 
 
-@bp.route("/contact", methods=["GET", "POST"])
+@bp.get("/contact")
+def contact_page():
+    return redirect(url_for("public.about", _anchor="contact"))
+
+
+@bp.post("/contact")
 @login_required
 def contact():
-    if request.method == "POST":
-        sujet = request.form.get("sujet", "").strip()
-        message = request.form.get("message", "").strip()
+    sujet = request.form.get("sujet", "").strip()
+    message = request.form.get("message", "").strip()
 
-        if not sujet or not message:
-            flash("Veuillez remplir le sujet et le message.", "warning")
-            return redirect(url_for("public.contact"))
+    if not sujet or not message:
+        flash("Veuillez remplir le sujet et le message.", "warning")
+        return redirect(url_for("public.about", _anchor="contact"))
 
-        create_contact_message(session["user_id"], sujet, message)
-        flash("Votre message a bien été envoyé au support.", "success")
-        return redirect(url_for("public.contact"))
-
-    return render_template("public/contact.html")
+    create_contact_message(session["user_id"], sujet, message)
+    flash("Votre message a bien été envoyé au support.", "success")
+    return redirect(url_for("public.about", _anchor="contact"))
 
 
 @bp.route("/about")
+@bp.route("/a-propos")
 def about():
     return render_template("public/about.html")
+
+
+@bp.route("/mentions-legales")
+def legal():
+    return render_template("public/legal.html")
+
+
+@bp.route("/conditions-utilisation")
+def terms():
+    return redirect(url_for("public.legal", _anchor="conditions-utilisation"))
+
+
+@bp.route("/politique-confidentialite")
+def privacy_policy():
+    return redirect(url_for("public.legal", _anchor="politique-confidentialite"))

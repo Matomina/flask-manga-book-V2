@@ -19,9 +19,15 @@ def test_panier_ok(client, auth):
     assert client.get("/panier").status_code == 200
 
 
-def test_help(client):
-    assert client.get("/help").status_code == 200
+def test_help_redirects_to_about_anchor(client):
+    response = client.get("/help", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/a-propos#aide")
 
 
-def test_aide(client):
-    assert client.get("/aide").status_code == 200
+def test_aide_redirects_to_about_anchor(client):
+    response = client.get("/aide", follow_redirects=False)
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/a-propos#aide")

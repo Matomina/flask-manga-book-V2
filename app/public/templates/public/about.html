@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}À propos - MangaBook V2{% endblock %}
+{% block title %}À propos, aide et contact - MangaBook V2{% endblock %}
 
-{% block meta_description %}Découvrez le projet MangaBook V2, son catalogue manga, ses goodies, son planning de sorties et son espace communautaire.{% endblock %}
+{% block meta_description %}Présentation de MangaBook V2, aide utilisateur et formulaire de contact.{% endblock %}
 
 {% block content %}
 <section class="banner page-banner">
@@ -13,21 +13,135 @@
 </section>
 
 <section class="about-page catalog-page public-content-page content">
-  <header class="about-page__header catalog-page__header page-intro">
+  <header id="a-propos" class="about-page__header catalog-page__header page-intro">
     <h2>À propos</h2>
-    <p>Découvrez le projet MangaBook V2 et son objectif.</p>
+    <p>
+      MangaBook V2 regroupe la présentation du projet, l’aide utilisateur et le
+      contact sur une seule page plus simple à parcourir.
+    </p>
   </header>
 
-  <div class="public-info-card card">
-    <h3>Le projet</h3>
+  <nav class="public-card-list" aria-label="Navigation de la page à propos">
+    <a class="public-info-card card" href="#a-propos">
+      <h3>Le projet</h3>
+      <p>Comprendre l’objectif de MangaBook V2.</p>
+    </a>
+
+    <a class="public-info-card card" href="#aide">
+      <h3>Aide</h3>
+      <p>Retrouver les informations utiles pour utiliser le site.</p>
+    </a>
+
+    <a class="public-info-card card" href="#contact">
+      <h3>Contact</h3>
+      <p>Envoyer une demande à MangaBook.</p>
+    </a>
+  </nav>
+
+  <section class="public-info-card card">
+    <h3>Le projet MangaBook</h3>
     <p>
       MangaBook V2 centralise un catalogue d’articles manga, de figurines et de
-      goodies, avec un planning de sorties et un espace communautaire.
+      goodies, avec un planning de sorties, des favoris, un panier et un espace
+      communautaire.
     </p>
     <p>
       Cette refonte vise une base plus propre, plus maintenable et plus proche
       du design d’origine.
     </p>
-  </div>
+  </section>
+
+  <section id="aide" class="public-info-card card">
+    <h3>Aide et utilisation</h3>
+    <p>
+      Depuis MangaBook V2, vous pouvez consulter le catalogue, filtrer les
+      articles, sauvegarder vos favoris, suivre votre historique, préparer un
+      panier et participer au forum.
+    </p>
+
+    <div class="public-card-list">
+      <article class="public-info-card card">
+        <h4>Compte utilisateur</h4>
+        <p>
+          Connectez-vous pour accéder à vos favoris, votre profil, votre
+          historique, votre panier et au formulaire de contact.
+        </p>
+      </article>
+
+      <article class="public-info-card card">
+        <h4>Catalogue et goodies</h4>
+        <p>
+          Les pages Catalogue, Goodies et Planning permettent de parcourir les
+          articles par univers, catégorie et jour de sortie.
+        </p>
+      </article>
+
+      <article class="public-info-card card">
+        <h4>Commande et panier</h4>
+        <p>
+          Le panier centralise les articles sélectionnés avant la création de la
+          commande.
+        </p>
+        <div class="public-info-card__actions">
+          <a href="{{ url_for('public.cart') }}" class="btn btn-primary">
+            Voir le panier
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="contact" class="contact-support__card public-info-card card">
+    <header class="contact-support__header">
+      <h3>Contact</h3>
+      <p>
+        Envoyez un message à l’équipe MangaBook. Votre demande sera consultable
+        depuis le back-office.
+      </p>
+    </header>
+
+    {% if session.get("user_id") %}
+    <form
+      action="{{ url_for('public.contact') }}"
+      method="post"
+      class="public-form contact-form"
+    >
+      <div class="public-form__group contact-form__group">
+        <label for="sujet">Sujet</label>
+        <input
+          type="text"
+          id="sujet"
+          name="sujet"
+          required
+          maxlength="150"
+          placeholder="Exemple : Problème avec mon compte"
+        />
+      </div>
+
+      <div class="public-form__group contact-form__group">
+        <label for="message">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="8"
+          required
+          placeholder="Décrivez votre demande..."
+        ></textarea>
+      </div>
+
+      <div class="public-form__actions contact-form__actions">
+        <button type="submit" class="btn btn-primary">
+          Envoyer le message
+        </button>
+      </div>
+    </form>
+    {% else %}
+    <div class="public-info-card__actions">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-primary">
+        Se connecter pour contacter le support
+      </a>
+    </div>
+    {% endif %}
+  </section>
 </section>
 {% endblock %}
