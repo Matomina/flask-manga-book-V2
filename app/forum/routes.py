@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from app.core.security import login_required
 from flask import (
     abort,
     flash,
@@ -11,15 +12,15 @@ from flask import (
     url_for,
 )
 
-from app.core.security import login_required
-
 from . import bp
 from .services import (
     create_reply,
-    create_topic as create_topic_service,
     get_all_topics,
     get_replies_by_topic_id,
     get_topic_by_id,
+)
+from .services import (
+    create_topic as create_topic_service,
 )
 
 
