@@ -159,9 +159,9 @@ def get_user_by_id_admin(user_id: int) -> sqlite3.Row | None:
 def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
     db = get_db()
     where_sql = ""
-    params: tuple = ()
+    params: tuple[str, ...] = ()
 
-    if status_filter != "all":
+    if status_filter in VALID_ORDER_STATUSES:
         where_sql = "WHERE o.status = ?"
         params = (status_filter,)
 
@@ -173,6 +173,8 @@ def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
             o.total_amount,
             o.status,
             o.created_at,
+            u.first_name,
+            u.last_name,
             u.email,
             COUNT(oa.id) AS items_count
         FROM orders AS o
@@ -198,7 +200,10 @@ def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
             o.created_at,
             u.email,
             u.first_name,
-            u.last_name
+            u.last_name,
+            u.phone,
+            u.address,
+            u.city
         FROM orders AS o
         LEFT JOIN user AS u ON u.id = o.user_id
         WHERE o.id = ?
@@ -218,6 +223,8 @@ def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
             oa.quantity,
             oa.unit_price,
             a.name,
+            a.genres,
+            a.universe,
             a.image
         FROM orders_articles AS oa
         JOIN articles AS a ON a.id = oa.article_id
