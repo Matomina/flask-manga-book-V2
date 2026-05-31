@@ -14,6 +14,10 @@ def create_order_from_cart(user_id: int) -> int:
     if not items:
         raise CartError("Le panier est vide.")
 
+    for item in items:
+        if item["stock"] < item["quantity"]:
+            raise CartError("Stock insuffisant.")
+
     try:
         cursor = db.execute(
             "INSERT INTO orders (user_id, total_amount, status) VALUES (?, ?, ?)",
@@ -28,6 +32,10 @@ def create_order_from_cart(user_id: int) -> int:
                 VALUES (?, ?, ?, ?)
                 """,
                 (order_id, item["article_id"], item["quantity"], item["price"]),
+            )
+            db.execute(
+                "UPDATE articles SET stock = stock - ? WHERE id = ?",
+                (item["quantity"], item["article_id"]),
             )
 
         db.execute("DELETE FROM cart_items WHERE user_id = ?", (user_id,))
