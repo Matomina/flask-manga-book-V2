@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, session, url_for
 
 from app.core.security import admin_required
 from app.forum.services import (
+    create_reply,
     delete_reply_by_id,
     delete_topic_by_id,
     get_all_topics_for_admin,
@@ -253,6 +254,28 @@ def forum_detail(topic_id: int):
         abort(404)
     replies = get_replies_by_topic_id(topic_id)
     return render_template("admin/forum/detail.html", topic=topic, replies=replies)
+
+
+@bp.route("/forum/<int:topic_id>/replies", methods=["POST"])
+@admin_required
+def forum_create_reply(topic_id: int):
+    topic = get_topic_by_id(topic_id)
+    if topic is None:
+        abort(404)
+
+    message = request.form.get("message", "").strip()
+    if not message:
+        flash("Le message est obligatoire.", "danger")
+        abort(400)
+
+    try:
+        create_reply(topic_id=topic_id, user_id=session["user_id"], message=message)
+    except ValueError:
+        flash("Impossible d’ajouter la réponse admin.", "danger")
+        abort(400)
+
+    flash("Réponse admin ajoutée avec succès.", "success")
+    return redirect(url_for("admin.forum_detail", topic_id=topic_id))
 
 
 @bp.route("/forum/<int:topic_id>/delete", methods=["POST"])
