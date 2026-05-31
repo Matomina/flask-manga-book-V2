@@ -2,59 +2,106 @@
 
 {% block title %}Forum - MangaBook V2{% endblock %}
 
+{% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/forum.css') }}"
+/>
+{% endblock %}
+
 {% block content %}
-<section class="banner page-banner">
+<section class="banner page-banner forum-hero-banner">
   <img
     src="{{ url_for('static', filename='image/banner-forum.jpg') }}"
     alt="Bannière forum MangaBook"
   />
 </section>
 
-<section class="forum-page catalog-page content">
-  <header class="forum-page__header page-intro">
-    <h2>Forum</h2>
-    <p>Échangez avec la communauté MangaBook autour de vos mangas favoris.</p>
+<section class="forum-page forum-shell" data-forum-live="index">
+  <header class="forum-hero-panel">
+    <div class="forum-hero-panel__content">
+      <span class="forum-kicker">MangaBook Community</span>
+      <h1>Forum live</h1>
+      <p>
+        Discutez mangas, sorties, goodies et théories avec la communauté.
+        L’interface reste connectée au backend pour afficher les derniers sujets.
+      </p>
+    </div>
+
+    <div class="forum-hero-panel__actions">
+      {% if session.user_id %}
+      <a href="{{ url_for('forum.create') }}" class="btn btn-primary">
+        Créer un sujet
+      </a>
+      {% else %}
+      <a href="{{ url_for('auth.login') }}" class="btn btn-primary">
+        Se connecter pour publier
+      </a>
+      {% endif %}
+      <button class="btn btn-secondary" type="button" data-forum-refresh>
+        Actualiser le flux
+      </button>
+    </div>
   </header>
 
-  <div class="forum-header catalog-search__actions filters-buttons">
-    {% if session.user_id %}
-    <a href="{{ url_for('forum.create') }}" class="btn btn-primary">
-      Créer un sujet
-    </a>
-    {% else %}
-    <p>
-      <a href="{{ url_for('auth.login') }}">Connectez-vous</a>
-      pour créer un sujet.
-    </p>
-    {% endif %}
-  </div>
-
-  {% if topics %}
-  <div class="forum-list public-card-list">
-    {% for topic in topics %}
-    <article class="forum-item public-info-card card">
-      <h3>
-        <a href="{{ url_for('forum.topic_detail', topic_id=topic.id) }}">
-          {{ topic.title }}
-        </a>
-      </h3>
-
-      <p>
-        Par {{ topic.author_first_name }} {{ topic.author_last_name }} — {{
-        topic.created_at }}
-      </p>
-
-      <p>{{ topic.message[:150] }}{% if topic.message|length > 150 %}...{% endif %}</p>
-
-      <p>{{ topic.reply_count }} réponse{% if topic.reply_count > 1 %}s{% endif %}</p>
+  <section class="forum-stats-grid" aria-label="Statistiques forum">
+    <article class="forum-stat-card">
+      <span>{{ topics|length }}</span>
+      <p>Sujets actifs</p>
     </article>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="empty-state">
-    <p>Aucun sujet pour le moment.</p>
-  </div>
-  {% endif %}
-</section>
+    <article class="forum-stat-card">
+      <span>{{ total_replies }}</span>
+      <p>Réponses publiées</p>
+    </article>
+    <article class="forum-stat-card">
+      <span>Live</span>
+      <p>Synchronisation backend</p>
+    </article>
+  </section>
 
+  <section class="forum-board">
+    <header class="forum-board__header">
+      <div>
+        <h2>Discussions récentes</h2>
+        <p>Les sujets les plus récents apparaissent en premier.</p>
+      </div>
+      <span class="forum-live-pill" data-forum-status>Connecté</span>
+    </header>
+
+    {% if topics %}
+    <div class="forum-topic-list" data-forum-topic-list>
+      {% for topic in topics %}
+      <article class="forum-topic-preview">
+        <a
+          class="forum-topic-preview__main"
+          href="{{ url_for('forum.topic_detail', topic_id=topic.id) }}"
+        >
+          <span class="forum-avatar">{{ topic.author_first_name[:1] }}{{ topic.author_last_name[:1] }}</span>
+          <div>
+            <h3>{{ topic.title }}</h3>
+            <p>{{ topic.message[:170] }}{% if topic.message|length > 170 %}...{% endif %}</p>
+            <small>
+              Par {{ topic.author_first_name }} {{ topic.author_last_name }} ·
+              {{ topic.created_at }} · {{ topic.author_role }}
+            </small>
+          </div>
+        </a>
+        <div class="forum-topic-preview__meta">
+          <strong>{{ topic.reply_count }}</strong>
+          <span>réponse{% if topic.reply_count > 1 %}s{% endif %}</span>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="forum-empty-state">
+      <p>Aucun sujet pour le moment. Lancez la première discussion.</p>
+    </div>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/forum-live.js') }}" defer></script>
 {% endblock %}
