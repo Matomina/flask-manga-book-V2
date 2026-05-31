@@ -9,6 +9,7 @@ from flask import Flask, current_app, g
 BASE_DIR = Path(__file__).resolve().parent
 SCHEMA_PATH = BASE_DIR / "schema.sql"
 SEED_PATH = BASE_DIR / "seed.sql"
+MIGRATIONS_DIR = BASE_DIR / "migrations"
 
 
 def get_db() -> sqlite3.Connection:
@@ -32,11 +33,23 @@ def close_db(error: Exception | None = None) -> None:
         db.close()
 
 
+def run_migrations() -> None:
+    """Exécuter les migrations SQL additionnelles dans l'ordre."""
+    if not MIGRATIONS_DIR.exists():
+        return
+
+    db = get_db()
+    for migration_path in sorted(MIGRATIONS_DIR.glob("*.sql")):
+        db.executescript(migration_path.read_text(encoding="utf-8"))
+    db.commit()
+
+
 def init_db() -> None:
-    """Créer la base via schema.sql."""
+    """Créer la base via schema.sql puis appliquer les migrations."""
     db = get_db()
     db.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
     db.commit()
+    run_migrations()
 
 
 def seed_db() -> None:
