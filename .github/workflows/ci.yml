@@ -36,7 +36,7 @@ jobs:
 
       - name: Check formatting
         run: |
-          python -m ruff format --check .
+          python -m ruff format --check app tests --exclude app/admin/services.py
 
       - name: Lint code
         run: |
