@@ -96,7 +96,10 @@ def _apply_payment_tracking_migration() -> bool:
 
     if not _column_exists("orders", "payment_status"):
         db.execute(
-            "ALTER TABLE orders ADD COLUMN payment_status TEXT NOT NULL DEFAULT 'unpaid'"
+            """
+            ALTER TABLE orders
+            ADD COLUMN payment_status TEXT NOT NULL DEFAULT 'unpaid'
+            """
         )
 
     if not _column_exists("orders", "payment_provider"):
