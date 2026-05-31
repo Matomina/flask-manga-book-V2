@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Commande confirmée - MangaBook V2{% endblock %}
+
+{% block content %}
+<section class="catalog-page public-content-page">
+  <header class="catalog-page__header">
+    <h2>Commande créée</h2>
+    <p>Votre commande a bien été enregistrée.</p>
+  </header>
+
+  <section class="public-info-card card">
+    <h3>Commande n°{{ order_id }}</h3>
+    <p>Statut : en attente de paiement.</p>
+    <p>La prochaine étape sera l’intégration du paiement sécurisé.</p>
+
+    <div class="public-info-card__actions">
+      <a href="{{ url_for('public.articles') }}" class="btn btn-primary">Retour au catalogue</a>
+      <a href="{{ url_for('public_cart.cart') }}" class="btn btn-secondary">Voir le panier</a>
+    </div>
+  </section>
+</section>
+{% endblock %}
