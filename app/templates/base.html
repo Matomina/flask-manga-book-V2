@@ -39,6 +39,10 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/cart-polish.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/footer-polish.css') }}"
+    />
 
     {% block extra_css %}{% endblock %}
   </head>
@@ -152,6 +156,14 @@
           <a href="{{ url_for('public.about', _anchor='contact') }}">Contact</a>
           <a href="{{ url_for('public.legal') }}">Mentions légales</a>
         </nav>
+        <a class="public-footer__brand" href="{{ url_for('public.home') }}">
+          <img
+            class="public-footer__logo"
+            src="{{ url_for('static', filename='image/favicon_one_piece.png') }}"
+            alt="Logo MangaBook"
+          />
+          <span>MangaBook © 2026</span>
+        </a>
       </div>
     </footer>
 
