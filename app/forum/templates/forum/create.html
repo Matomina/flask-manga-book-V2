@@ -1,26 +1,38 @@
-{% extends "base.html" %} {% block title %}Créer un sujet - Forum{% endblock %}
-{% block content %}
+{% extends "base.html" %}
 
-<section class="forum-create">
+{% block title %}Créer un sujet - Forum{% endblock %}
+
+{% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/forum.css') }}"
+/>
+{% endblock %}
+
+{% block content %}
+<section class="forum-create forum-shell">
   <div class="forum-create__topbar">
     <a href="{{ url_for('forum.index') }}" class="btn btn-secondary">
       ← Retour au forum
     </a>
   </div>
 
-  <header class="forum-create__header">
-    <h2>Créer un nouveau sujet</h2>
-    <p>
-      Lancez une discussion avec la communauté MangaBook en renseignant un titre
-      clair et un message précis.
-    </p>
+  <header class="forum-hero-panel forum-create-hero">
+    <div>
+      <span class="forum-kicker">Nouveau signal</span>
+      <h1>Créer une discussion</h1>
+      <p>
+        Lancez une conversation avec la communauté MangaBook. Un bon sujet est
+        clair, utile et donne envie aux autres membres de répondre.
+      </p>
+    </div>
   </header>
 
-  <section class="forum-create__card">
+  <section class="forum-create__card forum-glass-card">
     <form
       action="{{ url_for('forum.create_topic') }}"
       method="post"
-      class="forum-form"
+      class="forum-form forum-form--large"
     >
       <div class="forum-form__group">
         <label for="title">Titre du sujet</label>
@@ -51,5 +63,4 @@
     </form>
   </section>
 </section>
-
 {% endblock %}
