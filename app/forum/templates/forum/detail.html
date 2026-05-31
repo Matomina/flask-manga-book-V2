@@ -1,7 +1,16 @@
-{% extends "base.html" %} {% block title %}{{ topic.title }} - Forum{% endblock
-%} {% block content %}
+{% extends "base.html" %}
 
-<section class="forum-detail">
+{% block title %}{{ topic.title }} - Forum{% endblock %}
+
+{% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/forum.css') }}"
+/>
+{% endblock %}
+
+{% block content %}
+<section class="forum-detail forum-shell" data-forum-live="detail" data-topic-id="{{ topic.id }}">
   <div class="forum-detail__topbar">
     <a href="{{ url_for('forum.index') }}" class="btn btn-secondary">
       ← Retour au forum
@@ -14,15 +23,21 @@
     {% endif %}
   </div>
 
-  <article class="forum-topic-card">
+  <article class="forum-topic-card forum-glass-card">
     <header class="forum-topic-card__header">
-      <h2 class="forum-topic-card__title">{{ topic.title }}</h2>
-
-      <p class="forum-topic-card__infos">
-        Par {{ topic.author_first_name }} {{ topic.author_last_name }} — {{
-        topic.created_at }} — {{ topic.reply_count }} réponse{% if
-        topic.reply_count > 1 %}s{% endif %}
-      </p>
+      <div class="forum-avatar forum-avatar--large">
+        {{ topic.author_first_name[:1] }}{{ topic.author_last_name[:1] }}
+      </div>
+      <div>
+        <span class="forum-kicker">Sujet principal</span>
+        <h1 class="forum-topic-card__title">{{ topic.title }}</h1>
+        <p class="forum-topic-card__infos">
+          Par {{ topic.author_first_name }} {{ topic.author_last_name }} ·
+          {{ topic.created_at }} · {{ topic.author_role }} ·
+          <span data-forum-reply-count>{{ topic.reply_count }}</span>
+          réponse{% if topic.reply_count > 1 %}s{% endif %}
+        </p>
+      </div>
     </header>
 
     <div class="forum-topic-card__content">
@@ -32,19 +47,26 @@
     </div>
   </article>
 
-  <section class="forum-replies">
+  <section class="forum-replies forum-glass-card">
     <header class="forum-replies__header">
-      <h3>Réponses</h3>
+      <div>
+        <h2>Réponses</h2>
+        <p>Flux chronologique connecté au backend.</p>
+      </div>
+      <button class="btn btn-secondary" type="button" data-forum-refresh>
+        Actualiser
+      </button>
     </header>
 
     {% if replies %}
-    <div class="forum-replies__list">
+    <div class="forum-replies__list" data-forum-replies-list>
       {% for reply in replies %}
       <article class="forum-reply-card">
         <header class="forum-reply-card__header">
+          <span class="forum-avatar">{{ reply.author_first_name[:1] }}{{ reply.author_last_name[:1] }}</span>
           <p class="forum-reply-card__infos">
-            {{ reply.author_first_name }} {{ reply.author_last_name }} — {{
-            reply.created_at }}
+            <strong>{{ reply.author_first_name }} {{ reply.author_last_name }}</strong>
+            · {{ reply.created_at }} · {{ reply.author_role }}
           </p>
         </header>
 
@@ -57,15 +79,16 @@
       {% endfor %}
     </div>
     {% else %}
-    <div class="forum-empty-state">
+    <div class="forum-empty-state" data-forum-replies-list>
       <p>Aucune réponse pour le moment. Soyez le premier à participer.</p>
     </div>
     {% endif %}
   </section>
 
-  <section class="forum-reply-form-section">
+  <section class="forum-reply-form-section forum-glass-card">
     <header class="forum-reply-form-section__header">
-      <h3>Ajouter une réponse</h3>
+      <h2>Ajouter une réponse</h2>
+      <p>Publiez une réponse claire et respectueuse pour enrichir la discussion.</p>
     </header>
 
     {% if session.get("user_id") %}
@@ -73,13 +96,14 @@
       action="{{ url_for('forum.reply', topic_id=topic.id) }}"
       method="post"
       class="forum-form"
+      data-forum-reply-form
     >
       <div class="forum-form__group">
         <label for="message">Votre réponse</label>
         <textarea
           id="message"
           name="message"
-          rows="8"
+          rows="7"
           required
           placeholder="Écrivez votre réponse ici..."
         ></textarea>
@@ -102,5 +126,8 @@
     {% endif %}
   </section>
 </section>
+{% endblock %}
 
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/forum-live.js') }}" defer></script>
 {% endblock %}
