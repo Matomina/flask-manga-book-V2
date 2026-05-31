@@ -21,6 +21,20 @@
     <div class="card-list">
       {% for article in articles %}
       <article class="article-card product-card card">
+        <form
+          class="article-card__favorite-form"
+          action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
+          method="post"
+        >
+          <button
+            class="favorite-btn is-favorite"
+            type="submit"
+            aria-label="Retirer des favoris"
+          >
+            ♥
+          </button>
+        </form>
+
         {% if article["image"] %}
         <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
           <img
@@ -46,9 +60,7 @@
           <button
             class="btn btn-secondary add-to-cart-btn"
             type="button"
-            data-title="{{ article['name'] }}"
-            data-price="{{ article['price'] }}"
-            data-img="{{ url_for('static', filename=article['image']) if article['image'] else '' }}"
+            data-article-id="{{ article['id'] }}"
           >
             Ajouter au panier
           </button>
@@ -59,16 +71,6 @@
           >
             Voir le détail
           </a>
-
-          <form
-            class="public-inline-form"
-            action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
-            method="post"
-          >
-            <button class="btn btn-secondary add-to-cart-btn" type="submit">
-              Retirer
-            </button>
-          </form>
         </div>
       </article>
       {% endfor %}
