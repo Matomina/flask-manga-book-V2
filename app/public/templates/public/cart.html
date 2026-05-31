@@ -10,10 +10,26 @@
   </header>
 
   <section class="public-info-card card">
-    <h3>Page panier</h3>
-    <p>Cette page restaure l’accès public attendu dans MangaBook V2.</p>
+    {% if cart_items %}
+      <h3>Articles du panier</h3>
+      {% for item in cart_items %}
+        <article class="public-info-card">
+          <h4>{{ item["name"] }}</h4>
+          <p>Quantité : {{ item["quantity"] }}</p>
+          <p>Prix : {{ item["price"] }} €</p>
+        </article>
+      {% endfor %}
+      <p><strong>Total : {{ cart_total }} €</strong></p>
+      <form action="{{ url_for('public_cart.checkout') }}" method="post">
+        <button class="btn btn-primary" type="submit">Créer la commande</button>
+      </form>
+    {% else %}
+      <h3>Votre panier est vide</h3>
+      <p>Ajoutez des articles depuis le catalogue.</p>
+    {% endif %}
+
     <div class="public-info-card__actions">
-      <a href="{{ url_for('public.articles') }}" class="btn btn-primary">Catalogue</a>
+      <a href="{{ url_for('public.articles') }}" class="btn btn-secondary">Catalogue</a>
       <a href="{{ url_for('public.help_page') }}" class="btn btn-secondary">Aide</a>
     </div>
   </section>
