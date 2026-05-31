@@ -27,60 +27,145 @@
   </div>
 
   {% if goodies_sections %}
-  <section class="content goodies-results catalog-results">
-    <header class="goodies-results__header catalog-results__header">
+  <section class="planning-list goodies-section-list">
+    <header class="goodies-results__header catalog-results__header catalogue-content">
       <h3>Goodies par univers</h3>
-      <p>Licences restaurées depuis la V1 : Naruto, Jujutsu Kaisen, One Piece, Demon Slayer et Dragon Ball.</p>
+      <p>
+        Licences restaurées depuis la V1 : Naruto, Jujutsu Kaisen, One Piece,
+        Demon Slayer et Dragon Ball.
+      </p>
     </header>
 
-    <div class="public-card-list">
-      {% for section in goodies_sections.universes %}
-      <article class="public-info-card card">
-        <h4>{{ section.label }}</h4>
-        <p>{{ section.articles|length }} article{% if section.articles|length > 1 %}s{% endif %}</p>
-        {% if section.articles %}
-        <ul>
+    {% for section in goodies_sections.universes %}
+    <article class="planning-day content goodies-section">
+      <header class="planning-day__header">
+        <h3>{{ section.label }}</h3>
+        <p>
+          {{ section.articles|length }} article{% if section.articles|length > 1 %}s{% endif %}
+        </p>
+      </header>
+
+      {% if section.articles %}
+      <div class="scroll-container">
+        <button class="scroll-btn left" type="button" aria-label="Défiler vers la gauche">Précédent</button>
+
+        <div class="card-list">
           {% for article in section.articles %}
-          <li>
+          <article class="article-card product-card card">
+            {% if article["image"] %}
             <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
-              {{ article['name'] }}
+              <img
+                class="article-card__image product-img"
+                src="{{ url_for('static', filename=article['image']) }}"
+                alt="{{ article['name'] }}"
+              />
             </a>
-            — {{ article['price'] }} €
-          </li>
+            {% endif %}
+
+            <div class="card-info">
+              <h4 class="text">{{ article["name"] }}</h4>
+              <p class="price article-card__price">{{ article["price"] }} €</p>
+              <p class="article-card__meta">
+                {{ article["genres"] }} {% if article["universe"] %} • {{ article["universe"] }} {% endif %}
+              </p>
+              <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
+
+              <form
+                action="{{ url_for('public_cart.add', article_id=article['id']) }}"
+                method="post"
+                class="article-card__cart-form"
+              >
+                <input type="hidden" name="quantity" value="1" />
+                <button class="btn btn-secondary" type="submit">Ajouter au panier</button>
+              </form>
+
+              <a
+                class="product-detail-link"
+                href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+              >
+                Voir le détail
+              </a>
+            </div>
+          </article>
           {% endfor %}
-        </ul>
-        {% endif %}
-      </article>
-      {% endfor %}
-    </div>
+        </div>
+
+        <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">Suivant</button>
+      </div>
+      {% else %}
+      <p>Aucun article disponible pour cet univers.</p>
+      {% endif %}
+    </article>
+    {% endfor %}
   </section>
 
-  <section class="content goodies-results catalog-results">
-    <header class="goodies-results__header catalog-results__header">
+  <section class="planning-list goodies-section-list">
+    <header class="goodies-results__header catalog-results__header catalogue-content">
       <h3>Goodies par catégorie</h3>
       <p>Figurines, textile et vaisselle sont regroupés comme dans la version d’origine.</p>
     </header>
 
-    <div class="public-card-list">
-      {% for section in goodies_sections.categories %}
-      <article class="public-info-card card">
-        <h4>{{ section.label }}</h4>
-        <p>{{ section.articles|length }} article{% if section.articles|length > 1 %}s{% endif %}</p>
-        {% if section.articles %}
-        <ul>
+    {% for section in goodies_sections.categories %}
+    <article class="planning-day content goodies-section">
+      <header class="planning-day__header">
+        <h3>{{ section.label }}</h3>
+        <p>
+          {{ section.articles|length }} article{% if section.articles|length > 1 %}s{% endif %}
+        </p>
+      </header>
+
+      {% if section.articles %}
+      <div class="scroll-container">
+        <button class="scroll-btn left" type="button" aria-label="Défiler vers la gauche">Précédent</button>
+
+        <div class="card-list">
           {% for article in section.articles %}
-          <li>
+          <article class="article-card product-card card">
+            {% if article["image"] %}
             <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
-              {{ article['name'] }}
+              <img
+                class="article-card__image product-img"
+                src="{{ url_for('static', filename=article['image']) }}"
+                alt="{{ article['name'] }}"
+              />
             </a>
-            — {{ article['price'] }} €
-          </li>
+            {% endif %}
+
+            <div class="card-info">
+              <h4 class="text">{{ article["name"] }}</h4>
+              <p class="price article-card__price">{{ article["price"] }} €</p>
+              <p class="article-card__meta">
+                {{ article["genres"] }} {% if article["universe"] %} • {{ article["universe"] }} {% endif %}
+              </p>
+              <p class="article-card__stock">Stock : {{ article["stock"] }}</p>
+
+              <form
+                action="{{ url_for('public_cart.add', article_id=article['id']) }}"
+                method="post"
+                class="article-card__cart-form"
+              >
+                <input type="hidden" name="quantity" value="1" />
+                <button class="btn btn-secondary" type="submit">Ajouter au panier</button>
+              </form>
+
+              <a
+                class="product-detail-link"
+                href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+              >
+                Voir le détail
+              </a>
+            </div>
+          </article>
           {% endfor %}
-        </ul>
-        {% endif %}
-      </article>
-      {% endfor %}
-    </div>
+        </div>
+
+        <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">Suivant</button>
+      </div>
+      {% else %}
+      <p>Aucun article disponible pour cette catégorie.</p>
+      {% endif %}
+    </article>
+    {% endfor %}
   </section>
   {% else %}
   <div class="empty-state">
