@@ -115,6 +115,20 @@ def mark_contact_as_read(contact_id: int) -> None:
     db.commit()
 
 
+def delete_contact(contact_id: int) -> bool:
+    """Supprimer un message de contact."""
+    db = get_db()
+    cursor = db.execute(
+        """
+        DELETE FROM contact
+        WHERE id = ?
+        """,
+        (contact_id,),
+    )
+    db.commit()
+    return cursor.rowcount > 0
+
+
 # =========================
 # DASHBOARD
 # =========================
@@ -188,7 +202,7 @@ def get_all_users_admin() -> list[sqlite3.Row]:
 
 
 def get_user_by_id_admin(user_id: int) -> sqlite3.Row | None:
-    """Récupérer un utilisateur admin par son identifiant."""
+    """Récupérer un utilisateur par son identifiant pour l'administration."""
     db = get_db()
 
     return db.execute(
@@ -216,19 +230,13 @@ def get_user_by_id_admin(user_id: int) -> sqlite3.Row | None:
 
 
 def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
-    """Récupérer toutes les commandes pour l'administration."""
+    """Récupérer toutes les commandes avec filtre optionnel."""
     db = get_db()
 
     where_sql = ""
-    params: tuple[str, ...] = ()
+    params: tuple = ()
 
-    if status_filter in {
-        "pending",
-        "paid",
-        "shipped",
-        "delivered",
-        "cancelled",
-    }:
+    if status_filter != "all":
         where_sql = "WHERE o.status = ?"
         params = (status_filter,)
 
@@ -240,12 +248,13 @@ def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
             o.total_amount,
             o.status,
             o.created_at,
-            u.first_name,
-            u.last_name,
-            u.email
+            u.email,
+            COUNT(oa.id) AS items_count
         FROM orders AS o
-        JOIN user AS u ON u.id = o.user_id
+        LEFT JOIN user AS u ON u.id = o.user_id
+        LEFT JOIN orders_articles AS oa ON oa.order_id = o.id
         {where_sql}
+        GROUP BY o.id
         ORDER BY o.created_at DESC, o.id DESC
         """,
         params,
@@ -253,7 +262,7 @@ def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
 
 
 def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
-    """Récupérer une commande admin par son identifiant."""
+    """Récupérer une commande par identifiant."""
     db = get_db()
 
     return db.execute(
@@ -264,14 +273,11 @@ def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
             o.total_amount,
             o.status,
             o.created_at,
-            u.first_name,
-            u.last_name,
             u.email,
-            u.phone,
-            u.address,
-            u.city
+            u.first_name,
+            u.last_name
         FROM orders AS o
-        JOIN user AS u ON u.id = o.user_id
+        LEFT JOIN user AS u ON u.id = o.user_id
         WHERE o.id = ?
         """,
         (order_id,),
@@ -279,7 +285,7 @@ def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
 
 
 def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
-    """Récupérer les lignes d'articles d'une commande."""
+    """Récupérer les articles d'une commande."""
     db = get_db()
 
     return db.execute(
@@ -291,8 +297,6 @@ def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
             oa.quantity,
             oa.unit_price,
             a.name,
-            a.genres,
-            a.universe,
             a.image
         FROM orders_articles AS oa
         JOIN articles AS a ON a.id = oa.article_id
@@ -304,14 +308,13 @@ def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
 
 
 def update_order_status_admin(order_id: int, status: str) -> bool:
-    """Mettre à jour le statut d'une commande admin."""
+    """Mettre à jour le statut d'une commande."""
     normalized_status = _normalize_str(status)
 
     if normalized_status not in VALID_ORDER_STATUSES:
         raise ValueError("Statut de commande invalide.")
 
     db = get_db()
-
     cursor = db.execute(
         """
         UPDATE orders
@@ -336,7 +339,16 @@ def get_all_articles_admin() -> list[sqlite3.Row]:
 
     return db.execute(
         """
-        SELECT id, name, genres, universe, image, price, stock, release_day, created_at
+        SELECT
+            id,
+            name,
+            genres,
+            universe,
+            image,
+            price,
+            stock,
+            release_day,
+            created_at
         FROM articles
         ORDER BY created_at DESC, id DESC
         """
@@ -344,12 +356,21 @@ def get_all_articles_admin() -> list[sqlite3.Row]:
 
 
 def get_article_by_id_admin(article_id: int) -> sqlite3.Row | None:
-    """Récupérer un article admin par son identifiant."""
+    """Récupérer un article par son identifiant."""
     db = get_db()
 
     return db.execute(
         """
-        SELECT id, name, genres, universe, image, price, stock, release_day, created_at
+        SELECT
+            id,
+            name,
+            genres,
+            universe,
+            image,
+            price,
+            stock,
+            release_day,
+            created_at
         FROM articles
         WHERE id = ?
         """,
@@ -360,10 +381,17 @@ def get_article_by_id_admin(article_id: int) -> sqlite3.Row | None:
 def create_article(data: dict[str, Any]) -> None:
     """Créer un article."""
     db = get_db()
-
     db.execute(
         """
-        INSERT INTO articles (name, genres, universe, image, price, stock, release_day)
+        INSERT INTO articles (
+            name,
+            genres,
+            universe,
+            image,
+            price,
+            stock,
+            release_day
+        )
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -379,11 +407,10 @@ def create_article(data: dict[str, Any]) -> None:
     db.commit()
 
 
-def update_article(article_id: int, data: dict[str, Any]) -> None:
-    """Mettre à jour un article existant."""
+def update_article(article_id: int, data: dict[str, Any]) -> bool:
+    """Mettre à jour un article."""
     db = get_db()
-
-    db.execute(
+    cursor = db.execute(
         """
         UPDATE articles
         SET
@@ -409,16 +436,22 @@ def update_article(article_id: int, data: dict[str, Any]) -> None:
     )
     db.commit()
 
+    return cursor.rowcount > 0
 
-def delete_article(article_id: int) -> None:
+
+def delete_article(article_id: int) -> bool:
     """Supprimer un article."""
     db = get_db()
-
-    db.execute(
-        "DELETE FROM articles WHERE id = ?",
+    cursor = db.execute(
+        """
+        DELETE FROM articles
+        WHERE id = ?
+        """,
         (article_id,),
     )
     db.commit()
+
+    return cursor.rowcount > 0
 
 
 # =========================
