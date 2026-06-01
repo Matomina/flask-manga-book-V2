@@ -22,9 +22,9 @@ from .services import (
     create_contact_message,
     get_article_by_id,
     get_articles_grouped_by_release_day,
-    get_featured_articles,
     get_goodies_articles,
     get_goodies_sections,
+    get_home_sections,
     get_user_favorites,
     get_user_history,
     remove_favorite,
@@ -47,8 +47,8 @@ def _get_current_user_id() -> int | None:
 
 @bp.route("/")
 def home():
-    featured_articles = get_featured_articles()
-    return render_template("public/home.html", articles=featured_articles)
+    home_sections = get_home_sections(_get_current_user_id())
+    return render_template("public/home.html", **home_sections)
 
 
 @bp.route("/articles")
