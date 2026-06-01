@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block title %}Catalogue - MangaBook V2{% endblock
-%} {% block content %} {% set current_q = filters["q"] if filters else "" %} {%
+%} {% block meta_description %}Parcourez le catalogue MangaBook V2 : mangas, figurines, textiles, vaisselle et goodies filtrables par recherche, genre, univers et jour de sortie.{% endblock %} {% block content %} {% set current_q = filters["q"] if filters else "" %} {%
 set current_genre = filters["genre"] if filters else "" %} {% set
 current_universe = filters["universe"] if filters else "" %} {% set
 current_release_day = filters["release_day"] if filters else "" %}
@@ -13,6 +13,7 @@ current_release_day = filters["release_day"] if filters else "" %}
 
 <section class="catalog-page catalogue-page page-stack">
   <header class="catalog-page__header catalogue-content page-intro">
+    <h1 class="mb-sr-only">Catalogue des articles MangaBook</h1>
     <h2>Catalogue des articles</h2>
     <p>Découvrez tous les articles disponibles sur MangaBook.</p>
   </header>
