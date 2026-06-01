@@ -22,6 +22,8 @@ SELECT {ARTICLE_COLUMNS}
 FROM articles AS a
 """
 
+HOME_SECTION_LIMIT = 10
+
 RELEASE_DAY_ORDER = [
     "Lundi",
     "Mardi",
@@ -91,6 +93,23 @@ def _article_exists(article_id: int) -> bool:
         (article_id,),
     ).fetchone()
     return row is not None
+
+
+def _get_limited_home_articles(
+    where_sql: str,
+    params: tuple[Any, ...] = (),
+) -> list[sqlite3.Row]:
+    """Récupérer une section d'accueil limitée comme dans la V1."""
+    db = get_db()
+    return db.execute(
+        f"""
+        {ARTICLE_SELECT}
+        WHERE {where_sql}
+        ORDER BY a.created_at DESC, a.id DESC
+        LIMIT ?
+        """,
+        (*params, HOME_SECTION_LIMIT),
+    ).fetchall()
 
 
 def get_all_articles() -> list[sqlite3.Row]:
@@ -233,6 +252,40 @@ def get_featured_articles(limit: int = 8) -> list[sqlite3.Row]:
         """,
         (limit,),
     ).fetchall()
+
+
+def get_home_sections(user_id: int | None = None) -> dict[str, list[sqlite3.Row]]:
+    """Récupérer les sections d'accueil en parité fonctionnelle avec la V1."""
+    historiques: list[sqlite3.Row] = []
+
+    if user_id is not None:
+        db = get_db()
+        historiques = db.execute(
+            f"""
+            SELECT
+                {ARTICLE_COLUMNS},
+                h.viewed_at
+            FROM history AS h
+            JOIN articles AS a ON h.article_id = a.id
+            WHERE h.user_id = ?
+            ORDER BY h.viewed_at DESC, a.id DESC
+            LIMIT ?
+            """,
+            (user_id, HOME_SECTION_LIMIT),
+        ).fetchall()
+
+    return {
+        "historiques": historiques,
+        "classiques": _get_limited_home_articles(
+            "a.genres = ? AND a.price <= ?",
+            ("manga", 7.50),
+        ),
+        "pepites": _get_limited_home_articles(
+            "a.genres = ? AND a.price > ?",
+            ("manga", 8),
+        ),
+        "goodies": _get_limited_home_articles("a.genres = ?", ("goodies",)),
+    }
 
 
 def get_article_by_id(article_id: int) -> sqlite3.Row | None:

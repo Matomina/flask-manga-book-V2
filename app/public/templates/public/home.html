@@ -3,6 +3,92 @@
 {% block title %}Accueil - MangaBook V2{% endblock %}
 
 {% block content %}
+{% macro article_card(article) %}
+<article class="article-card product-card card">
+  {% if session.get("user_id") %}
+    {% if article["id"] in favorites_ids %}
+    <form
+      class="article-card__favorite-form"
+      method="post"
+      action="{{ url_for('public.remove_from_favorites', article_id=article['id']) }}"
+    >
+      <button
+        class="favorite-btn is-favorite"
+        type="submit"
+        aria-label="Retirer des favoris"
+      >
+        ♥
+      </button>
+    </form>
+    {% else %}
+    <form
+      class="article-card__favorite-form"
+      method="post"
+      action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
+    >
+      <button
+        class="favorite-btn"
+        type="submit"
+        aria-label="Ajouter aux favoris"
+      >
+        ♥
+      </button>
+    </form>
+    {% endif %}
+  {% endif %}
+
+  {% if article["image"] %}
+  <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+    <img
+      class="article-card__image product-img"
+      src="{{ url_for('static', filename=article['image']) }}"
+      alt="{{ article['name'] }}"
+    />
+  </a>
+  {% endif %}
+
+  <div class="card-info">
+    <h3 class="text">{{ article["name"] }}</h3>
+    <p class="price article-card__price">
+      {{ "%.2f"|format(article["price"]) }} €
+    </p>
+
+    <button
+      class="btn btn-secondary add-to-cart-btn"
+      type="button"
+      data-article-id="{{ article['id'] }}"
+    >
+      Ajouter au panier
+    </button>
+
+    <a
+      class="product-detail-link"
+      href="{{ url_for('public.article_detail', article_id=article['id']) }}"
+    >
+      Voir le détail
+    </a>
+  </div>
+</article>
+{% endmacro %}
+
+{% macro article_carousel(articles) %}
+<div class="scroll-container">
+  <button class="scroll-btn left" type="button" aria-label="Défiler vers la gauche">
+    Précédent
+  </button>
+
+  <div class="card-list">
+    {% for article in articles %}
+      {{ article_card(article) }}
+    {% endfor %}
+  </div>
+
+  <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">
+    Suivant
+  </button>
+</div>
+{% endmacro %}
+
 <section class="banner page-banner">
   <img
     src="{{ url_for('static', filename='image/sun_jin_hoo_violet.jpeg') }}"
@@ -14,110 +100,169 @@
   <section class="content page-intro home-intro">
     <h1 class="page-title">Bienvenue sur MangaBook</h1>
     <p class="intro-1">
-      Plongez dans un univers où chaque page raconte une histoire. Découvrez nos
-      mangas, goodies et produits exclusifs.
+      Plongez dans un univers pensé pour les passionnés de manga, d’anime et de
+      goodies collectors.
+    </p>
+    <p>
+      Retrouvez vos séries préférées, découvrez de nouvelles pépites et composez
+      votre collection à votre rythme.
     </p>
 
-    <p>
+    <div class="home-intro__actions">
       <a class="btn btn-secondary" href="{{ url_for('public.articles') }}">
         Voir tout le catalogue
       </a>
-    </p>
+      <a class="btn btn-primary" href="{{ url_for('public.goodies') }}">
+        Explorer les goodies
+      </a>
+    </div>
   </section>
 
-  {% if articles %}
-  {% for section_title in ["Les Classiques", "Les Pépites", "Les Nouveautés", "Les Goodies"] %}
   <section class="content home-featured">
-    <h2>{{ section_title }}</h2>
+    <header class="section-heading">
+      <h2>📜 Reprendre votre exploration</h2>
+      <p>
+        Retrouvez rapidement les articles que vous avez consultés récemment et
+        reprenez votre découverte là où vous l’aviez laissée.
+      </p>
+    </header>
+
+    {% if session.get("user_id") %}
+      {% if historiques %}
+        {{ article_carousel(historiques) }}
+      {% else %}
+      <p class="empty-state">
+        Aucun article consulté pour le moment. Parcourez le catalogue pour
+        commencer votre historique.
+      </p>
+      {% endif %}
+    {% else %}
+    <p class="empty-state">
+      Connectez-vous pour retrouver ici vos dernières consultations.
+    </p>
+    {% endif %}
+  </section>
+
+  <section class="content home-featured">
+    <header class="section-heading">
+      <h2>⭐ Les Classiques</h2>
+      <p>
+        Les incontournables du manga à petit prix. Une sélection idéale pour
+        commencer une collection, compléter une série ou retrouver les valeurs
+        sûres qui traversent les générations.
+      </p>
+    </header>
+
+    {% if classiques %}
+      {{ article_carousel(classiques) }}
+    {% else %}
+    <p class="empty-state">Aucun classique disponible pour le moment.</p>
+    {% endif %}
+  </section>
+
+  <section class="content home-featured">
+    <header class="section-heading">
+      <h2>💎 Les Pépites</h2>
+      <p>
+        Des titres plus premium, des éditions marquantes et des articles à ne
+        pas laisser passer. Cette sélection met en avant les mangas qui méritent
+        une place spéciale dans votre collection.
+      </p>
+    </header>
+
+    {% if pepites %}
+      {{ article_carousel(pepites) }}
+    {% else %}
+    <p class="empty-state">Aucune pépite disponible pour le moment.</p>
+    {% endif %}
+  </section>
+
+  <section class="content home-featured">
+    <header class="section-heading">
+      <h2>🎁 Les Goodies</h2>
+      <p>
+        Affichez vos univers préférés au-delà des pages. Figurines, textiles,
+        accessoires et objets collectors : explorez les goodies par licence ou
+        découvrez directement les produits disponibles.
+      </p>
+    </header>
 
     <div class="scroll-container">
-      <button class="scroll-btn left" type="button" aria-label="Défiler vers la gauche">
+      <button
+        class="scroll-btn left"
+        type="button"
+        aria-label="Défiler vers la gauche"
+      >
         Précédent
       </button>
 
       <div class="card-list">
-        {% for article in articles %}
-        <article class="article-card product-card card">
-          {% if session.get("user_id") %} {% if article["id"] in favorites_ids %}
-          <span class="favorite-btn is-favorite" aria-label="Déjà en favori">♥</span>
-          {% else %}
-          <form
-            class="article-card__favorite-form"
-            method="post"
-            action="{{ url_for('public.add_to_favorites', article_id=article['id']) }}"
-          >
-            <button class="favorite-btn" type="submit" aria-label="Ajouter aux favoris">♥</button>
-          </form>
-          {% endif %} {% endif %}
-
-          {% if article["image"] %}
-          <a href="{{ url_for('public.article_detail', article_id=article['id']) }}">
+        <article class="card">
+          <a href="{{ url_for('public.goodies') }}#goodies-naruto">
             <img
-              class="article-card__image product-img"
-              src="{{ url_for('static', filename=article['image']) }}"
-              alt="{{ article['name'] }}"
+              src="{{ url_for('static', filename='image/produit_naruto.jpeg') }}"
+              alt="Produit Naruto"
             />
           </a>
-          {% endif %}
-
-          <div class="card-info">
-            <h3 class="text">{{ article["name"] }}</h3>
-            <p class="price article-card__price">{{ article["price"] }} €</p>
-
-            <button
-              class="btn btn-secondary add-to-cart-btn"
-              type="button"
-              data-article-id="{{ article['id'] }}"
-            >
-              Ajouter au panier
-            </button>
-
-            <a
-              class="product-detail-link"
-              href="{{ url_for('public.article_detail', article_id=article['id']) }}"
-            >
-              Voir le détail
-            </a>
-          </div>
         </article>
+
+        <article class="card">
+          <a href="{{ url_for('public.goodies') }}#goodies-jujutsu_kaisen">
+            <img
+              src="{{ url_for(
+                'static',
+                filename='image/produit_jujutsu_kaisen.jpeg'
+              ) }}"
+              alt="Produit Jujutsu Kaisen"
+            />
+          </a>
+        </article>
+
+        <article class="card">
+          <a href="{{ url_for('public.goodies') }}#goodies-one_piece">
+            <img
+              src="{{ url_for('static', filename='image/produit_one_piece.jpeg') }}"
+              alt="Produit One Piece"
+            />
+          </a>
+        </article>
+
+        <article class="card">
+          <a href="{{ url_for('public.goodies') }}#goodies-demon_slayer">
+            <img
+              src="{{ url_for(
+                'static',
+                filename='image/produit_demon_slayer.jpeg'
+              ) }}"
+              alt="Produit Demon Slayer"
+            />
+          </a>
+        </article>
+
+        <article class="card">
+          <a href="{{ url_for('public.goodies') }}#goodies-dragon_ball">
+            <img
+              src="{{ url_for('static', filename='image/produit_dbz.jpeg') }}"
+              alt="Produit Dragon Ball"
+            />
+          </a>
+        </article>
+
+        {% for article in goodies %}
+          {{ article_card(article) }}
+        {% else %}
+        <p class="empty-state">Aucun goodies disponible pour le moment.</p>
         {% endfor %}
       </div>
 
-      <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">
+      <button
+        class="scroll-btn right"
+        type="button"
+        aria-label="Défiler vers la droite"
+      >
         Suivant
       </button>
     </div>
-  </section>
-  {% endfor %}
-  {% else %}
-  <section class="content">
-    <p>Aucun article disponible pour le moment.</p>
-  </section>
-  {% endif %}
-
-  <section class="content home-contact">
-    <h2>Contact</h2>
-
-    {% if session.get("user_id") %}
-    <form class="public-form" action="{{ url_for('public.contact') }}" method="post">
-      <div class="public-form__group">
-        <label for="sujet">Sujet</label>
-        <input type="text" id="sujet" name="sujet" required />
-      </div>
-
-      <div class="public-form__group">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" required></textarea>
-      </div>
-
-      <button class="btn btn-primary" type="submit">Envoyer</button>
-    </form>
-    {% else %}
-    <p>
-      <a href="{{ url_for('auth.login') }}">Connectez-vous</a>
-      pour envoyer un message.
-    </p>
-    {% endif %}
   </section>
 </main>
 {% endblock %}
