@@ -141,7 +141,7 @@ def validate_article_data(
         price = float(data.get("price", 0))
         if price < 0:
             errors.append("Le prix doit être positif.")
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         errors.append("Prix invalide.")
         price = 0.0
 
@@ -149,7 +149,7 @@ def validate_article_data(
         stock = int(data.get("stock", 0))
         if stock < 0:
             errors.append("Stock invalide.")
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         errors.append("Stock invalide.")
         stock = 0
 
