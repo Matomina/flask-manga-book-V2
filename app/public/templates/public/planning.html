@@ -1,6 +1,11 @@
-{% extends "base.html" %} {% block title %}Planning des sorties - MangaBook V2{%
-endblock %} {% block content %} {% set days = [ "Lundi", "Mardi", "Mercredi",
-"Jeudi", "Vendredi", "Samedi", "Dimanche", "Sans jour fixe" ] %}
+{% extends "base.html" %}
+
+{% block title %}Planning des sorties - MangaBook V2{% endblock %}
+
+{% block meta_description %}Consultez le planning MangaBook V2 pour suivre les articles, mangas et goodies organisés par jour de sortie.{% endblock %}
+
+{% block content %}
+{% set days = [ "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche", "Sans jour fixe" ] %}
 
 <section class="banner">
   <img
@@ -11,6 +16,7 @@ endblock %} {% block content %} {% set days = [ "Lundi", "Mardi", "Mercredi",
 
 <section class="planning-page catalog-page catalogue-page">
   <header class="planning-page__header catalog-page__header catalogue-content">
+    <h1 class="mb-sr-only">Planning des sorties MangaBook</h1>
     <h2>Planning des sorties</h2>
     <p>Consultez les articles MangaBook organisés par jour de sortie.</p>
   </header>
