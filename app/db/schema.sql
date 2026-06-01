@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS topics;
 DROP TABLE IF EXISTS contact;
 DROP TABLE IF EXISTS orders_articles;
 DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS cart_items;
 DROP TABLE IF EXISTS favorites;
 DROP TABLE IF EXISTS history;
 DROP TABLE IF EXISTS detail_articles_public;
@@ -93,6 +94,18 @@ CREATE TABLE favorites (
     UNIQUE (user_id, article_id)
 );
 
+CREATE TABLE cart_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    article_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,
+    UNIQUE (user_id, article_id)
+);
+
 CREATE TABLE orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -156,6 +169,9 @@ CREATE INDEX idx_history_viewed_at ON history(viewed_at);
 CREATE INDEX idx_favorites_user_id ON favorites(user_id);
 CREATE INDEX idx_favorites_article_id ON favorites(article_id);
 CREATE INDEX idx_favorites_created_at ON favorites(created_at);
+
+CREATE INDEX idx_cart_items_user_id ON cart_items(user_id);
+CREATE INDEX idx_cart_items_article_id ON cart_items(article_id);
 
 CREATE INDEX idx_orders_user_id ON orders(user_id);
 CREATE INDEX idx_orders_status ON orders(status);
