@@ -2,9 +2,9 @@
 
 [![CI](https://github.com/Matomina/flask-manga-book-V2/actions/workflows/ci.yml/badge.svg)](https://github.com/Matomina/flask-manga-book-V2/actions/workflows/ci.yml)
 
-Application web développée avec **Flask**, **Jinja2** et **SQLite**, centrée sur un univers manga, avec catalogue public, forum, espace utilisateur, support/contact et administration.
+Application web développée avec **Flask**, **Jinja2** et **SQLite**, centrée sur un univers manga, avec catalogue public, forum, espace utilisateur, panier, support/contact et administration.
 
-Le projet a été reconstruit avec une architecture modulaire, une séparation claire entre les blueprints publics, authentification, forum et administration, ainsi qu’une base de tests automatisés solide.
+Le projet a été reconstruit avec une architecture modulaire, une séparation claire entre les blueprints publics, authentification, forum, panier et administration, ainsi qu’une base de tests automatisés solide.
 
 ---
 
@@ -17,16 +17,20 @@ L’application permet actuellement de gérer :
 - un catalogue d’articles ;
 - des fiches articles détaillées ;
 - une recherche avec filtres ;
+- un tri sécurisé du catalogue ;
 - des favoris utilisateurs ;
 - un historique de consultation ;
 - un profil utilisateur ;
+- un panier backend synchronisé avec le popup public ;
 - un formulaire de contact/support ;
-- un forum public avec sujets et réponses ;
+- un forum public avec sujets, réponses et endpoints JSON ;
 - une modération forum côté admin ;
 - un dashboard admin enrichi ;
 - une gestion admin des articles ;
+- une gestion admin des utilisateurs ;
+- une gestion admin des commandes ;
 - une gestion admin des messages de contact ;
-- des pages publiques complémentaires comme goodies et planning.
+- des pages publiques complémentaires comme goodies, planning, à propos et mentions légales.
 
 ---
 
@@ -40,6 +44,7 @@ Mettre en place une application web cohérente permettant à un utilisateur de :
 - filtrer le catalogue par recherche, genre, univers et jour de sortie ;
 - consulter une fiche article ;
 - ajouter ou retirer des favoris ;
+- gérer un panier ;
 - suivre son historique de consultation ;
 - accéder à son profil ;
 - contacter le support ;
@@ -51,9 +56,9 @@ Côté administration, l’objectif est de permettre à un administrateur de :
 - gérer les articles ;
 - créer, modifier et supprimer des articles ;
 - suivre les stocks faibles ou ruptures ;
-- consulter les messages de contact ;
-- filtrer les messages lus / non lus ;
-- consulter le détail d’un message ;
+- consulter les utilisateurs ;
+- consulter et mettre à jour les commandes ;
+- consulter, filtrer et supprimer les messages de contact ;
 - modérer les sujets et réponses du forum.
 
 ### Objectif technique
@@ -64,11 +69,13 @@ Construire une base Flask propre, maintenable et testée, avec :
 - une app factory Flask ;
 - une séparation routes / services / templates ;
 - une base SQLite initialisée par schéma SQL ;
+- des migrations SQL dédiées ;
 - une configuration via fichiers d’environnement ;
 - une suite de tests automatisés ;
 - une couverture de code élevée ;
 - une configuration qualité avec Ruff et Pytest ;
-- une CI GitHub Actions pour valider automatiquement le projet.
+- une CI GitHub Actions pour valider automatiquement le projet ;
+- une documentation exploitable pour le dossier RNCP.
 
 ---
 
@@ -76,7 +83,7 @@ Construire une base Flask propre, maintenable et testée, avec :
 
 ### Back-end
 
-- Python
+- Python 3.14
 - Flask
 - SQLite
 - Jinja2
@@ -85,7 +92,8 @@ Construire une base Flask propre, maintenable et testée, avec :
 ### Front-end
 
 - HTML
-- CSS simple via templates
+- CSS
+- JavaScript progressif
 - Jinja2
 
 ### Qualité, tests et CI
@@ -93,6 +101,7 @@ Construire une base Flask propre, maintenable et testée, avec :
 - Pytest
 - Pytest-cov
 - Ruff
+- Compileall
 - GitHub Actions
 - Git / GitHub
 
@@ -122,7 +131,9 @@ flask-manga-book-V2/
 │   │   └── security.py
 │   ├── db/
 │   │   ├── connection.py
-│   │   └── schema.sql
+│   │   ├── schema.sql
+│   │   ├── seed.sql
+│   │   └── migrations/
 │   ├── forum/
 │   │   ├── routes.py
 │   │   ├── services.py
@@ -130,13 +141,23 @@ flask-manga-book-V2/
 │   ├── public/
 │   │   ├── routes.py
 │   │   ├── services.py
+│   │   ├── cart_routes.py
+│   │   ├── cart_services.py
+│   │   ├── favorite_services.py
+│   │   ├── order_services.py
 │   │   └── templates/
 │   ├── static/
 │   └── templates/
+├── docs/
+│   ├── ROADMAP.md
+│   ├── functional-parity-roadmap.md
+│   ├── V2_OPTIMIZATION_ROADMAP.md
+│   └── V2_QUALITY_AUDIT.md
 ├── tests/
 ├── .env.example
 ├── .flaskenv
 ├── .gitignore
+├── .python-version
 ├── pyproject.toml
 ├── requirements.txt
 ├── requirements-dev.txt
@@ -154,18 +175,24 @@ flask-manga-book-V2/
 - Catalogue d’articles
 - Recherche catalogue
 - Filtres par genre, univers et jour de sortie
+- Tri sécurisé
 - Fiches articles
 - Page goodies
 - Page planning
-- Page à propos
+- Page à propos regroupant aide et contact
+- Page mentions légales regroupant conditions d’utilisation et politique de confidentialité
 
 ### Espace utilisateur
 
 - Connexion
+- Inscription
 - Déconnexion sécurisée en POST
 - Profil utilisateur
 - Favoris
 - Historique de consultation
+- Panier backend
+- Popup panier synchronisé
+- Commande depuis le panier
 - Formulaire de contact/support
 
 ### Forum
@@ -174,6 +201,8 @@ flask-manga-book-V2/
 - Détail d’un sujet
 - Création de sujet
 - Ajout de réponses
+- Endpoints JSON
+- Interface live modernisée
 - Accès protégé pour les actions utilisateur
 - Modération côté admin
 
@@ -184,6 +213,8 @@ flask-manga-book-V2/
 - Statistiques forum
 - Alertes stock faible
 - Alertes rupture de stock
+- Gestion des utilisateurs
+- Gestion des commandes
 - Gestion des articles
 - Création d’article
 - Modification d’article
@@ -193,7 +224,9 @@ flask-manga-book-V2/
 - Gestion des messages de contact
 - Filtres contacts : tous, non lus, lus
 - Détail contact avec marquage automatique comme lu
+- Suppression de contacts
 - Modération forum
+- Réponse admin sur le forum
 
 ---
 
@@ -298,22 +331,21 @@ Mot de passe : test
 
 ## Commandes utiles
 
+### Validation complète locale
+
+```bash
+python -m ruff format --check .
+python -m ruff check .
+python -m compileall app tests
+python -m pytest
+git status
+git diff --stat
+```
+
 ### Lancer les tests
 
 ```bash
 python -m pytest
-```
-
-### Lancer uniquement les tests admin
-
-```bash
-python -m pytest tests/test_admin.py -v
-```
-
-### Lancer uniquement les tests auth
-
-```bash
-python -m pytest tests/test_auth.py -v
 ```
 
 ### Vérifier le formatage
@@ -347,23 +379,30 @@ python -m ruff check . --fix
 État actuel validé localement :
 
 ```text
-129 tests passent
-Couverture globale : 94%
+226 tests passent
+Couverture globale : 93%
 Ruff format : OK
 Ruff check : OK
+Compileall : OK
 ```
 
-Dernière validation complète :
+Dernière validation complète connue :
 
 ```text
-tests/test_admin.py              ✅
-tests/test_app.py                ✅
-tests/test_auth.py               ✅
-tests/test_auth_services.py      ✅
-tests/test_core_filters.py       ✅
-tests/test_forum.py              ✅
-tests/test_public.py             ✅
-tests/test_public_services.py    ✅
+tests/test_admin.py                 ✅
+tests/test_admin_contact_delete.py  ✅
+tests/test_admin_forum_reply.py     ✅
+tests/test_app.py                   ✅
+tests/test_auth.py                  ✅
+tests/test_auth_services.py         ✅
+tests/test_cart_json_routes.py      ✅
+tests/test_cart_order_services.py   ✅
+tests/test_core_filters.py          ✅
+tests/test_forum.py                 ✅
+tests/test_forum_live.py            ✅
+tests/test_public.py                ✅
+tests/test_public_services.py       ✅
+tests/test_public_static_pages.py   ✅
 ```
 
 ---
@@ -385,10 +424,12 @@ Elle exécute automatiquement :
 
 ```text
 1. installation de Python
-2. installation des dépendances de développement
-3. vérification du formatage avec Ruff
-4. lint avec Ruff
-5. suite complète Pytest avec couverture
+2. vérification explicite de Python 3.14
+3. installation des dépendances de développement
+4. vérification du formatage avec Ruff
+5. lint avec Ruff
+6. compilation Python avec compileall
+7. suite complète Pytest avec couverture
 ```
 
 Commandes équivalentes en local :
@@ -396,6 +437,7 @@ Commandes équivalentes en local :
 ```bash
 python -m ruff format --check .
 python -m ruff check .
+python -m compileall app tests
 python -m pytest
 ```
 
@@ -438,7 +480,7 @@ Configuration principale pour :
 
 ## Sécurité et bonnes pratiques
 
-Le projet applique plusieurs bonnes pratiques :
+Le projet applique déjà plusieurs bonnes pratiques :
 
 - session Flask protégée par `SECRET_KEY` ;
 - accès admin protégé par décorateur ;
@@ -452,6 +494,26 @@ Le projet applique plusieurs bonnes pratiques :
 - tests automatisés sur les routes, services et protections ;
 - CI GitHub Actions pour valider les changements.
 
+Points prévus dans la roadmap qualité :
+
+- durcir la configuration environnement ;
+- ajouter une protection CSRF sur les formulaires POST sensibles ;
+- renforcer les migrations et contraintes de base de données ;
+- documenter les preuves techniques pour le dossier RNCP.
+
+---
+
+## Documentation projet
+
+Documents principaux :
+
+```text
+docs/V2_OPTIMIZATION_ROADMAP.md   Roadmap active optimisation / nettoyage / RNCP
+docs/V2_QUALITY_AUDIT.md          Audit qualité technique V2
+docs/ROADMAP.md                   Roadmap historique conservée comme preuve projet
+docs/functional-parity-roadmap.md Roadmap de parité fonctionnelle clôturée
+```
+
 ---
 
 ## Roadmap validée
@@ -459,56 +521,68 @@ Le projet applique plusieurs bonnes pratiques :
 ### Terminé
 
 - Architecture Flask app factory
-- Blueprints public, auth, forum, admin
+- Blueprints public, auth, forum, panier, admin
 - Base SQLite avec schéma dédié
+- Migrations SQL
 - Authentification
+- Inscription
 - Déconnexion POST
 - Catalogue public
-- Recherche et filtres catalogue
+- Recherche, filtres et tri catalogue
 - Fiches articles
 - Profil utilisateur
 - Favoris
 - Historique utilisateur
+- Panier backend synchronisé
+- Popup panier
 - Contact/support public
-- Forum public
+- Forum public modernisé
+- Endpoints JSON forum
 - Modération forum admin
 - Goodies
 - Planning
+- Pages à propos / aide / contact regroupées
+- Pages légales regroupées
 - Dashboard admin enrichi
+- Gestion utilisateurs admin
+- Gestion commandes admin
 - Articles admin renforcés
 - Contacts admin améliorés
-- Configuration environnement propre
+- Documentation roadmap optimisation
+- Audit qualité technique
 - Dépendances production / développement séparées
 - Ruff format / lint validé
+- Compileall validé
 - GitHub Actions CI
 - Suite de tests complète
 
 ### En cours / prochaines étapes
 
-- Gestion utilisateurs admin
-- Gestion commandes admin
-- Amélioration templates UI
-- Refonte visuelle progressive
-- Documentation technique complémentaire
+- Synchronisation de la documentation projet
+- Durcissement configuration et sécurité
+- Refactoring des services admin
+- Protection CSRF des formulaires POST
+- Renforcement DB/migrations
+- SEO, accessibilité et smoke tests
+- Nettoyage fichiers et dossiers inutiles
+- Préparation du dossier RNCP
 
 ---
 
 ## Prochaine étape technique
 
-La prochaine étape fonctionnelle prévue est :
+La prochaine étape technique prévue après cette synchronisation documentaire est :
 
 ```text
-ADMIN-04 — Gestion utilisateurs admin
+Phase 4 — hardening/config-security
 ```
 
 Objectifs :
 
-- route `/admin/users` ;
-- liste des utilisateurs ;
-- détail utilisateur ;
-- affichage du rôle ;
-- affichage des informations principales ;
-- tests admin dédiés.
+- durcir `app/config.py` ;
+- synchroniser `.env.example` ;
+- ajouter ou adapter les tests de configuration ;
+- conserver la validation complète Ruff, compileall et Pytest.
 
 ---
 
