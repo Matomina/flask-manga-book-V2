@@ -260,10 +260,26 @@ function initPublicMenu() {
   });
 }
 
+function initStickyHeader() {
+  const header = document.querySelector('.public-header');
+
+  if (!header) {
+    return;
+  }
+
+  const syncHeaderState = () => {
+    document.body.classList.toggle('is-public-header-scrolled', window.scrollY > 12);
+  };
+
+  syncHeaderState();
+  window.addEventListener('scroll', syncHeaderState, { passive: true });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initScroll('.scroll-container', '.card-list');
   initCartButtons();
   initPublicMenu();
+  initStickyHeader();
 
   onEvent(document.getElementById('floatingCartBtn'), 'click', openCartPopup);
   onEvent(document.getElementById('cartOverlay'), 'click', closeCartPopup);
