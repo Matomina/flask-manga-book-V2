@@ -129,3 +129,27 @@ def test_toggle_favorite_adds_then_removes(app, db):
     assert favorite is not None
     assert removed == "removed"
     assert deleted is None
+
+
+def test_cart_items_schema_has_expected_constraints(app, db):
+    with app.app_context():
+        table = db.execute(
+            """
+            SELECT sql
+            FROM sqlite_master
+            WHERE type = 'table' AND name = 'cart_items'
+            """
+        ).fetchone()
+        foreign_keys = db.execute("PRAGMA foreign_key_list(cart_items)").fetchall()
+        indexes = db.execute("PRAGMA index_list(cart_items)").fetchall()
+
+    referenced_tables = {foreign_key["table"] for foreign_key in foreign_keys}
+    index_names = {index["name"] for index in indexes}
+
+    assert table is not None
+    assert "CHECK (quantity > 0)" in table["sql"]
+    assert referenced_tables == {"articles", "user"}
+    assert index_names >= {
+        "idx_cart_items_article_id",
+        "idx_cart_items_user_id",
+    }

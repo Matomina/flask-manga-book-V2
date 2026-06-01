@@ -259,6 +259,24 @@ python -m ruff format .
 python -m ruff check .
 ```
 
+### Appliquer les migrations SQLite
+
+```bash
+flask migrate-db
+```
+
+Cette commande applique les migrations manquantes sur la base existante sans réinitialiser les données locales.
+
+### Réinitialiser la base SQLite
+
+```bash
+flask reset-db
+```
+
+Cette commande recrée la base depuis `app/db/schema.sql`, puis réinjecte `app/db/seed.sql`. Elle écrase les données locales existantes de la base configurée dans `DATABASE`.
+
+En développement, la base locale historique du projet est `instance/manga.sqlite`. Ne basculez pas vers une autre base, comme `instance/manga.sqlite3`, sans migration explicite et sauvegarde préalable.
+
 ---
 
 ## État qualité
