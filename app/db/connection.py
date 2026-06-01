@@ -183,9 +183,17 @@ def _apply_cart_constraints_migration() -> bool:
         """
     )
     db.execute("PRAGMA foreign_keys = ON;")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_cart_items_user_id ON cart_items(user_id)")
     db.execute(
-        "CREATE INDEX IF NOT EXISTS idx_cart_items_article_id ON cart_items(article_id)"
+        """
+        CREATE INDEX IF NOT EXISTS idx_cart_items_user_id
+        ON cart_items(user_id)
+        """
+    )
+    db.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_cart_items_article_id
+        ON cart_items(article_id)
+        """
     )
     return True
 
