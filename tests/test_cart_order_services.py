@@ -143,10 +143,13 @@ def test_cart_items_schema_has_expected_constraints(app, db):
         foreign_keys = db.execute("PRAGMA foreign_key_list(cart_items)").fetchall()
         indexes = db.execute("PRAGMA index_list(cart_items)").fetchall()
 
+    referenced_tables = {foreign_key["table"] for foreign_key in foreign_keys}
+    index_names = {index["name"] for index in indexes}
+
     assert table is not None
     assert "CHECK (quantity > 0)" in table["sql"]
-    assert {foreign_key["table"] for foreign_key in foreign_keys} == {"articles", "user"}
-    assert {index["name"] for index in indexes} >= {
+    assert referenced_tables == {"articles", "user"}
+    assert index_names >= {
         "idx_cart_items_article_id",
         "idx_cart_items_user_id",
     }
