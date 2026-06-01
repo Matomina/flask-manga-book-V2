@@ -26,10 +26,7 @@ L’application permet actuellement de gérer :
 - un forum public avec sujets, réponses et endpoints JSON ;
 - une modération forum côté admin ;
 - un dashboard admin enrichi ;
-- une gestion admin des articles ;
-- une gestion admin des utilisateurs ;
-- une gestion admin des commandes ;
-- une gestion admin des messages de contact ;
+- une gestion admin des articles, utilisateurs, commandes, contacts et forum ;
 - des pages publiques complémentaires comme goodies, planning, à propos et mentions légales.
 
 ---
@@ -54,7 +51,6 @@ Côté administration, l’objectif est de permettre à un administrateur de :
 
 - consulter un dashboard global ;
 - gérer les articles ;
-- créer, modifier et supprimer des articles ;
 - suivre les stocks faibles ou ruptures ;
 - consulter les utilisateurs ;
 - consulter et mettre à jour les commandes ;
@@ -70,10 +66,10 @@ Construire une base Flask propre, maintenable et testée, avec :
 - une séparation routes / services / templates ;
 - une base SQLite initialisée par schéma SQL ;
 - des migrations SQL dédiées ;
-- une configuration via fichiers d’environnement ;
+- une configuration via variables d’environnement ;
 - une suite de tests automatisés ;
 - une couverture de code élevée ;
-- une configuration qualité avec Ruff et Pytest ;
+- une configuration qualité avec Ruff, compileall et Pytest ;
 - une CI GitHub Actions pour valider automatiquement le projet ;
 - une documentation exploitable pour le dossier RNCP.
 
@@ -111,41 +107,16 @@ Construire une base Flask propre, maintenable et testée, avec :
 
 ```text
 flask-manga-book-V2/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
+├── .github/workflows/ci.yml
 ├── app/
 │   ├── __init__.py
+│   ├── config.py
 │   ├── admin/
-│   │   ├── routes.py
-│   │   ├── services.py
-│   │   └── templates/
 │   ├── auth/
-│   │   ├── routes.py
-│   │   ├── services.py
-│   │   └── templates/
 │   ├── core/
-│   │   ├── context_processors.py
-│   │   ├── errors.py
-│   │   ├── filters.py
-│   │   └── security.py
 │   ├── db/
-│   │   ├── connection.py
-│   │   ├── schema.sql
-│   │   ├── seed.sql
-│   │   └── migrations/
 │   ├── forum/
-│   │   ├── routes.py
-│   │   ├── services.py
-│   │   └── templates/
 │   ├── public/
-│   │   ├── routes.py
-│   │   ├── services.py
-│   │   ├── cart_routes.py
-│   │   ├── cart_services.py
-│   │   ├── favorite_services.py
-│   │   ├── order_services.py
-│   │   └── templates/
 │   ├── static/
 │   └── templates/
 ├── docs/
@@ -156,7 +127,6 @@ flask-manga-book-V2/
 ├── tests/
 ├── .env.example
 ├── .flaskenv
-├── .gitignore
 ├── .python-version
 ├── pyproject.toml
 ├── requirements.txt
@@ -164,69 +134,6 @@ flask-manga-book-V2/
 ├── run.py
 └── README.md
 ```
-
----
-
-## Fonctionnalités principales
-
-### Espace public
-
-- Page d’accueil
-- Catalogue d’articles
-- Recherche catalogue
-- Filtres par genre, univers et jour de sortie
-- Tri sécurisé
-- Fiches articles
-- Page goodies
-- Page planning
-- Page à propos regroupant aide et contact
-- Page mentions légales regroupant conditions d’utilisation et politique de confidentialité
-
-### Espace utilisateur
-
-- Connexion
-- Inscription
-- Déconnexion sécurisée en POST
-- Profil utilisateur
-- Favoris
-- Historique de consultation
-- Panier backend
-- Popup panier synchronisé
-- Commande depuis le panier
-- Formulaire de contact/support
-
-### Forum
-
-- Liste des sujets
-- Détail d’un sujet
-- Création de sujet
-- Ajout de réponses
-- Endpoints JSON
-- Interface live modernisée
-- Accès protégé pour les actions utilisateur
-- Modération côté admin
-
-### Administration
-
-- Dashboard global enrichi
-- Statistiques utilisateurs, articles, commandes, contacts
-- Statistiques forum
-- Alertes stock faible
-- Alertes rupture de stock
-- Gestion des utilisateurs
-- Gestion des commandes
-- Gestion des articles
-- Création d’article
-- Modification d’article
-- Suppression d’article
-- Validation stricte des genres, univers et jours de sortie
-- Upload image contrôlé
-- Gestion des messages de contact
-- Filtres contacts : tous, non lus, lus
-- Détail contact avec marquage automatique comme lu
-- Suppression de contacts
-- Modération forum
-- Réponse admin sur le forum
 
 ---
 
@@ -239,13 +146,11 @@ git clone https://github.com/Matomina/flask-manga-book-V2.git
 cd flask-manga-book-V2
 ```
 
-### 2. Créer un environnement virtuel
+### 2. Créer et activer l’environnement virtuel
 
 ```bash
 python -m venv .venv
 ```
-
-### 3. Activer l’environnement virtuel
 
 Sous Windows PowerShell :
 
@@ -260,14 +165,14 @@ Sous macOS / Linux :
 source .venv/bin/activate
 ```
 
-### 4. Installer les dépendances de développement
+### 3. Installer les dépendances de développement
 
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements-dev.txt
 ```
 
-### 5. Préparer le fichier d’environnement
+### 4. Préparer le fichier d’environnement
 
 Sous Windows PowerShell :
 
@@ -281,24 +186,18 @@ Sous macOS / Linux :
 cp .env.example .env
 ```
 
-### 6. Lancer l’application
+Le fichier `.env` doit contenir une vraie valeur locale pour `SECRET_KEY`.
 
-Avec `.flaskenv`, le lancement peut se faire simplement avec :
+### 5. Lancer l’application
 
 ```bash
 flask run
 ```
 
-Ou avec :
+Ou :
 
 ```bash
 python -m flask run
-```
-
-Autre option :
-
-```bash
-python run.py
 ```
 
 Application disponible sur :
@@ -348,12 +247,6 @@ git diff --stat
 python -m pytest
 ```
 
-### Vérifier le formatage
-
-```bash
-python -m ruff format --check .
-```
-
 ### Formater le code
 
 ```bash
@@ -364,12 +257,6 @@ python -m ruff format .
 
 ```bash
 python -m ruff check .
-```
-
-### Corriger automatiquement les erreurs Ruff possibles
-
-```bash
-python -m ruff check . --fix
 ```
 
 ---
@@ -432,15 +319,6 @@ Elle exécute automatiquement :
 7. suite complète Pytest avec couverture
 ```
 
-Commandes équivalentes en local :
-
-```bash
-python -m ruff format --check .
-python -m ruff check .
-python -m compileall app tests
-python -m pytest
-```
-
 ---
 
 ## Configuration
@@ -453,9 +331,10 @@ Il contient notamment :
 
 ```env
 FLASK_ENV=development
-FLASK_DEBUG=1
+FLASK_DEBUG=0
 SECRET_KEY=change-me-in-local-env
 DATABASE=instance/manga.sqlite3
+MAX_CONTENT_LENGTH=2097152
 TESTING=0
 ```
 
@@ -465,16 +344,24 @@ Fichier utilisé pour simplifier le lancement local de Flask :
 
 ```env
 FLASK_APP=app
-FLASK_DEBUG=1
+FLASK_DEBUG=0
 ```
 
-### `pyproject.toml`
+### Configuration applicative
 
-Configuration principale pour :
+La configuration principale est dans :
 
-- Ruff ;
-- Pytest ;
-- Pytest-cov.
+```text
+app/config.py
+```
+
+Règles importantes :
+
+- `SECRET_KEY` est obligatoire hors environnement de test ;
+- `DEBUG` est désactivé par défaut ;
+- `DATABASE` peut être configuré via variable d’environnement ;
+- `MAX_CONTENT_LENGTH` est centralisé dans la configuration Flask ;
+- les tests utilisent une configuration dédiée avec `SECRET_KEY="test"`.
 
 ---
 
@@ -483,6 +370,10 @@ Configuration principale pour :
 Le projet applique déjà plusieurs bonnes pratiques :
 
 - session Flask protégée par `SECRET_KEY` ;
+- `SECRET_KEY` obligatoire hors environnement de test ;
+- `DEBUG` désactivé par défaut ;
+- base de données configurable via `DATABASE` ;
+- limite d’upload centralisée via `MAX_CONTENT_LENGTH` ;
 - accès admin protégé par décorateur ;
 - accès utilisateur protégé par décorateur ;
 - logout en `POST` ;
@@ -494,9 +385,8 @@ Le projet applique déjà plusieurs bonnes pratiques :
 - tests automatisés sur les routes, services et protections ;
 - CI GitHub Actions pour valider les changements.
 
-Points prévus dans la roadmap qualité :
+Points restants dans la roadmap qualité :
 
-- durcir la configuration environnement ;
 - ajouter une protection CSRF sur les formulaires POST sensibles ;
 - renforcer les migrations et contraintes de base de données ;
 - documenter les preuves techniques pour le dossier RNCP.
@@ -550,6 +440,8 @@ docs/functional-parity-roadmap.md Roadmap de parité fonctionnelle clôturée
 - Contacts admin améliorés
 - Documentation roadmap optimisation
 - Audit qualité technique
+- Synchronisation documentation
+- Configuration de base durcie
 - Dépendances production / développement séparées
 - Ruff format / lint validé
 - Compileall validé
@@ -558,8 +450,6 @@ docs/functional-parity-roadmap.md Roadmap de parité fonctionnelle clôturée
 
 ### En cours / prochaines étapes
 
-- Synchronisation de la documentation projet
-- Durcissement configuration et sécurité
 - Refactoring des services admin
 - Protection CSRF des formulaires POST
 - Renforcement DB/migrations
@@ -571,18 +461,18 @@ docs/functional-parity-roadmap.md Roadmap de parité fonctionnelle clôturée
 
 ## Prochaine étape technique
 
-La prochaine étape technique prévue après cette synchronisation documentaire est :
+La prochaine étape technique prévue après le hardening configuration est :
 
 ```text
-Phase 4 — hardening/config-security
+Phase 5 — refactor/admin-services-split
 ```
 
 Objectifs :
 
-- durcir `app/config.py` ;
-- synchroniser `.env.example` ;
-- ajouter ou adapter les tests de configuration ;
-- conserver la validation complète Ruff, compileall et Pytest.
+- découper `app/admin/services.py` ;
+- créer des services spécialisés admin ;
+- conserver les tests admin ;
+- valider Ruff, compileall et Pytest.
 
 ---
 

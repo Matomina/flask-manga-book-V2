@@ -5,4 +5,4 @@
 # Do not put secrets here. Use ".env" for local private values.
 
 FLASK_APP=app
-FLASK_DEBUG=1
+FLASK_DEBUG=0

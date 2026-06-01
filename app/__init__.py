@@ -1,17 +1,3 @@
-"""
-========================================================
-MANGABOOK – APPLICATION FACTORY
---------------------------------------------------------
-Initialisation principale de l'application Flask.
-
-Architecture :
-- Public séparé
-- Admin séparé
-- Templates isolés par blueprint
-- Extensions centralisées
-========================================================
-"""
-
 from __future__ import annotations
 
 import os
@@ -19,7 +5,7 @@ from typing import Any
 
 from flask import Flask
 
-from .config import Config
+from .config import Config, apply_environment_config, validate_required_config
 from .core import (
     register_context_processors,
     register_error_handlers,
@@ -33,9 +19,12 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     """Créer et configurer l'application Flask."""
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
+    apply_environment_config(app.config)
 
     if test_config is not None:
         app.config.from_mapping(test_config)
+
+    validate_required_config(app.config)
 
     os.makedirs(app.instance_path, exist_ok=True)
 
