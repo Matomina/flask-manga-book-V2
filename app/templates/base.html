@@ -57,6 +57,8 @@
   </head>
 
   <body class="public-shell">
+    <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
+
     <header class="public-header site-header">
       <div class="header-top">
         <a class="public-header__brand logo-title" href="{{ url_for('public.home') }}">
@@ -118,7 +120,7 @@
       </nav>
     </header>
 
-    <main class="public-main">
+    <main class="public-main" id="contenu-principal" tabindex="-1">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %}
       <div class="flash-messages" role="status" aria-live="polite">
