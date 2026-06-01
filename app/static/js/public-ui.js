@@ -275,11 +275,71 @@ function initStickyHeader() {
   window.addEventListener('scroll', syncHeaderState, { passive: true });
 }
 
+function initRevealOnScroll() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
+  const revealSelectors = [
+    '.public-main > section',
+    '.public-main > article',
+    '.content',
+    '.page-intro',
+    '.home-featured',
+    '.catalog-page__header',
+    '.catalog-search',
+    '.catalog-results',
+    '.goodies-results',
+    '.planning-day',
+    '.public-info-card',
+    '.article-detail-card',
+    '.auth-card',
+    '.forum-topic-card',
+  ].join(',');
+
+  const elements = Array.from(document.querySelectorAll(revealSelectors)).filter(
+    (element) => !element.closest('.public-header, .public-footer, .cart-popup'),
+  );
+
+  if (!elements.length) {
+    return;
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    elements.forEach((element) => element.classList.add('is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      threshold: 0.12,
+      rootMargin: '0px 0px -8% 0px',
+    },
+  );
+
+  elements.forEach((element, index) => {
+    element.classList.add('reveal-on-scroll');
+    element.style.setProperty('--reveal-delay', `${Math.min(index % 4, 3) * 80}ms`);
+    observer.observe(element);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initScroll('.scroll-container', '.card-list');
   initCartButtons();
   initPublicMenu();
   initStickyHeader();
+  initRevealOnScroll();
 
   onEvent(document.getElementById('floatingCartBtn'), 'click', openCartPopup);
   onEvent(document.getElementById('cartOverlay'), 'click', closeCartPopup);
