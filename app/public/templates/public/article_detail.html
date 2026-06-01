@@ -1,6 +1,10 @@
-{% extends "base.html" %} {% block title %}{{ article["name"] }} - MangaBook
-V2{% endblock %} {% block content %}
+{% extends "base.html" %}
 
+{% block title %}{{ article["name"] }} - MangaBook V2{% endblock %}
+
+{% block meta_description %}Découvrez {{ article["name"] }} sur MangaBook V2 : fiche article, prix, stock, genre{% if article["universe"] %}, univers {{ article["universe"] }}{% endif %} et description détaillée.{% endblock %}
+
+{% block content %}
 <section class="banner page-banner">
   <img
     src="{{ url_for('static', filename='image/banner-article-detail.jpeg') }}"
@@ -11,6 +15,7 @@ V2{% endblock %} {% block content %}
 
 <section class="article-detail-page catalog-page catalogue-page">
   <header class="catalog-page__header catalogue-content page-intro">
+    <h1 class="mb-sr-only">{{ article["name"] }}</h1>
     <h2>{{ article["name"] }}</h2>
     <p>Découvrez le détail, le prix, le stock et les informations de cet article.</p>
   </header>
