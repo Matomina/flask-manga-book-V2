@@ -99,60 +99,6 @@
 
         <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">Suivant</button>
       </div>
-
-      <footer class="cart-summary-premium" aria-labelledby="cart-summary-title">
-        <div class="cart-summary-premium__content">
-          <div class="cart-summary-premium__header">
-            <p class="cart-summary-premium__eyebrow">Panier sécurisé</p>
-            <h3 id="cart-summary-title">Récapitulatif de votre commande</h3>
-            <p class="cart-summary-premium__subtitle">
-              Vérifiez votre sélection avant de créer votre commande MangaBook.
-            </p>
-          </div>
-
-          <div class="cart-summary-premium__stats" aria-label="Résumé du panier">
-            <div class="cart-summary-stat">
-              <span class="cart-summary-stat__label">Articles</span>
-              <strong>{{ cart_items|length }}</strong>
-            </div>
-            <div class="cart-summary-stat">
-              <span class="cart-summary-stat__label">Quantités</span>
-              <strong>{{ total_quantity }}</strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="cart-summary-premium__panel">
-          <div class="cart-summary-premium__lines">
-            <div class="cart-summary-line">
-              <span>Sous-total</span>
-              <strong>{{ "%.2f"|format(cart_total) }} €</strong>
-            </div>
-            <div class="cart-summary-line">
-              <span>Livraison</span>
-              <strong>Offerte</strong>
-            </div>
-            <div class="cart-summary-line cart-summary-line--total">
-              <span>Total</span>
-              <strong>{{ "%.2f"|format(cart_total) }} €</strong>
-            </div>
-          </div>
-
-          <p class="cart-summary-premium__note">
-            Validation rapide • Commande enregistrée immédiatement • Suivi depuis votre espace profil.
-          </p>
-
-          <form
-            action="{{ url_for('public_cart.checkout') }}"
-            method="post"
-            class="cart-summary-premium__actions"
-          >
-            <button class="cart-summary-premium__cta" type="submit">
-              Créer ma commande
-            </button>
-          </form>
-        </div>
-      </footer>
       {% else %}
       <div class="empty-state">
         <h3>Votre panier est vide</h3>
@@ -163,6 +109,62 @@
       </div>
       {% endif %}
     </article>
+
+    {% if cart_items %}
+    <footer class="cart-summary-premium" aria-labelledby="cart-summary-title">
+      <div class="cart-summary-premium__content">
+        <div class="cart-summary-premium__header">
+          <p class="cart-summary-premium__eyebrow">Panier sécurisé</p>
+          <h3 id="cart-summary-title">Récapitulatif de votre commande</h3>
+          <p class="cart-summary-premium__subtitle">
+            Vérifiez votre sélection avant de créer votre commande MangaBook.
+          </p>
+        </div>
+
+        <div class="cart-summary-premium__stats" aria-label="Résumé du panier">
+          <div class="cart-summary-stat">
+            <span class="cart-summary-stat__label">Articles</span>
+            <strong>{{ cart_items|length }}</strong>
+          </div>
+          <div class="cart-summary-stat">
+            <span class="cart-summary-stat__label">Quantités</span>
+            <strong>{{ total_quantity }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-summary-premium__panel">
+        <div class="cart-summary-premium__lines">
+          <div class="cart-summary-line">
+            <span>Sous-total</span>
+            <strong>{{ "%.2f"|format(cart_total) }} €</strong>
+          </div>
+          <div class="cart-summary-line">
+            <span>Livraison</span>
+            <strong>Offerte</strong>
+          </div>
+          <div class="cart-summary-line cart-summary-line--total">
+            <span>Total</span>
+            <strong>{{ "%.2f"|format(cart_total) }} €</strong>
+          </div>
+        </div>
+
+        <p class="cart-summary-premium__note">
+          Validation rapide • Commande enregistrée immédiatement • Suivi depuis votre espace profil.
+        </p>
+
+        <form
+          action="{{ url_for('public_cart.checkout') }}"
+          method="post"
+          class="cart-summary-premium__actions"
+        >
+          <button class="cart-summary-premium__cta" type="submit">
+            Créer ma commande
+          </button>
+        </form>
+      </div>
+    </footer>
+    {% endif %}
   </section>
 </section>
 {% endblock %}
