@@ -1,416 +1,57 @@
 from __future__ import annotations
 
-import sqlite3
-from pathlib import Path
-from typing import Any
-from uuid import uuid4
+from .account_services import get_all_users_admin, get_user_by_id_admin
+from .article_services import (
+    VALID_ARTICLE_GENRES,
+    VALID_ARTICLE_UNIVERSES,
+    VALID_RELEASE_DAYS,
+    create_article,
+    delete_article,
+    get_all_articles_admin,
+    get_article_by_id_admin,
+    update_article,
+    validate_article_data,
+)
+from .contact_services import (
+    delete_contact,
+    get_all_contacts,
+    get_contact_by_id,
+    mark_contact_as_read,
+)
+from .dashboard_services import get_dashboard_stats
+from .media_services import ALLOWED_EXTENSIONS, UPLOAD_FOLDER, allowed_file, save_image
+from .order_services import (
+    VALID_ORDER_STATUSES,
+    get_all_orders_admin,
+    get_order_by_id_admin,
+    get_order_items_by_order_id,
+    update_order_status_admin,
+)
 
-from flask import current_app
-from werkzeug.datastructures import FileStorage
-from werkzeug.utils import secure_filename
-
-from app.db import get_db
-
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
-VALID_ARTICLE_GENRES = {"manga", "figurine", "textile", "vaisselle", "goodies"}
-VALID_ARTICLE_UNIVERSES = {
-    "naruto",
-    "jujutsu_kaisen",
-    "one_piece",
-    "demon_slayer",
-    "dragon_ball",
-}
-VALID_RELEASE_DAYS = {
-    "Lundi",
-    "Mardi",
-    "Mercredi",
-    "Jeudi",
-    "Vendredi",
-    "Samedi",
-    "Dimanche",
-    "Sans jour fixe",
-}
-VALID_ORDER_STATUSES = {"pending", "paid", "shipped", "delivered", "cancelled"}
-UPLOAD_FOLDER = "uploads"
-
-
-def _normalize_str(value: Any) -> str:
-    return str(value or "").strip()
-
-
-def _normalize_optional_str(value: Any) -> str | None:
-    cleaned = _normalize_str(value)
-    return cleaned or None
-
-
-def get_all_contacts(status_filter: str = "all") -> list[sqlite3.Row]:
-    db = get_db()
-    where_sql = ""
-
-    if status_filter == "unread":
-        where_sql = "WHERE c.status != 'read'"
-    elif status_filter == "read":
-        where_sql = "WHERE c.status = 'read'"
-
-    return db.execute(
-        f"""
-        SELECT c.id, c.sujet, c.message, c.status, c.created_at, u.email
-        FROM contact AS c
-        LEFT JOIN user AS u ON u.id = c.user_id
-        {where_sql}
-        ORDER BY c.created_at DESC, c.id DESC
-        """
-    ).fetchall()
-
-
-def get_contact_by_id(contact_id: int) -> sqlite3.Row | None:
-    db = get_db()
-    return db.execute(
-        """
-        SELECT c.id, c.sujet, c.message, c.status, c.created_at, u.email
-        FROM contact AS c
-        LEFT JOIN user AS u ON u.id = c.user_id
-        WHERE c.id = ?
-        """,
-        (contact_id,),
-    ).fetchone()
-
-
-def mark_contact_as_read(contact_id: int) -> None:
-    db = get_db()
-    db.execute(
-        "UPDATE contact SET status = 'read' WHERE id = ?",
-        (contact_id,),
-    )
-    db.commit()
-
-
-def delete_contact(contact_id: int) -> bool:
-    db = get_db()
-    cursor = db.execute(
-        "DELETE FROM contact WHERE id = ?",
-        (contact_id,),
-    )
-    db.commit()
-    return cursor.rowcount > 0
-
-
-def get_dashboard_stats() -> dict[str, int]:
-    db = get_db()
-    row = db.execute(
-        """
-        SELECT
-            (SELECT COUNT(*) FROM user) AS users,
-            (SELECT COUNT(*) FROM articles) AS articles,
-            (SELECT COUNT(*) FROM orders) AS orders,
-            (SELECT COUNT(*) FROM contact) AS contacts,
-            (SELECT COUNT(*) FROM contact WHERE status != 'read') AS unread_contacts,
-            (SELECT COUNT(*) FROM topics) AS forum_topics,
-            (SELECT COUNT(*) FROM replies) AS forum_replies,
-            (SELECT COUNT(*) FROM articles WHERE stock > 0 AND stock <= 5)
-                AS low_stock_articles,
-            (SELECT COUNT(*) FROM articles WHERE stock <= 0) AS out_of_stock_articles
-        """
-    ).fetchone()
-    return dict(row)
-
-
-def get_all_users_admin() -> list[sqlite3.Row]:
-    db = get_db()
-    return db.execute(
-        """
-        SELECT
-            id,
-            first_name,
-            last_name,
-            email,
-            phone,
-            address,
-            city,
-            role,
-            created_at
-        FROM user
-        ORDER BY created_at DESC, id DESC
-        """
-    ).fetchall()
-
-
-def get_user_by_id_admin(user_id: int) -> sqlite3.Row | None:
-    db = get_db()
-    return db.execute(
-        """
-        SELECT
-            id,
-            first_name,
-            last_name,
-            email,
-            phone,
-            address,
-            city,
-            role,
-            created_at
-        FROM user
-        WHERE id = ?
-        """,
-        (user_id,),
-    ).fetchone()
-
-
-def get_all_orders_admin(status_filter: str = "all") -> list[sqlite3.Row]:
-    db = get_db()
-    where_sql = ""
-    params: tuple[str, ...] = ()
-
-    if status_filter in VALID_ORDER_STATUSES:
-        where_sql = "WHERE o.status = ?"
-        params = (status_filter,)
-
-    return db.execute(
-        f"""
-        SELECT
-            o.id,
-            o.user_id,
-            o.total_amount,
-            o.status,
-            o.created_at,
-            u.first_name,
-            u.last_name,
-            u.email,
-            COUNT(oa.id) AS items_count
-        FROM orders AS o
-        LEFT JOIN user AS u ON u.id = o.user_id
-        LEFT JOIN orders_articles AS oa ON oa.order_id = o.id
-        {where_sql}
-        GROUP BY o.id
-        ORDER BY o.created_at DESC, o.id DESC
-        """,
-        params,
-    ).fetchall()
-
-
-def get_order_by_id_admin(order_id: int) -> sqlite3.Row | None:
-    db = get_db()
-    return db.execute(
-        """
-        SELECT
-            o.id,
-            o.user_id,
-            o.total_amount,
-            o.status,
-            o.created_at,
-            u.email,
-            u.first_name,
-            u.last_name,
-            u.phone,
-            u.address,
-            u.city
-        FROM orders AS o
-        LEFT JOIN user AS u ON u.id = o.user_id
-        WHERE o.id = ?
-        """,
-        (order_id,),
-    ).fetchone()
-
-
-def get_order_items_by_order_id(order_id: int) -> list[sqlite3.Row]:
-    db = get_db()
-    return db.execute(
-        """
-        SELECT
-            oa.id,
-            oa.order_id,
-            oa.article_id,
-            oa.quantity,
-            oa.unit_price,
-            a.name,
-            a.genres,
-            a.universe,
-            a.image
-        FROM orders_articles AS oa
-        JOIN articles AS a ON a.id = oa.article_id
-        WHERE oa.order_id = ?
-        ORDER BY oa.id ASC
-        """,
-        (order_id,),
-    ).fetchall()
-
-
-def update_order_status_admin(order_id: int, status: str) -> bool:
-    normalized_status = _normalize_str(status)
-
-    if normalized_status not in VALID_ORDER_STATUSES:
-        raise ValueError("Statut de commande invalide.")
-
-    db = get_db()
-    cursor = db.execute(
-        "UPDATE orders SET status = ? WHERE id = ?",
-        (normalized_status, order_id),
-    )
-    db.commit()
-    return cursor.rowcount > 0
-
-
-def get_all_articles_admin() -> list[sqlite3.Row]:
-    db = get_db()
-    return db.execute(
-        """
-        SELECT id, name, genres, universe, image, price, stock, release_day, created_at
-        FROM articles
-        ORDER BY created_at DESC, id DESC
-        """
-    ).fetchall()
-
-
-def get_article_by_id_admin(article_id: int) -> sqlite3.Row | None:
-    db = get_db()
-    return db.execute(
-        """
-        SELECT id, name, genres, universe, image, price, stock, release_day, created_at
-        FROM articles
-        WHERE id = ?
-        """,
-        (article_id,),
-    ).fetchone()
-
-
-def create_article(data: dict[str, Any]) -> None:
-    db = get_db()
-    db.execute(
-        """
-        INSERT INTO articles (
-            name,
-            genres,
-            universe,
-            image,
-            price,
-            stock,
-            release_day
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            data["name"],
-            data["genres"],
-            data["universe"],
-            data["image"],
-            data["price"],
-            data["stock"],
-            data["release_day"],
-        ),
-    )
-    db.commit()
-
-
-def update_article(article_id: int, data: dict[str, Any]) -> bool:
-    db = get_db()
-    cursor = db.execute(
-        """
-        UPDATE articles
-        SET
-            name = ?,
-            genres = ?,
-            universe = ?,
-            image = ?,
-            price = ?,
-            stock = ?,
-            release_day = ?
-        WHERE id = ?
-        """,
-        (
-            data["name"],
-            data["genres"],
-            data["universe"],
-            data["image"],
-            data["price"],
-            data["stock"],
-            data["release_day"],
-            article_id,
-        ),
-    )
-    db.commit()
-    return cursor.rowcount > 0
-
-
-def delete_article(article_id: int) -> bool:
-    db = get_db()
-    cursor = db.execute(
-        "DELETE FROM articles WHERE id = ?",
-        (article_id,),
-    )
-    db.commit()
-    return cursor.rowcount > 0
-
-
-def validate_article_data(
-    data: dict[str, Any],
-    *,
-    require_image: bool = True,
-) -> tuple[dict[str, Any], list[str]]:
-    errors: list[str] = []
-    name = _normalize_str(data.get("name"))
-    genres = _normalize_str(data.get("genres"))
-    universe = _normalize_optional_str(data.get("universe"))
-    image = _normalize_optional_str(data.get("image"))
-    release_day = _normalize_optional_str(data.get("release_day"))
-
-    try:
-        price = float(data.get("price", 0))
-        if price < 0:
-            errors.append("Le prix doit être positif.")
-    except TypeError, ValueError:
-        errors.append("Prix invalide.")
-        price = 0.0
-
-    try:
-        stock = int(data.get("stock", 0))
-        if stock < 0:
-            errors.append("Stock invalide.")
-    except TypeError, ValueError:
-        errors.append("Stock invalide.")
-        stock = 0
-
-    if not name:
-        errors.append("Le nom est obligatoire.")
-
-    if genres not in VALID_ARTICLE_GENRES:
-        errors.append("Genre invalide.")
-
-    if universe is not None and universe not in VALID_ARTICLE_UNIVERSES:
-        errors.append("Univers invalide.")
-
-    if release_day is not None and release_day not in VALID_RELEASE_DAYS:
-        errors.append("Jour de sortie invalide.")
-
-    if require_image and not image:
-        errors.append("Image obligatoire.")
-
-    clean_data = {
-        "name": name,
-        "genres": genres,
-        "universe": universe,
-        "image": image,
-        "price": price,
-        "stock": stock,
-        "release_day": release_day,
-    }
-    return clean_data, errors
-
-
-def allowed_file(filename: str) -> bool:
-    if not filename or "." not in filename:
-        return False
-    return Path(filename).suffix.lower().lstrip(".") in ALLOWED_EXTENSIONS
-
-
-def save_image(file: FileStorage | None) -> str | None:
-    if file is None or not file.filename:
-        return None
-
-    if not allowed_file(file.filename):
-        return None
-
-    filename = f"{uuid4().hex}_{secure_filename(file.filename)}"
-    upload_dir = Path(current_app.root_path) / "static" / UPLOAD_FOLDER
-    upload_dir.mkdir(parents=True, exist_ok=True)
-    file.save(upload_dir / filename)
-    return f"{UPLOAD_FOLDER}/{filename}"
+__all__ = [
+    "ALLOWED_EXTENSIONS",
+    "UPLOAD_FOLDER",
+    "VALID_ARTICLE_GENRES",
+    "VALID_ARTICLE_UNIVERSES",
+    "VALID_ORDER_STATUSES",
+    "VALID_RELEASE_DAYS",
+    "allowed_file",
+    "create_article",
+    "delete_article",
+    "delete_contact",
+    "get_all_articles_admin",
+    "get_all_contacts",
+    "get_all_orders_admin",
+    "get_all_users_admin",
+    "get_article_by_id_admin",
+    "get_contact_by_id",
+    "get_dashboard_stats",
+    "get_order_by_id_admin",
+    "get_order_items_by_order_id",
+    "get_user_by_id_admin",
+    "mark_contact_as_read",
+    "save_image",
+    "update_article",
+    "update_order_status_admin",
+    "validate_article_data",
+]
