@@ -58,6 +58,24 @@ def _column_exists(table_name: str, column_name: str) -> bool:
     return any(column["name"] == column_name for column in columns)
 
 
+def _cart_items_has_required_constraints() -> bool:
+    if not _table_exists("cart_items"):
+        return False
+
+    db = get_db()
+    table_row = db.execute(
+        """
+        SELECT sql
+        FROM sqlite_master
+        WHERE type = 'table' AND name = 'cart_items'
+        """
+    ).fetchone()
+    table_sql = table_row["sql"] if table_row else ""
+    foreign_keys = db.execute("PRAGMA foreign_key_list(cart_items)").fetchall()
+
+    return "CHECK (quantity > 0)" in table_sql and len(foreign_keys) >= 2
+
+
 def _ensure_migration_table() -> None:
     db = get_db()
     db.execute(
@@ -117,11 +135,77 @@ def _apply_payment_tracking_migration() -> bool:
     return True
 
 
+def _apply_cart_constraints_migration() -> bool:
+    if not _table_exists("cart_items"):
+        return False
+
+    if _cart_items_has_required_constraints():
+        return True
+
+    db = get_db()
+    db.execute("PRAGMA foreign_keys = OFF;")
+    db.executescript(
+        """
+        CREATE TABLE cart_items_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            article_id INTEGER NOT NULL,
+            quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+            FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,
+            UNIQUE (user_id, article_id)
+        );
+
+        INSERT OR IGNORE INTO cart_items_new (
+            id,
+            user_id,
+            article_id,
+            quantity,
+            created_at,
+            updated_at
+        )
+        SELECT
+            ci.id,
+            ci.user_id,
+            ci.article_id,
+            ci.quantity,
+            ci.created_at,
+            ci.updated_at
+        FROM cart_items AS ci
+        JOIN user AS u ON u.id = ci.user_id
+        JOIN articles AS a ON a.id = ci.article_id
+        WHERE ci.quantity > 0;
+
+        DROP TABLE cart_items;
+        ALTER TABLE cart_items_new RENAME TO cart_items;
+        """
+    )
+    db.execute("PRAGMA foreign_keys = ON;")
+    db.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_cart_items_user_id
+        ON cart_items(user_id)
+        """
+    )
+    db.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_cart_items_article_id
+        ON cart_items(article_id)
+        """
+    )
+    return True
+
+
 def _apply_migration_file(migration_path: Path) -> bool:
     db = get_db()
 
     if migration_path.name == "002_payment_tracking.sql":
         return _apply_payment_tracking_migration()
+
+    if migration_path.name == "003_cart_constraints.sql":
+        return _apply_cart_constraints_migration()
 
     db.executescript(migration_path.read_text(encoding="utf-8"))
     return True
