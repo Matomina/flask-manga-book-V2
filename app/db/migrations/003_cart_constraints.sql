@@ -1,0 +1,2 @@
+-- Cart constraints migration is implemented in app/db/connection.py.
+-- SQLite requires rebuilding the table to add foreign keys and CHECK constraints safely.
