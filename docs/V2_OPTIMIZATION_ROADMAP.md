@@ -17,7 +17,7 @@ Python 3.14.3
 Ruff format : OK
 Ruff check : OK
 Compileall : OK
-Pytest : 226 passed
+Pytest : 232 passed
 Coverage : 93%
 ```
 
@@ -63,7 +63,7 @@ Statut : terminé.
 
 ### Phase 3 — Synchronisation documentation
 
-Statut : en cours.
+Statut : terminé.
 
 - Branche : `docs/sync-project-documentation`.
 - Fichiers :
@@ -75,42 +75,60 @@ docs/functional-parity-roadmap.md
 docs/V2_OPTIMIZATION_ROADMAP.md
 ```
 
-Objectifs :
-
-- actualiser `226 passed` et couverture 93% ;
-- documenter compileall dans les validations ;
-- clôturer la roadmap de parité fonctionnelle ;
-- marquer `docs/ROADMAP.md` comme historique ;
-- clarifier les prochaines phases avant RNCP.
+Résultat : documentation projet synchronisée, roadmap de parité clôturée et documents d'audit/roadmap centralisés.
 
 ### Phase 4 — Configuration projet
 
-Statut : à venir.
+Statut : terminé.
 
-- Branche prévue : `hardening/config-security`.
-- Fichiers prévus : `app/config.py`, `.env.example`, `README.md`, `tests/test_app.py`.
-- Objectif : rendre la configuration plus professionnelle et moins permissive.
+- Branche : `hardening/config-security`.
+- Fichiers principaux : `app/config.py`, `.env.example`, `README.md`, `tests/test_app.py`.
+- Résultat : configuration durcie, `SECRET_KEY` obligatoire hors tests, base locale historique restaurée sur `instance/manga.sqlite`.
 
 ### Phase 5 — Refactoring admin
 
-Statut : à venir.
+Statut : terminé.
 
-- Branche prévue : `refactor/admin-services-split`.
-- Objectif : découper le service admin par responsabilité.
+- Branche : `refactor/admin-services-split`.
+- Résultat : services admin découpés par responsabilité et tests conservés.
 
 ### Phase 6 — Protection des formulaires
 
-Statut : à venir.
+Statut : terminé.
 
-- Branche prévue : `security/add-csrf-protection`.
-- Objectif : renforcer les actions POST sensibles avec des tests adaptés.
+- Branche : `csrf-protection`.
+- Résultat : protection CSRF centralisée, formulaires POST et requêtes AJAX panier/forum couverts, tests ciblés ajoutés.
 
 ### Phase 7 — Base de données et migrations
 
-Statut : à venir.
+Statut : terminé.
 
-- Branche prévue : `refactor/db-migrations-hardening`.
-- Objectif : clarifier les contraintes, clés étrangères, index, migrations et procédure `flask migrate-db`.
+- Branches :
+
+```text
+refactor/db-migrations-hardening-2
+refactor/db-schema-alignment
+docs/db-hardening-proof
+```
+
+- PR réalisées :
+
+```text
+PR #26 — restore historical local database path
+PR #27 — harden cart item migrations
+PR #28 — align db schema with cart constraints
+```
+
+- Résultat :
+  - base locale historique documentée : `instance/manga.sqlite` ;
+  - migrations panier renforcées ;
+  - table `cart_items` reconstruite avec contraintes sur bases existantes ;
+  - `schema.sql` aligné avec les migrations ;
+  - test de structure DB ajouté ;
+  - commandes `flask migrate-db` et `flask reset-db` documentées ;
+  - preuve RNCP ajoutée dans `docs/DB_HARDENING_PROOF.md`.
+
+- Preuve : Ruff OK, compileall OK, `232 passed`, coverage 93%, working tree clean.
 
 ### Phase 8 — SEO, accessibilité et rendu
 
@@ -159,5 +177,11 @@ Statut : à venir.
 - [x] Phase 1 vérifiée : aucun correctif syntaxe nécessaire, `226 passed`.
 - [x] Phase 2 réalisée : audit qualité ajouté dans `docs/V2_QUALITY_AUDIT.md`.
 - [x] Phase 2 mergée dans `main`.
-- [ ] Phase 3 en cours : synchronisation documentation.
-- [ ] Phase 4 à venir : configuration projet.
+- [x] Phase 3 terminée : synchronisation documentation.
+- [x] Phase 4 terminée : configuration projet durcie.
+- [x] Phase 5 terminée : refactoring admin.
+- [x] Phase 6 terminée : protection CSRF.
+- [x] Phase 7 terminée : DB/migrations stabilisées et preuve ajoutée.
+- [ ] Phase 8 à venir : SEO, accessibilité et rendu.
+- [ ] Phase 9 à venir : nettoyage fichiers inutiles.
+- [ ] Phase 10 à venir : dossier RNCP.
