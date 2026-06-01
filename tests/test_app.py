@@ -4,6 +4,7 @@ import pytest
 
 from app import create_app
 from app.config import DEFAULT_MAX_CONTENT_LENGTH
+from app.core.csrf import CSRF_FIELD_NAME
 
 
 def test_config(tmp_path):
@@ -52,3 +53,51 @@ def test_config_requires_secret_key_outside_testing(monkeypatch, tmp_path):
                 "DATABASE": str(tmp_path / "app.sqlite3"),
             }
         )
+
+
+def test_request_token_rejects_missing_token(app):
+    app.config["CSRF_TESTING"] = True
+    client = app.test_client()
+
+    with client.session_transaction() as session:
+        session["user_id"] = 1
+        session["user_role"] = "admin"
+        session[CSRF_FIELD_NAME] = "known-token"
+
+    response = client.post("/auth/logout")
+
+    assert response.status_code == 400
+
+
+def test_request_token_accepts_form_token(app):
+    app.config["CSRF_TESTING"] = True
+    client = app.test_client()
+
+    with client.session_transaction() as session:
+        session["user_id"] = 1
+        session["user_role"] = "admin"
+        session[CSRF_FIELD_NAME] = "known-token"
+
+    response = client.post(
+        "/auth/logout",
+        data={CSRF_FIELD_NAME: "known-token"},
+    )
+
+    assert response.status_code == 302
+
+
+def test_request_token_accepts_header_token(app):
+    app.config["CSRF_TESTING"] = True
+    client = app.test_client()
+
+    with client.session_transaction() as session:
+        session["user_id"] = 1
+        session["user_role"] = "admin"
+        session[CSRF_FIELD_NAME] = "known-token"
+
+    response = client.post(
+        "/auth/logout",
+        headers={"X-CSRF-Token": "known-token"},
+    )
+
+    assert response.status_code == 302
