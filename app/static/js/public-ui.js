@@ -26,10 +26,15 @@ function initScroll(wrapperSelector, containerSelector) {
 
 let cartState = { items: [], total: 0, count: 0 };
 
+function csrfToken() {
+  return document.querySelector('meta[name="csrf-token"]')?.content || '';
+}
+
 function csrfHeaders() {
   return {
     'Content-Type': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': csrfToken(),
   };
 }
 

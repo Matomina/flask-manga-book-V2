@@ -1,7 +1,12 @@
+function forumCsrfToken() {
+  return document.querySelector('meta[name="csrf-token"]')?.content || '';
+}
+
 function forumRequestHeaders() {
   return {
     'Content-Type': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': forumCsrfToken(),
   };
 }
 

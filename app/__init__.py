@@ -11,6 +11,7 @@ from .core import (
     register_error_handlers,
     register_template_filters,
 )
+from .core.csrf import register_csrf
 from .db import init_app as init_db_app
 from .db.connection import run_migrations
 
@@ -31,6 +32,7 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     register_extensions(app)
     register_context_processors(app)
     register_template_filters(app)
+    register_csrf(app)
     register_blueprints(app)
     register_error_handlers(app)
 
