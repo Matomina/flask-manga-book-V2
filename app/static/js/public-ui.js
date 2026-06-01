@@ -275,50 +275,9 @@ function initStickyHeader() {
   window.addEventListener('scroll', syncHeaderState, { passive: true });
 }
 
-function initRevealOnScroll() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    return;
-  }
-
-  const stableSelectors = [
-    '.public-main > section',
-    '.public-main > article',
-    '.page-intro',
-    '.home-featured',
-    '.public-info-card',
-    '.article-detail-card',
-    '.auth-card',
-    '.forum-topic-card',
-  ].join(',');
-
-  const complexPageSelectors = [
-    '.catalog-page__header',
-    '.cart-page__header',
-  ].join(',');
-
-  const elements = Array.from(
-    document.querySelectorAll(`${stableSelectors},${complexPageSelectors}`),
-  ).filter((element) => {
-    if (element.closest('.public-header, .public-footer, .cart-popup')) {
-      return false;
-    }
-
-    return !element.closest(
-      '.catalog-results, .goodies-results, .planning-list, .planning-day, .article-grid, .scroll-container, .card-list',
-    );
-  });
-
-  if (!elements.length) {
-    return;
-  }
-
-  if (!('IntersectionObserver' in window)) {
-    elements.forEach((element) => element.classList.add('is-visible'));
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
+function createRevealObserver() {
+  return new IntersectionObserver(
+    (entries, observer) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
           return;
@@ -329,15 +288,118 @@ function initRevealOnScroll() {
       });
     },
     {
-      threshold: 0.08,
-      rootMargin: '0px 0px -4% 0px',
+      threshold: 0.1,
+      rootMargin: '0px 0px -7% 0px',
     },
   );
+}
 
-  elements.forEach((element, index) => {
-    element.classList.add('reveal-on-scroll');
-    element.style.setProperty('--reveal-delay', `${Math.min(index % 3, 2) * 55}ms`);
-    observer.observe(element);
+function prepareRevealElement(element, observer, delay = 0, extraClass = '') {
+  if (!element || element.classList.contains('reveal-on-scroll')) {
+    return;
+  }
+
+  element.classList.add('reveal-on-scroll');
+
+  if (extraClass) {
+    element.classList.add(extraClass);
+  }
+
+  element.style.setProperty('--reveal-delay', `${delay}ms`);
+  observer.observe(element);
+}
+
+function revealImmediately(elements) {
+  elements.forEach((element) => {
+    element.classList.add('is-visible');
+  });
+}
+
+function groupCardsByVisualRow(cards) {
+  const rowMap = new Map();
+
+  cards.forEach((card) => {
+    const rowTop = Math.round(card.offsetTop / 10) * 10;
+    const rowCards = rowMap.get(rowTop) || [];
+    rowCards.push(card);
+    rowMap.set(rowTop, rowCards);
+  });
+
+  return Array.from(rowMap.entries())
+    .sort(([firstTop], [secondTop]) => firstTop - secondTop)
+    .map(([, rowCards]) => rowCards);
+}
+
+function initRevealOnScroll() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
+  const stableSelectors = [
+    '.public-main > section:not(.catalog-page):not(.goodies-page):not(.planning-page)',
+    '.public-main > article',
+    '.page-intro:not(.catalog-page__header)',
+    '.home-featured',
+    '.public-info-card',
+    '.article-detail-card',
+    '.auth-card',
+    '.forum-topic-card',
+  ].join(',');
+
+  const stableElements = Array.from(document.querySelectorAll(stableSelectors)).filter(
+    (element) => !element.closest('.public-header, .public-footer, .cart-popup'),
+  );
+
+  const carouselSections = Array.from(
+    document.querySelectorAll(
+      '.planning-list > .planning-day, .goodies-section-list > .goodies-section',
+    ),
+  ).filter((section) => section.querySelector('.scroll-container'));
+
+  const catalogSupportElements = Array.from(
+    document.querySelectorAll(
+      '.catalog-page__header, .catalog-search, .catalog-results__header, .goodies-results__header, .planning-page__header, .planning-page__topbar, .goodies-page__header, .goodies-page__topbar',
+    ),
+  );
+
+  const catalogCards = Array.from(
+    document.querySelectorAll('.catalog-results .article-grid > .article-card'),
+  );
+
+  const revealElements = [
+    ...stableElements,
+    ...catalogSupportElements,
+    ...carouselSections,
+    ...catalogCards,
+  ];
+
+  if (!revealElements.length) {
+    return;
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    revealImmediately(revealElements);
+    return;
+  }
+
+  const observer = createRevealObserver();
+
+  stableElements.forEach((element, index) => {
+    prepareRevealElement(element, observer, Math.min(index % 4, 3) * 120);
+  });
+
+  catalogSupportElements.forEach((element, index) => {
+    prepareRevealElement(element, observer, index * 110);
+  });
+
+  carouselSections.forEach((section, index) => {
+    prepareRevealElement(section, observer, Math.min(index % 5, 4) * 160, 'reveal-carousel');
+  });
+
+  groupCardsByVisualRow(catalogCards).forEach((rowCards, rowIndex) => {
+    rowCards.forEach((card) => {
+      prepareRevealElement(card, observer, Math.min(rowIndex, 5) * 170, 'reveal-row-card');
+    });
   });
 }
 
@@ -346,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCartButtons();
   initPublicMenu();
   initStickyHeader();
-  initRevealOnScroll();
+  window.requestAnimationFrame(initRevealOnScroll);
 
   onEvent(document.getElementById('floatingCartBtn'), 'click', openCartPopup);
   onEvent(document.getElementById('cartOverlay'), 'click', closeCartPopup);
