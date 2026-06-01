@@ -94,6 +94,24 @@ a {
   outline-offset: 3px;
 }
 
+.skip-link {
+  position: absolute;
+  z-index: 10000;
+  top: 12px;
+  left: 12px;
+  padding: 10px 14px;
+  border-radius: var(--mb-radius-sm);
+  background: var(--mb-dark);
+  color: var(--mb-white);
+  font-weight: 700;
+  transform: translateY(-160%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 .mb-container {
   width: min(100% - 32px, var(--mb-content-container));
   margin-inline: auto;
