@@ -7,6 +7,7 @@
       name="description"
       content="{% block meta_description %}MangaBook V2, catalogue manga, figurines, goodies, planning de sorties et forum communautaire.{% endblock %}"
     />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <title>{% block title %}MangaBook V2{% endblock %}</title>
     <link
@@ -174,6 +175,22 @@
       </div>
     </footer>
 
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (!token) return;
+
+        document.querySelectorAll('form[method="post"], form[method="POST"]').forEach((form) => {
+          if (form.querySelector('input[name="{{ csrf_field_name }}"]')) return;
+
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "{{ csrf_field_name }}";
+          input.value = token;
+          form.appendChild(input);
+        });
+      });
+    </script>
     <script src="{{ url_for('static', filename='js/public-ui.js') }}" defer></script>
     {% block extra_js %}{% endblock %}
   </body>
