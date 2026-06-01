@@ -333,7 +333,7 @@ Il contient notamment :
 FLASK_ENV=development
 FLASK_DEBUG=0
 SECRET_KEY=change-me-in-local-env
-DATABASE=instance/manga.sqlite3
+DATABASE=instance/manga.sqlite
 MAX_CONTENT_LENGTH=2097152
 TESTING=0
 ```

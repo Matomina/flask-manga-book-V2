@@ -7,8 +7,8 @@ from typing import Any
 BASE_DIR = Path(__file__).resolve().parent.parent
 INSTANCE_DIR = BASE_DIR / "instance"
 
-DEFAULT_DATABASE = str(INSTANCE_DIR / "manga.sqlite3")
-DEFAULT_TEST_DATABASE = str(INSTANCE_DIR / "test.sqlite3")
+DEFAULT_DATABASE = str(INSTANCE_DIR / "manga.sqlite")
+DEFAULT_TEST_DATABASE = str(INSTANCE_DIR / "test.sqlite")
 DEFAULT_MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2 MB
 
 
