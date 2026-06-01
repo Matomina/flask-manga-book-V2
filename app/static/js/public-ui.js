@@ -280,26 +280,33 @@ function initRevealOnScroll() {
     return;
   }
 
-  const revealSelectors = [
+  const stableSelectors = [
     '.public-main > section',
     '.public-main > article',
-    '.content',
     '.page-intro',
     '.home-featured',
-    '.catalog-page__header',
-    '.catalog-search',
-    '.catalog-results',
-    '.goodies-results',
-    '.planning-day',
     '.public-info-card',
     '.article-detail-card',
     '.auth-card',
     '.forum-topic-card',
   ].join(',');
 
-  const elements = Array.from(document.querySelectorAll(revealSelectors)).filter(
-    (element) => !element.closest('.public-header, .public-footer, .cart-popup'),
-  );
+  const complexPageSelectors = [
+    '.catalog-page__header',
+    '.cart-page__header',
+  ].join(',');
+
+  const elements = Array.from(
+    document.querySelectorAll(`${stableSelectors},${complexPageSelectors}`),
+  ).filter((element) => {
+    if (element.closest('.public-header, .public-footer, .cart-popup')) {
+      return false;
+    }
+
+    return !element.closest(
+      '.catalog-results, .goodies-results, .planning-list, .planning-day, .article-grid, .scroll-container, .card-list',
+    );
+  });
 
   if (!elements.length) {
     return;
@@ -322,14 +329,14 @@ function initRevealOnScroll() {
       });
     },
     {
-      threshold: 0.12,
-      rootMargin: '0px 0px -8% 0px',
+      threshold: 0.08,
+      rootMargin: '0px 0px -4% 0px',
     },
   );
 
   elements.forEach((element, index) => {
     element.classList.add('reveal-on-scroll');
-    element.style.setProperty('--reveal-delay', `${Math.min(index % 4, 3) * 80}ms`);
+    element.style.setProperty('--reveal-delay', `${Math.min(index % 3, 2) * 55}ms`);
     observer.observe(element);
   });
 }
