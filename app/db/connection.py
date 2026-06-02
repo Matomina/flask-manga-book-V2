@@ -12,6 +12,10 @@ SEED_PATH = BASE_DIR / "seed.sql"
 MIGRATIONS_DIR = BASE_DIR / "migrations"
 MIGRATIONS_TABLE = "schema_migrations"
 BASE_SCHEMA_TABLES = {"user", "articles", "orders"}
+DEMO_IMAGE_FALLBACKS = {
+    "image/figurine_naruto.jpeg": "image/produit_naruto.jpeg",
+    "image/figurine_itachi.jpeg": "image/produit_jujutsu_kaisen.jpeg",
+}
 
 
 def get_db() -> sqlite3.Connection:
@@ -207,6 +211,24 @@ def _apply_cart_constraints_migration() -> bool:
     return True
 
 
+def _apply_demo_image_fallbacks() -> None:
+    """Corriger les chemins d'images de démo absents du repo."""
+    if not _table_exists("articles"):
+        return
+
+    db = get_db()
+    for missing_image, fallback_image in DEMO_IMAGE_FALLBACKS.items():
+        db.execute(
+            """
+            UPDATE articles
+            SET image = ?
+            WHERE image = ?
+            """,
+            (fallback_image, missing_image),
+        )
+    db.commit()
+
+
 def _apply_migration_file(migration_path: Path) -> bool:
     db = get_db()
 
@@ -256,6 +278,7 @@ def seed_db() -> None:
     db = get_db()
     db.executescript(SEED_PATH.read_text(encoding="utf-8"))
     db.commit()
+    _apply_demo_image_fallbacks()
 
 
 def reset_db() -> None:
@@ -275,6 +298,8 @@ def ensure_demo_database() -> None:
     if not _has_seed_data():
         seed_db()
         run_migrations()
+
+    _apply_demo_image_fallbacks()
 
 
 @click.command("init-db")
