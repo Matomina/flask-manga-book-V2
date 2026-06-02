@@ -65,7 +65,9 @@ def export_full_catalog(database: Path, output: Path) -> int:
     values = []
     for row in rows:
         values.append(
-            "    (" + ", ".join(_quote_sql(row[column]) for column in ARTICLE_COLUMNS) + ")"
+            "    ("
+            + ", ".join(_quote_sql(row[column]) for column in ARTICLE_COLUMNS)
+            + ")"
         )
 
     lines.append(",\n".join(values) + ";")
