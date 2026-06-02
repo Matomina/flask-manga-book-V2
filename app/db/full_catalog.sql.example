@@ -1,0 +1,10 @@
+-- Optional full catalog seed generated from the real local database.
+--
+-- Copy this file to app/db/full_catalog.sql, replace this example content with
+-- exported INSERT statements for the articles table, then commit full_catalog.sql
+-- when you want Render's free demo database to contain the full catalog.
+--
+-- Required workflow:
+-- 1. Generate app/db/full_catalog.sql from your local instance/manga.sqlite.
+-- 2. Verify referenced images exist in app/static.
+-- 3. Run: python -m pytest tests/test_deploy_static_assets.py
