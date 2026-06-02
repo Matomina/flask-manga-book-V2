@@ -1,6 +1,6 @@
 /* =========================
    MangaBook V2 - Cart overlay stability
-   Prevent overlay flash, scroll bleed and unstable display state during popup open.
+   Keep the page visible behind the cart popup with a soft blur and opacity layer.
    ========================= */
 
 .cart-overlay {
@@ -26,8 +26,8 @@ body.is-cart-open .cart-overlay,
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
-  background: rgba(21, 3, 45, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(21, 3, 45, 0.28);
+  backdrop-filter: blur(2px) saturate(0.95);
   transition:
     opacity 0.18s ease,
     visibility 0s linear 0s,
