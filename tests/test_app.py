@@ -55,15 +55,17 @@ def test_auto_seed_demo_bootstraps_empty_database(monkeypatch, tmp_path):
     create_app()
 
     with sqlite3.connect(db_path) as connection:
-        article_count = connection.execute(
+        article_count_row = connection.execute(
             "SELECT COUNT(*) FROM articles"
-        ).fetchone()[0]
-        migration_count = connection.execute(
+        ).fetchone()
+        migration_count_row = connection.execute(
             "SELECT COUNT(*) FROM schema_migrations"
-        ).fetchone()[0]
+        ).fetchone()
 
-    assert article_count > 0
-    assert migration_count > 0
+    assert article_count_row is not None
+    assert migration_count_row is not None
+    assert article_count_row[0] > 0
+    assert migration_count_row[0] > 0
 
 
 def test_config_requires_secret_key_outside_testing(monkeypatch, tmp_path):
