@@ -20,6 +20,7 @@ class Config:
     DEBUG = False
     TESTING = False
     MAX_CONTENT_LENGTH = DEFAULT_MAX_CONTENT_LENGTH
+    AUTO_SEED_DEMO = False
 
 
 class TestConfig(Config):
@@ -30,6 +31,12 @@ class TestConfig(Config):
     SECRET_KEY = "test"
     DATABASE = DEFAULT_TEST_DATABASE
     UPLOAD_FOLDER = "app/static/uploads"
+
+
+def _env_flag(name: str) -> bool:
+    """Retourner True si une variable d'environnement active un flag."""
+
+    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
 
 
 def apply_environment_config(config: dict[str, Any]) -> None:
@@ -46,6 +53,9 @@ def apply_environment_config(config: dict[str, Any]) -> None:
 
     if max_content_length := os.environ.get("MAX_CONTENT_LENGTH"):
         config["MAX_CONTENT_LENGTH"] = int(max_content_length)
+
+    if "AUTO_SEED_DEMO" in os.environ:
+        config["AUTO_SEED_DEMO"] = _env_flag("AUTO_SEED_DEMO")
 
 
 def validate_required_config(config: dict[str, Any]) -> None:
