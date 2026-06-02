@@ -1,12 +1,14 @@
-{% extends "base.html" %} {% block title %}Mentions légales, conditions et
-confidentialité - MangaBook V2{% endblock %} {% block meta_description
-%}Consultez les mentions légales, les conditions d’utilisation et la politique
-de confidentialité de MangaBook V2.{% endblock %} {% block content %}
-<section class="catalog-page public-content-page content legal-page">
-  <header id="mentions-legales" class="catalog-page__header page-intro">
-    <h1 class="mb-sr-only">
-      Mentions légales, conditions d’utilisation et confidentialité
-    </h1>
+{% extends "base.html" %}
+
+{% block title %}Mentions légales, conditions et confidentialité - MangaBook V2{% endblock %}
+
+{% block meta_description %}Consultez les mentions légales, les conditions d’utilisation et la politique de confidentialité de MangaBook V2.{% endblock %}
+
+{% block content %}
+<section class="catalog-page public-content-page content legal-page info-premium-page legal-premium-page">
+  <header id="mentions-legales" class="catalog-page__header page-intro info-hero-card legal-hero-card">
+    <span class="info-card__eyebrow">Cadre légal</span>
+    <h1 class="mb-sr-only">Mentions légales, conditions d’utilisation et confidentialité</h1>
     <h2>Mentions légales, conditions d’utilisation et confidentialité</h2>
     <p>
       Cette page regroupe les informations juridiques principales de MangaBook
@@ -15,24 +17,28 @@ de confidentialité de MangaBook V2.{% endblock %} {% block content %}
     </p>
   </header>
 
-  <nav class="public-card-list" aria-label="Navigation juridique">
-    <a class="public-info-card card" href="#mentions-legales">
+  <nav class="public-card-list info-nav-grid" aria-label="Navigation juridique">
+    <a class="public-info-card card info-nav-card" href="#mentions-legales">
+      <span class="info-nav-card__icon" aria-hidden="true">§</span>
       <h3>Mentions légales</h3>
       <p>Informations relatives à l’éditeur et au site.</p>
     </a>
 
-    <a class="public-info-card card" href="#conditions-utilisation">
+    <a class="public-info-card card info-nav-card" href="#conditions-utilisation">
+      <span class="info-nav-card__icon" aria-hidden="true">✓</span>
       <h3>Conditions d’utilisation</h3>
       <p>Règles principales d’utilisation de MangaBook V2.</p>
     </a>
 
-    <a class="public-info-card card" href="#politique-confidentialite">
+    <a class="public-info-card card info-nav-card" href="#politique-confidentialite">
+      <span class="info-nav-card__icon" aria-hidden="true">🔒</span>
       <h3>Politique de confidentialité</h3>
       <p>Données, finalités et droits des utilisateurs.</p>
     </a>
   </nav>
 
-  <section class="public-info-card card">
+  <section class="public-info-card card info-premium-card legal-info-card">
+    <span class="info-card__eyebrow">Éditeur</span>
     <h3>Mentions légales</h3>
     <p>
       MangaBook V2 est un projet de démonstration de site e-commerce et
@@ -45,7 +51,8 @@ de confidentialité de MangaBook V2.{% endblock %} {% block content %}
     </p>
   </section>
 
-  <section id="conditions-utilisation" class="public-info-card card">
+  <section id="conditions-utilisation" class="public-info-card card info-premium-card legal-info-card">
+    <span class="info-card__eyebrow">Utilisation</span>
     <h3>Conditions d’utilisation</h3>
     <p>
       L’utilisateur s’engage à utiliser MangaBook V2 de manière normale,
@@ -60,7 +67,8 @@ de confidentialité de MangaBook V2.{% endblock %} {% block content %}
     </p>
   </section>
 
-  <section id="politique-confidentialite" class="public-info-card card">
+  <section id="politique-confidentialite" class="public-info-card card info-premium-card legal-info-card">
+    <span class="info-card__eyebrow">Données</span>
     <h3>Politique de confidentialité</h3>
     <p>
       MangaBook V2 peut traiter des informations liées au compte utilisateur,
