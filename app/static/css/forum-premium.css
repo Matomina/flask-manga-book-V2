@@ -1,6 +1,6 @@
 /* =========================
-   MangaBook V2 - Premium forum page
-   Align forum index with the global premium design system.
+   MangaBook V2 - Premium forum pages
+   Align forum index and detail views with the global premium design system.
    ========================= */
 
 .forum-shell {
@@ -15,7 +15,13 @@
 .forum-stat-card,
 .forum-board,
 .forum-topic-preview,
-.forum-empty-state {
+.forum-empty-state,
+.forum-detail__topbar,
+.forum-topic-card,
+.forum-replies,
+.forum-reply-form-section,
+.forum-reply-card,
+.forum-login-warning {
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.24);
@@ -36,6 +42,14 @@
   padding: clamp(28px, 5vw, 54px);
 }
 
+.forum-detail__topbar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 18px;
+}
+
 .forum-kicker {
   margin-bottom: 12px;
   border-color: rgba(255, 255, 255, 0.24);
@@ -54,11 +68,26 @@
 .forum-topic-preview small,
 .forum-topic-preview__meta,
 .forum-topic-preview__meta strong,
-.forum-topic-preview__meta span {
+.forum-topic-preview__meta span,
+.forum-topic-card__title,
+.forum-topic-card__infos,
+.forum-topic-card__content,
+.forum-topic-card__content p,
+.forum-replies h2,
+.forum-replies p,
+.forum-reply-card__infos,
+.forum-reply-card__infos strong,
+.forum-reply-card__content,
+.forum-reply-card__content p,
+.forum-reply-form-section h2,
+.forum-reply-form-section p,
+.forum-login-warning p,
+.forum-login-warning a {
   color: var(--mb-white);
 }
 
-.forum-hero-panel h1 {
+.forum-hero-panel h1,
+.forum-topic-card__title {
   font-size: clamp(2.2rem, 5vw, 4.8rem);
   letter-spacing: -0.05em;
 }
@@ -66,12 +95,22 @@
 .forum-hero-panel p,
 .forum-board p,
 .forum-topic-preview p,
-.forum-topic-preview small {
+.forum-topic-preview small,
+.forum-topic-card__infos,
+.forum-topic-card__content p,
+.forum-replies p,
+.forum-reply-card__infos,
+.forum-reply-card__content p,
+.forum-reply-form-section p,
+.forum-login-warning p {
   color: rgba(255, 255, 255, 0.88);
   font-weight: 800;
 }
 
 .forum-hero-panel__actions .btn,
+.forum-detail__topbar .btn,
+.forum-replies .btn,
+.forum-reply-form-section .btn,
 .forum-live-pill {
   border: 0;
   border-radius: 999px;
@@ -100,17 +139,39 @@
   font-size: clamp(2rem, 4vw, 3rem);
 }
 
-.forum-board {
+.forum-board,
+.forum-topic-card,
+.forum-replies,
+.forum-reply-form-section {
   display: grid;
   gap: 22px;
   padding: clamp(24px, 4vw, 42px);
 }
 
-.forum-board__header {
+.forum-board__header,
+.forum-topic-card__header,
+.forum-replies__header,
+.forum-reply-form-section__header {
   align-items: flex-start;
 }
 
-.forum-topic-preview {
+.forum-topic-card__header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+}
+
+.forum-topic-card__content,
+.forum-reply-card__content,
+.forum-form {
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.forum-topic-preview,
+.forum-reply-card {
   padding: 18px;
   border-radius: 24px;
   background:
@@ -124,7 +185,9 @@
 }
 
 .forum-topic-preview:hover,
-.forum-topic-preview:focus-within {
+.forum-topic-preview:focus-within,
+.forum-reply-card:hover,
+.forum-reply-card:focus-within {
   border-color: rgba(255, 255, 255, 0.42);
   box-shadow:
     0 26px 60px rgba(59, 20, 113, 0.34),
@@ -148,10 +211,28 @@
   color: var(--mb-primary);
 }
 
-.forum-empty-state {
+.forum-empty-state,
+.forum-login-warning {
   padding: 26px;
   border-style: solid;
   color: var(--mb-white);
+}
+
+.forum-form label {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.forum-form input,
+.forum-form textarea {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  color: var(--mb-white);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.forum-form input::placeholder,
+.forum-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.62);
 }
 
 @media (max-width: 970px) {
@@ -160,7 +241,8 @@
   }
 
   .forum-hero-panel,
-  .forum-topic-preview {
+  .forum-topic-preview,
+  .forum-topic-card__header {
     grid-template-columns: 1fr;
   }
 }
