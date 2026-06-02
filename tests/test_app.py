@@ -55,7 +55,9 @@ def test_auto_seed_demo_bootstraps_empty_database(monkeypatch, tmp_path):
     create_app()
 
     with sqlite3.connect(db_path) as connection:
-        article_count = connection.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
+        article_count = connection.execute(
+            "SELECT COUNT(*) FROM articles"
+        ).fetchone()[0]
         migration_count = connection.execute(
             "SELECT COUNT(*) FROM schema_migrations"
         ).fetchone()[0]
