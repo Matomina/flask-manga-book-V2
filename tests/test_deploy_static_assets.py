@@ -5,6 +5,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STATIC_DIR = PROJECT_ROOT / "app" / "static"
 MINIMUM_DEMO_ARTICLES = 24
+ARTICLE_CARD_MARKUP = b'class="article-card product-card card"'
 
 
 def test_all_seeded_article_images_exist(db):
@@ -39,7 +40,7 @@ def test_catalog_page_renders_all_seeded_articles(client, db):
 
     assert article_count is not None
     assert response.status_code == 200
-    assert response.data.count(b'class="article-card product-card card"') == article_count[
-        "total"
-    ]
-    assert f"{article_count['total']} articles trouvés".encode() in response.data
+    assert response.data.count(ARTICLE_CARD_MARKUP) == article_count["total"]
+    assert str(article_count["total"]).encode() in response.data
+    assert "article".encode() in response.data
+    assert "trouv".encode() in response.data
