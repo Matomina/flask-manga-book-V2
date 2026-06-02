@@ -1,0 +1,106 @@
+/* =========================
+   MangaBook V2 - Premium cart page
+   Align cart page with global premium info-page design.
+   ========================= */
+
+.cart-page {
+  display: grid;
+  gap: 28px;
+  max-width: var(--mb-container);
+  margin: 0 auto;
+  padding: 0 clamp(18px, 3vw, 32px) 48px;
+}
+
+.cart-page__header,
+.cart-page__topbar,
+.cart-section,
+.cart-summary-premium,
+.cart-empty-premium {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 28px;
+  color: var(--mb-white);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.14), transparent 34%),
+    linear-gradient(135deg, rgba(220, 30, 247, 0.95), rgba(145, 53, 255, 0.96));
+  box-shadow:
+    0 24px 54px rgba(59, 20, 113, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.cart-page__header {
+  padding: clamp(28px, 5vw, 54px);
+}
+
+.cart-page__header h2,
+.cart-page__header p,
+.cart-section h3,
+.cart-section p,
+.cart-empty-premium h3,
+.cart-empty-premium p {
+  color: var(--mb-white);
+}
+
+.cart-page__header p,
+.cart-section p,
+.cart-empty-premium p {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 800;
+}
+
+.cart-page__topbar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 18px;
+}
+
+.cart-page__topbar .btn,
+.cart-empty-premium .btn,
+.cart-section .btn,
+.cart-summary-premium .cart-summary-premium__cta {
+  border: 0;
+  border-radius: 999px;
+  color: var(--mb-primary);
+  font-weight: 950;
+  background: linear-gradient(135deg, var(--mb-white), #f4e9ff);
+  box-shadow: 0 14px 30px rgba(35, 5, 76, 0.24);
+}
+
+.cart-section-list {
+  display: grid;
+  gap: 28px;
+}
+
+.cart-section {
+  padding: clamp(24px, 4vw, 42px);
+}
+
+.cart-section .planning-day__header {
+  color: var(--mb-white);
+}
+
+.cart-empty-premium {
+  display: grid;
+  gap: 16px;
+  min-height: 220px;
+  align-content: center;
+  padding: clamp(28px, 5vw, 54px);
+}
+
+.cart-empty-premium .btn {
+  width: fit-content;
+}
+
+@media (max-width: 700px) {
+  .cart-page {
+    padding-inline: 16px;
+  }
+
+  .cart-page__topbar {
+    justify-content: flex-start;
+  }
+}
