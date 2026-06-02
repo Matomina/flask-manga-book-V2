@@ -2,6 +2,13 @@
 
 {% block title %}Panier - MangaBook V2{% endblock %}
 
+{% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/cart-page-premium.css') }}"
+/>
+{% endblock %}
+
 {% block content %}
 <section class="banner">
   <img
@@ -12,6 +19,7 @@
 
 <section class="cart-page catalog-page catalogue-page">
   <header class="cart-page__header catalog-page__header catalogue-content">
+    <span class="info-card__eyebrow">Panier sécurisé</span>
     <h2>Panier</h2>
     <p>Espace de synthèse des articles sélectionnés avant commande.</p>
   </header>
@@ -100,7 +108,8 @@
         <button class="scroll-btn right" type="button" aria-label="Défiler vers la droite">Suivant</button>
       </div>
       {% else %}
-      <div class="empty-state">
+      <div class="cart-empty-premium">
+        <span class="info-card__eyebrow">Sélection vide</span>
         <h3>Votre panier est vide</h3>
         <p>Ajoutez des mangas ou goodies depuis le catalogue.</p>
         <a href="{{ url_for('public.articles') }}" class="btn btn-primary">
