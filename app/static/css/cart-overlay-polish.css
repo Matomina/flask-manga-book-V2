@@ -7,24 +7,32 @@
   position: fixed;
   inset: 0;
   z-index: 1001;
-  display: block;
+  display: block !important;
   overflow: hidden;
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  background: rgba(21, 3, 45, 0.5);
+  background: rgba(21, 3, 45, 0);
   backdrop-filter: blur(0);
   transition:
     opacity 0.18s ease,
-    visibility 0.18s ease,
+    visibility 0s linear 0.18s,
+    background-color 0.18s ease,
     backdrop-filter 0.18s ease;
 }
 
+body.is-cart-open .cart-overlay,
 .cart-overlay.active {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
+  background: rgba(21, 3, 45, 0.5);
   backdrop-filter: blur(4px);
+  transition:
+    opacity 0.18s ease,
+    visibility 0s linear 0s,
+    background-color 0.18s ease,
+    backdrop-filter 0.18s ease;
 }
 
 .cart-popup {
@@ -34,14 +42,18 @@
   transform: translate3d(100%, 0, 0);
   transition:
     transform 0.24s ease,
-    visibility 0.24s ease;
+    visibility 0s linear 0.24s;
   will-change: transform;
 }
 
+body.is-cart-open .cart-popup,
 .cart-popup.active {
   visibility: visible;
   pointer-events: auto;
   transform: translate3d(0, 0, 0);
+  transition:
+    transform 0.24s ease,
+    visibility 0s linear 0s;
 }
 
 html.no-scroll,
@@ -55,4 +67,10 @@ body.no-scroll {
   right: 0;
   left: 0;
   width: 100%;
+}
+
+body.is-cart-open .floating-cart-btn {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.92);
 }
