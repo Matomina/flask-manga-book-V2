@@ -1,0 +1,116 @@
+/* =========================
+   MangaBook V2 - Final UI polish overrides
+   Scroll lock, footer composition and cart popup containment.
+   ========================= */
+
+html.no-scroll,
+body.no-scroll {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body.no-scroll {
+  touch-action: none;
+}
+
+body.no-scroll .cart-popup,
+body.no-scroll .cart-popup * {
+  touch-action: auto;
+}
+
+.cart-overlay.active {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  overflow: hidden;
+}
+
+.cart-popup {
+  z-index: 950;
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+.cart-content {
+  max-height: calc(100dvh - 176px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.cart-popup__footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+
+.public-footer {
+  min-height: 96px;
+  margin-top: 36px;
+  padding: 12px clamp(16px, 2.6vw, 26px) 14px;
+}
+
+.public-footer__inner {
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.public-footer__inner nav,
+.public-footer .footer-links nav {
+  width: 100%;
+  justify-content: center;
+  gap: clamp(6px, 1vw, 14px);
+}
+
+.public-footer a.footer-link,
+.public-footer a:not(.public-footer__brand) {
+  min-height: 32px;
+  padding: 6px 12px;
+  font-size: clamp(0.78rem, 0.9vw, 0.9rem);
+  letter-spacing: 0.02em;
+}
+
+.public-footer__brand {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 0;
+  padding: 3px 12px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.92rem;
+  font-weight: 950;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+}
+
+.public-footer__brand:hover,
+.public-footer__brand:focus-visible {
+  color: var(--mb-primary);
+  background: linear-gradient(135deg, var(--mb-white), #f4e9ff);
+  box-shadow: 0 14px 30px rgba(35, 5, 76, 0.24);
+}
+
+.public-footer__logo {
+  width: 24px;
+  height: 24px;
+  padding: 2px;
+  border-radius: 999px;
+}
+
+@media (max-width: 700px) {
+  .public-footer {
+    min-height: 112px;
+    padding-block: 14px;
+  }
+
+  .public-footer__inner nav,
+  .public-footer .footer-links nav {
+    row-gap: 4px;
+  }
+}
