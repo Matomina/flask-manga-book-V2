@@ -69,10 +69,9 @@ function renderCart(containerId) {
     .map(
       (item) => `
       <div class="cart-item">
-        ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ''}
-        <div class="cart-item-info">
-          <strong>${item.name}</strong>
-          <div class="cart-qty">
+        <div class="cart-item-media">
+          ${item.image ? `<img src="${item.image}" alt="${item.name}">` : '<div class="cart-item-image-placeholder"></div>'}
+          <div class="cart-qty" aria-label="Modifier la quantité">
             <button
               type="button"
               data-cart-action="decrease"
@@ -87,6 +86,10 @@ function renderCart(containerId) {
               data-quantity="${item.quantity}"
             >+</button>
           </div>
+        </div>
+        <div class="cart-item-info">
+          <strong>${item.name}</strong>
+          <span>Quantité : ${item.quantity}</span>
         </div>
         <span class="cart-price">${money(item.price * item.quantity)}€</span>
       </div>
