@@ -13,7 +13,7 @@ from .core import (
 )
 from .core.csrf import register_csrf
 from .db import init_app as init_db_app
-from .db.connection import run_migrations
+from .db.connection import ensure_demo_database, run_migrations
 
 
 def create_app(test_config: dict[str, Any] | None = None) -> Flask:
@@ -37,6 +37,7 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     register_error_handlers(app)
 
     with app.app_context():
+        ensure_demo_database()
         run_migrations()
 
     return app

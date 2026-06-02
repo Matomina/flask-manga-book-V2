@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sqlite3
+
 import pytest
 
 from app import create_app
@@ -32,6 +34,7 @@ def test_config_uses_environment_values(monkeypatch, tmp_path):
     monkeypatch.setenv("DATABASE", str(db_path))
     monkeypatch.setenv("FLASK_DEBUG", "1")
     monkeypatch.setenv("MAX_CONTENT_LENGTH", "1048576")
+    monkeypatch.setenv("AUTO_SEED_DEMO", "1")
 
     app = create_app()
 
@@ -39,6 +42,30 @@ def test_config_uses_environment_values(monkeypatch, tmp_path):
     assert app.config["DATABASE"] == str(db_path)
     assert app.config["DEBUG"] is True
     assert app.config["MAX_CONTENT_LENGTH"] == 1048576
+    assert app.config["AUTO_SEED_DEMO"] is True
+
+
+def test_auto_seed_demo_bootstraps_empty_database(monkeypatch, tmp_path):
+    db_path = tmp_path / "demo.sqlite3"
+
+    monkeypatch.setenv("SECRET_KEY", "secure-test-key")
+    monkeypatch.setenv("DATABASE", str(db_path))
+    monkeypatch.setenv("AUTO_SEED_DEMO", "1")
+
+    create_app()
+
+    with sqlite3.connect(db_path) as connection:
+        article_count_row = connection.execute(
+            "SELECT COUNT(*) FROM articles"
+        ).fetchone()
+        migration_count_row = connection.execute(
+            "SELECT COUNT(*) FROM schema_migrations"
+        ).fetchone()
+
+    assert article_count_row is not None
+    assert migration_count_row is not None
+    assert article_count_row[0] > 0
+    assert migration_count_row[0] > 0
 
 
 def test_config_requires_secret_key_outside_testing(monkeypatch, tmp_path):
@@ -46,6 +73,7 @@ def test_config_requires_secret_key_outside_testing(monkeypatch, tmp_path):
     monkeypatch.delenv("DATABASE", raising=False)
     monkeypatch.delenv("FLASK_DEBUG", raising=False)
     monkeypatch.delenv("MAX_CONTENT_LENGTH", raising=False)
+    monkeypatch.delenv("AUTO_SEED_DEMO", raising=False)
 
     with pytest.raises(RuntimeError, match="SECRET_KEY"):
         create_app(

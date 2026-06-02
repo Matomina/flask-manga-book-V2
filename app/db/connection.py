@@ -52,6 +52,15 @@ def _base_schema_exists() -> bool:
     return all(_table_exists(table_name) for table_name in BASE_SCHEMA_TABLES)
 
 
+def _has_seed_data() -> bool:
+    if not _table_exists("articles"):
+        return False
+
+    db = get_db()
+    row = db.execute("SELECT COUNT(*) AS total FROM articles").fetchone()
+    return bool(row and row["total"] > 0)
+
+
 def _column_exists(table_name: str, column_name: str) -> bool:
     db = get_db()
     columns = db.execute(f"PRAGMA table_info({table_name})").fetchall()
@@ -253,6 +262,19 @@ def reset_db() -> None:
     """Réinitialiser complètement la base."""
     init_db()
     seed_db()
+
+
+def ensure_demo_database() -> None:
+    """Initialiser une base de démonstration vide quand le flag est activé."""
+    if not current_app.config.get("AUTO_SEED_DEMO"):
+        return
+
+    if not _base_schema_exists():
+        init_db()
+
+    if not _has_seed_data():
+        seed_db()
+        run_migrations()
 
 
 @click.command("init-db")
