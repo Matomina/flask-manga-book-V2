@@ -11,12 +11,49 @@ body.no-scroll {
 }
 
 body.no-scroll {
+  position: fixed;
+  width: 100%;
   touch-action: none;
 }
 
 body.no-scroll .cart-popup,
 body.no-scroll .cart-popup * {
   touch-action: auto;
+}
+
+.public-header__brand.logo-title {
+  min-height: 44px;
+  padding: 4px 12px 4px 4px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.public-header__brand.logo-title:hover,
+.public-header__brand.logo-title:focus-visible {
+  border-color: rgba(255, 255, 255, 0.32);
+  background: linear-gradient(135deg, var(--mb-white), #f4e9ff);
+  box-shadow: 0 14px 30px rgba(35, 5, 76, 0.26);
+  transform: translateY(-1px);
+}
+
+.public-header__brand.logo-title:hover .site-title,
+.public-header__brand.logo-title:focus-visible .site-title,
+.public-header__brand.logo-title:hover .public-header__brand-text,
+.public-header__brand.logo-title:focus-visible .public-header__brand-text {
+  color: var(--mb-primary);
+  text-shadow: none;
+}
+
+.public-header__brand.logo-title:hover .site-title::after,
+.public-header__brand.logo-title:focus-visible .site-title::after,
+.public-header__brand.logo-title:hover .public-header__brand-text::after,
+.public-header__brand.logo-title:focus-visible .public-header__brand-text::after {
+  background: var(--mb-primary);
 }
 
 .cart-overlay.active {
