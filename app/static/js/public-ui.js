@@ -179,7 +179,7 @@ async function updateQuantity(articleId, nextQuantity) {
 function openCartPopup() {
   scrollPositionBeforeCartOpen = window.scrollY;
   document.documentElement.classList.add('no-scroll');
-  document.body.classList.add('no-scroll');
+  document.body.classList.add('no-scroll', 'is-cart-open');
   document.body.style.top = `-${scrollPositionBeforeCartOpen}px`;
   document.getElementById('cartPopup')?.classList.add('active');
   document.getElementById('cartOverlay')?.classList.add('active');
@@ -188,7 +188,7 @@ function openCartPopup() {
 
 function closeCartPopup() {
   document.documentElement.classList.remove('no-scroll');
-  document.body.classList.remove('no-scroll');
+  document.body.classList.remove('no-scroll', 'is-cart-open');
   document.body.style.top = '';
   document.getElementById('cartPopup')?.classList.remove('active');
   document.getElementById('cartOverlay')?.classList.remove('active');
@@ -271,6 +271,7 @@ function initPublicMenu() {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       closePublicMenu();
+      closeCartPopup();
     }
   });
 }
