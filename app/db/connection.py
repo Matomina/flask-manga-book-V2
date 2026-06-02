@@ -15,6 +15,7 @@ BASE_SCHEMA_TABLES = {"user", "articles", "orders"}
 DEMO_IMAGE_FALLBACKS = {
     "image/figurine_naruto.jpeg": "image/produit_naruto.jpeg",
     "image/figurine_itachi.jpeg": "image/produit_jujutsu_kaisen.jpeg",
+    "image/bol_dragon_ball.jpg": "image/dragon_ball.jpeg",
 }
 
 
