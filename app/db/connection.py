@@ -9,6 +9,7 @@ from flask import Flask, current_app, g
 BASE_DIR = Path(__file__).resolve().parent
 SCHEMA_PATH = BASE_DIR / "schema.sql"
 SEED_PATH = BASE_DIR / "seed.sql"
+FULL_CATALOG_SEED_PATH = BASE_DIR / "full_catalog.sql"
 MIGRATIONS_DIR = BASE_DIR / "migrations"
 MIGRATIONS_TABLE = "schema_migrations"
 BASE_SCHEMA_TABLES = {"user", "articles", "orders"}
@@ -230,6 +231,17 @@ def _apply_demo_image_fallbacks() -> None:
     db.commit()
 
 
+def _apply_full_catalog_seed() -> None:
+    """Appliquer le catalogue complet exporté depuis la vraie base locale."""
+    if not FULL_CATALOG_SEED_PATH.exists() or not _table_exists("articles"):
+        return
+
+    db = get_db()
+    db.executescript(FULL_CATALOG_SEED_PATH.read_text(encoding="utf-8"))
+    db.commit()
+    _apply_demo_image_fallbacks()
+
+
 def _apply_migration_file(migration_path: Path) -> bool:
     db = get_db()
 
@@ -279,6 +291,7 @@ def seed_db() -> None:
     db = get_db()
     db.executescript(SEED_PATH.read_text(encoding="utf-8"))
     db.commit()
+    _apply_full_catalog_seed()
     _apply_demo_image_fallbacks()
 
 
@@ -300,6 +313,7 @@ def ensure_demo_database() -> None:
         seed_db()
         run_migrations()
 
+    _apply_full_catalog_seed()
     _apply_demo_image_fallbacks()
 
 
