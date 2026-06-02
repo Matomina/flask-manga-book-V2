@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: manga-book-v2
+    runtime: python
+    plan: free
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: gunicorn "run:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: DATABASE
+        value: /tmp/manga.sqlite
+      - key: MAX_CONTENT_LENGTH
+        value: "2097152"
