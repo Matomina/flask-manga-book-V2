@@ -4,6 +4,13 @@
 
 {% block meta_description %}Découvrez {{ article["name"] }} sur MangaBook V2 : fiche article, prix, stock, genre{% if article["universe"] %}, univers {{ article["universe"] }}{% endif %} et description détaillée.{% endblock %}
 
+{% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/detail-pages-premium.css') }}"
+/>
+{% endblock %}
+
 {% block content %}
 <section class="banner page-banner">
   <img
@@ -15,6 +22,7 @@
 
 <section class="article-detail-page catalog-page catalogue-page">
   <header class="catalog-page__header catalogue-content page-intro">
+    <span class="info-card__eyebrow">Fiche article</span>
     <h1 class="mb-sr-only">{{ article["name"] }}</h1>
     <h2>{{ article["name"] }}</h2>
     <p>Découvrez le détail, le prix, le stock et les informations de cet article.</p>

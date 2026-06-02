@@ -1,0 +1,297 @@
+/* =========================
+   MangaBook V2 - Final UI polish overrides
+   Scroll lock, footer composition and cart popup containment.
+   ========================= */
+
+html.no-scroll,
+body.no-scroll {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body.no-scroll {
+  position: fixed;
+  width: 100%;
+  touch-action: none;
+}
+
+body.no-scroll .cart-popup,
+body.no-scroll .cart-popup * {
+  touch-action: auto;
+}
+
+.public-header__brand.logo-title {
+  min-height: 44px;
+  padding: 4px 12px 4px 4px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.public-header__brand.logo-title:hover,
+.public-header__brand.logo-title:focus-visible {
+  border-color: rgba(255, 255, 255, 0.32);
+  background: linear-gradient(135deg, var(--mb-white), #f4e9ff);
+  box-shadow: 0 14px 30px rgba(35, 5, 76, 0.26);
+  transform: translateY(-1px);
+}
+
+.public-header__brand.logo-title:hover .site-title,
+.public-header__brand.logo-title:focus-visible .site-title,
+.public-header__brand.logo-title:hover .public-header__brand-text,
+.public-header__brand.logo-title:focus-visible .public-header__brand-text {
+  color: var(--mb-primary);
+  text-shadow: none;
+}
+
+.public-header__brand.logo-title:hover .site-title::after,
+.public-header__brand.logo-title:focus-visible .site-title::after,
+.public-header__brand.logo-title:hover .public-header__brand-text::after,
+.public-header__brand.logo-title:focus-visible .public-header__brand-text::after {
+  background: var(--mb-primary);
+}
+
+.cart-overlay.active {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  overflow: hidden;
+}
+
+.cart-popup {
+  z-index: 950;
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+.cart-content {
+  max-height: calc(100dvh - 176px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.cart-popup__footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+
+.public-footer {
+  min-height: 96px;
+  margin-top: 36px;
+  padding: 12px clamp(16px, 2.6vw, 26px) 14px;
+}
+
+.public-footer__inner {
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.public-footer__inner nav,
+.public-footer .footer-links nav {
+  width: 100%;
+  justify-content: center;
+  gap: clamp(6px, 1vw, 14px);
+}
+
+.public-footer a.footer-link,
+.public-footer a:not(.public-footer__brand) {
+  min-height: 32px;
+  padding: 6px 12px;
+  font-size: clamp(0.78rem, 0.9vw, 0.9rem);
+  letter-spacing: 0.02em;
+}
+
+.public-footer__brand {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 0;
+  padding: 3px 12px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.92rem;
+  font-weight: 950;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+}
+
+.public-footer__brand:hover,
+.public-footer__brand:focus-visible {
+  color: var(--mb-primary);
+  background: linear-gradient(135deg, var(--mb-white), #f4e9ff);
+  box-shadow: 0 14px 30px rgba(35, 5, 76, 0.24);
+}
+
+.public-footer__logo {
+  width: 24px;
+  height: 24px;
+  padding: 2px;
+  border-radius: 999px;
+}
+
+.info-premium-page {
+  display: grid;
+  gap: 28px;
+}
+
+.info-hero-card,
+.info-premium-card,
+.info-nav-card,
+.info-mini-card,
+.legal-info-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 28px;
+  color: var(--mb-white);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.14), transparent 34%),
+    linear-gradient(135deg, rgba(220, 30, 247, 0.95), rgba(145, 53, 255, 0.96));
+  box-shadow:
+    0 24px 54px rgba(59, 20, 113, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.info-hero-card,
+.info-premium-card {
+  padding: clamp(28px, 5vw, 54px);
+}
+
+.info-hero-card h2,
+.info-premium-card h3,
+.info-mini-card h4,
+.info-nav-card h3,
+.legal-info-card h3 {
+  color: var(--mb-white);
+}
+
+.info-hero-card p,
+.info-premium-card p,
+.info-mini-card p,
+.info-nav-card p,
+.legal-info-card p {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 800;
+}
+
+.info-card__eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 12px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.82rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.info-nav-grid,
+.info-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.info-nav-card,
+.info-mini-card {
+  display: grid;
+  min-height: 210px;
+  align-content: start;
+  gap: 14px;
+  padding: clamp(22px, 3vw, 32px);
+  text-decoration: none;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.info-nav-card:hover,
+.info-nav-card:focus-visible,
+.info-mini-card:hover,
+.info-mini-card:focus-within {
+  box-shadow:
+    0 30px 68px rgba(59, 20, 113, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  transform: translateY(-4px);
+}
+
+.info-nav-card__icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 18px;
+  color: var(--mb-primary);
+  font-weight: 950;
+  background: linear-gradient(135deg, var(--mb-white), #f4e9ff);
+  box-shadow: 0 14px 30px rgba(35, 5, 76, 0.22);
+}
+
+.info-contact-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.info-contact-form label {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 900;
+}
+
+.info-contact-form input,
+.info-contact-form textarea {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  color: var(--mb-white);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.info-contact-form input::placeholder,
+.info-contact-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.info-premium-page .btn {
+  border: 0;
+  border-radius: 999px;
+  color: var(--mb-primary);
+  font-weight: 950;
+  background: linear-gradient(135deg, var(--mb-white), #f4e9ff);
+  box-shadow: 0 14px 30px rgba(35, 5, 76, 0.24);
+}
+
+@media (max-width: 900px) {
+  .info-nav-grid,
+  .info-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .public-footer {
+    min-height: 112px;
+    padding-block: 14px;
+  }
+
+  .public-footer__inner nav,
+  .public-footer .footer-links nav {
+    row-gap: 4px;
+  }
+}

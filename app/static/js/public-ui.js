@@ -25,6 +25,7 @@ function initScroll(wrapperSelector, containerSelector) {
 }
 
 let cartState = { items: [], total: 0, count: 0 };
+let scrollPositionBeforeCartOpen = 0;
 
 function csrfToken() {
   return document.querySelector('meta[name="csrf-token"]')?.content || '';
@@ -69,10 +70,9 @@ function renderCart(containerId) {
     .map(
       (item) => `
       <div class="cart-item">
-        ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ''}
-        <div class="cart-item-info">
-          <strong>${item.name}</strong>
-          <div class="cart-qty">
+        <div class="cart-item-media">
+          ${item.image ? `<img src="${item.image}" alt="${item.name}">` : '<div class="cart-item-image-placeholder"></div>'}
+          <div class="cart-qty" aria-label="Modifier la quantité">
             <button
               type="button"
               data-cart-action="decrease"
@@ -87,6 +87,10 @@ function renderCart(containerId) {
               data-quantity="${item.quantity}"
             >+</button>
           </div>
+        </div>
+        <div class="cart-item-info">
+          <strong>${item.name}</strong>
+          <span>Quantité : ${item.quantity}</span>
         </div>
         <span class="cart-price">${money(item.price * item.quantity)}€</span>
       </div>
@@ -173,16 +177,22 @@ async function updateQuantity(articleId, nextQuantity) {
 }
 
 function openCartPopup() {
-  document.body.classList.add('no-scroll');
+  scrollPositionBeforeCartOpen = window.scrollY;
+  document.documentElement.classList.add('no-scroll');
+  document.body.classList.add('no-scroll', 'is-cart-open');
+  document.body.style.top = `-${scrollPositionBeforeCartOpen}px`;
   document.getElementById('cartPopup')?.classList.add('active');
   document.getElementById('cartOverlay')?.classList.add('active');
   fetchCart();
 }
 
 function closeCartPopup() {
-  document.body.classList.remove('no-scroll');
+  document.documentElement.classList.remove('no-scroll');
+  document.body.classList.remove('no-scroll', 'is-cart-open');
+  document.body.style.top = '';
   document.getElementById('cartPopup')?.classList.remove('active');
   document.getElementById('cartOverlay')?.classList.remove('active');
+  window.scrollTo(0, scrollPositionBeforeCartOpen);
 }
 
 async function quickCheckout() {
@@ -261,6 +271,7 @@ function initPublicMenu() {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       closePublicMenu();
+      closeCartPopup();
     }
   });
 }

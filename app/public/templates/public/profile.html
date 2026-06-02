@@ -1,64 +1,84 @@
-{% extends "base.html" %} {% block title %}Mon profil - MangaBook V2{% endblock
-%} {% block content %}
+{% extends "base.html" %}
 
-<section class="banner page-banner">
+{% block title %}Mon profil - MangaBook V2{% endblock %}
+
+{% block content %}
+<section class="banner page-banner profile-banner">
   <img
     src="{{ url_for('static', filename='image/banner-profile.jpeg') }}"
     alt="Bannière profil MangaBook"
   />
 </section>
 
-<section class="profile-page catalog-page public-content-page content">
-  <header class="profile-page__header catalog-page__header page-intro">
+<section class="profile-page catalog-page public-content-page content profile-premium-page">
+  <header class="profile-page__header catalog-page__header page-intro profile-hero-card">
+    <span class="profile-hero-card__eyebrow">Espace utilisateur</span>
     <h2>Mon profil</h2>
     <p>
-      Retrouvez les informations de votre compte et vos raccourcis utilisateur.
+      Retrouvez les informations de votre compte, vos raccourcis utilisateur et
+      les accès rapides vers vos espaces MangaBook.
     </p>
   </header>
 
-  <section class="profile-card public-info-card card">
-    <h3>Informations du compte</h3>
+  <section class="profile-premium-grid" aria-label="Informations du profil">
+    <article class="profile-card public-info-card card profile-account-card">
+      <div class="profile-account-card__avatar" aria-hidden="true">
+        {{ user.first_name[:1] }}{{ user.last_name[:1] }}
+      </div>
 
-    <p>
-      <strong>Prénom :</strong>
-      {{ user.first_name }}
-    </p>
+      <div class="profile-account-card__content">
+        <span class="profile-card__eyebrow">Compte connecté</span>
+        <h3>{{ user.first_name }} {{ user.last_name }}</h3>
 
-    <p>
-      <strong>Nom :</strong>
-      {{ user.last_name }}
-    </p>
+        <dl class="profile-account-list">
+          <div>
+            <dt>Email</dt>
+            <dd>{{ user.email }}</dd>
+          </div>
+          <div>
+            <dt>Rôle</dt>
+            <dd>{{ user.role }}</dd>
+          </div>
+        </dl>
+      </div>
+    </article>
 
-    <p>
-      <strong>Email :</strong>
-      {{ user.email }}
-    </p>
-
-    <p>
-      <strong>Rôle :</strong>
-      {{ user.role }}
-    </p>
+    <aside class="profile-support-card public-info-card card">
+      <span class="profile-card__eyebrow">Support</span>
+      <h3>Besoin d’aide ?</h3>
+      <p>
+        Contactez l’équipe MangaBook pour une question de compte, de commande ou
+        d’utilisation du site.
+      </p>
+      <a href="{{ url_for('public.contact') }}" class="btn btn-primary">
+        Contacter le support
+      </a>
+    </aside>
   </section>
 
-  <section class="profile-actions">
-    <header class="catalog-results__header">
+  <section class="profile-actions profile-spaces-section">
+    <header class="catalog-results__header profile-section-header">
+      <span class="profile-card__eyebrow">Raccourcis</span>
       <h3>Mes espaces</h3>
     </header>
 
-    <div class="profile-actions__grid">
+    <div class="profile-actions__grid profile-spaces-grid">
       <a href="{{ url_for('public.favorites') }}" class="profile-action-card card">
+        <span class="profile-action-card__icon" aria-hidden="true">♥</span>
         <h4>Mes favoris</h4>
         <p>Consulter les articles que vous avez ajoutés à vos favoris.</p>
       </a>
 
       <a href="{{ url_for('public.history') }}" class="profile-action-card card">
+        <span class="profile-action-card__icon" aria-hidden="true">↺</span>
         <h4>Mon historique</h4>
         <p>Retrouver les articles que vous avez consultés récemment.</p>
       </a>
 
-      <a href="{{ url_for('public.contact') }}" class="profile-action-card card">
-        <h4>Contacter le support</h4>
-        <p>Envoyer une demande à l’administration MangaBook.</p>
+      <a href="{{ url_for('public.cart') }}" class="profile-action-card card">
+        <span class="profile-action-card__icon" aria-hidden="true">🛒</span>
+        <h4>Mon panier</h4>
+        <p>Reprendre votre sélection et finaliser votre commande MangaBook.</p>
       </a>
     </div>
   </section>
