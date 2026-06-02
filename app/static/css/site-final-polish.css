@@ -362,3 +362,60 @@ body.no-scroll .cart-popup * {
     margin-bottom: 8px;
   }
 }
+
+/* Global favorite heart unification */
+
+.public-main .article-card.product-card.card .favorite-btn {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  z-index: 20;
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  color: #e63946;
+  font-size: 0;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 22px rgba(35, 5, 76, 0.22);
+}
+
+.public-main .article-card.product-card.card .favorite-btn::before {
+  content: "\2665";
+  color: #e63946;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.public-main .article-card.product-card.card .favorite-btn:hover,
+.public-main .article-card.product-card.card .favorite-btn:focus-visible,
+.public-main .article-card.product-card.card .favorite-btn.is-favorite {
+  color: #e63946;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 26px rgba(230, 57, 70, 0.28);
+  transform: scale(1.04);
+}
+
+.public-main .article-card.product-card.card .favorite-btn:hover::before,
+.public-main .article-card.product-card.card .favorite-btn:focus-visible::before,
+.public-main .article-card.product-card.card .favorite-btn.is-favorite::before {
+  color: #e63946;
+}
+
+@media (max-width: 700px) {
+  .public-main .article-card.product-card.card .favorite-btn {
+    top: 20px;
+    right: 20px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .public-main .article-card.product-card.card .favorite-btn::before {
+    font-size: 15px;
+  }
+}
