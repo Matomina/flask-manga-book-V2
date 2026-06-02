@@ -5,15 +5,16 @@
 {% block meta_description %}Découvrez MangaBook V2, une expérience manga soignée qui réunit catalogue, planning, favoris, panier, communauté et support utilisateur.{% endblock %}
 
 {% block content %}
-<section class="banner page-banner">
+<section class="banner page-banner about-banner">
   <img
     src="{{ url_for('static', filename='image/banner-about.png') }}"
     alt="Bannière à propos MangaBook"
   />
 </section>
 
-<section class="about-page catalog-page public-content-page content">
-  <header id="a-propos" class="about-page__header catalog-page__header page-intro">
+<section class="about-page catalog-page public-content-page content info-premium-page">
+  <header id="a-propos" class="about-page__header catalog-page__header page-intro info-hero-card">
+    <span class="info-card__eyebrow">MangaBook V2</span>
     <h1 class="mb-sr-only">À propos de MangaBook</h1>
     <h2>À propos de MangaBook</h2>
     <p>
@@ -24,24 +25,28 @@
     </p>
   </header>
 
-  <nav class="public-card-list" aria-label="Navigation de la page à propos">
-    <a class="public-info-card card" href="#a-propos">
+  <nav class="public-card-list info-nav-grid" aria-label="Navigation de la page à propos">
+    <a class="public-info-card card info-nav-card" href="#a-propos">
+      <span class="info-nav-card__icon" aria-hidden="true">✦</span>
       <h3>Une expérience soignée</h3>
       <p>Un espace centralisé pour explorer les articles, goodies et nouveautés.</p>
     </a>
 
-    <a class="public-info-card card" href="#aide">
+    <a class="public-info-card card info-nav-card" href="#aide">
+      <span class="info-nav-card__icon" aria-hidden="true">?</span>
       <h3>Accompagnement</h3>
       <p>Des repères simples pour utiliser chaque fonctionnalité du site.</p>
     </a>
 
-    <a class="public-info-card card" href="#contact">
+    <a class="public-info-card card info-nav-card" href="#contact">
+      <span class="info-nav-card__icon" aria-hidden="true">✉</span>
       <h3>Support dédié</h3>
       <p>Un point de contact direct pour transmettre une demande à l’équipe.</p>
     </a>
   </nav>
 
-  <section class="public-info-card card">
+  <section class="public-info-card card info-premium-card info-feature-card">
+    <span class="info-card__eyebrow">Vision produit</span>
     <h3>Un projet pensé pour les passionnés</h3>
     <p>
       MangaBook V2 rassemble les éléments essentiels d’une boutique manga
@@ -55,7 +60,8 @@
     </p>
   </section>
 
-  <section id="aide" class="public-info-card card">
+  <section id="aide" class="public-info-card card info-premium-card info-support-section">
+    <span class="info-card__eyebrow">Aide utilisateur</span>
     <h3>Un parcours utilisateur plus clair</h3>
     <p>
       Chaque section est organisée pour permettre une consultation rapide :
@@ -64,8 +70,8 @@
       du forum.
     </p>
 
-    <div class="public-card-list">
-      <article class="public-info-card card">
+    <div class="public-card-list info-card-grid">
+      <article class="public-info-card card info-mini-card">
         <h4>Compte utilisateur</h4>
         <p>
           La connexion donne accès à un espace personnel regroupant les favoris,
@@ -73,7 +79,7 @@
         </p>
       </article>
 
-      <article class="public-info-card card">
+      <article class="public-info-card card info-mini-card">
         <h4>Catalogue et nouveautés</h4>
         <p>
           Les pages Catalogue, Goodies et Planning facilitent la découverte des
@@ -81,7 +87,7 @@
         </p>
       </article>
 
-      <article class="public-info-card card">
+      <article class="public-info-card card info-mini-card">
         <h4>Panier et préparation de commande</h4>
         <p>
           Le panier permet de regrouper les articles sélectionnés et de préparer
@@ -96,8 +102,9 @@
     </div>
   </section>
 
-  <section id="contact" class="contact-support__card public-info-card card">
+  <section id="contact" class="contact-support__card public-info-card card info-premium-card info-contact-card">
     <header class="contact-support__header">
+      <span class="info-card__eyebrow">Contact</span>
       <h3>Contacter l’équipe MangaBook</h3>
       <p>
         Une question, une remarque ou un problème d’utilisation ? Envoyez votre
@@ -110,7 +117,7 @@
     <form
       action="{{ url_for('public.contact') }}"
       method="post"
-      class="public-form contact-form"
+      class="public-form contact-form info-contact-form"
     >
       <div class="public-form__group contact-form__group">
         <label for="sujet">Sujet</label>
